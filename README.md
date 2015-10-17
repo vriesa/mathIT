@@ -1,2 +1,2 @@
 # mathIT
-Mathematic Library for Java
+Mathematics Library for Java
