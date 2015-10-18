@@ -788,7 +788,8 @@ public class GraphRegister {
     * either <i>X</i>, <i>Y</i>, or <i>Z</i>.
     * @param v the measured qubit 
     * (in an <i>n</i> qubit register, v = 0, 1, ..., <i>n</i> - 1)
-    * @param basis the Pauli gate which serves as measurement basis 
+    * @param basis the Pauli gate which serves as measurement basis
+    * @return the qubit value as measured in the specified basis
     */
    public int measure(int v, LocalCliffordOperator basis) {
       return measure(v, basis, -1);

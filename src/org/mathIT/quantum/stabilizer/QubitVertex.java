@@ -46,6 +46,8 @@ import static org.mathIT.quantum.stabilizer.LocalCliffordOperator.*;
    
    /** Returns the complex 2x2 matrix representing the vertex operator 
     *  associated to this qubit vertex, according to the graph state formalism.
+    *  @return the complex 2x2 matrix representing the vertex operator 
+    *  associated to this qubit vertex
     */
    public double[][][] getMatrix() {
       return byprod.getMatrix();

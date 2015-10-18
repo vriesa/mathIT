@@ -254,13 +254,18 @@ public class LocalCliffordOperator {
       {0, 1, 3, 0}
    };
    
-   /** constructor, takes an integer in 0..23.*/
+   /** Constructor, takes an integer in 0..23.
+    *  @param the code of this operator
+    */
    public LocalCliffordOperator (int code) {
      this.code = code;
    }
 
    /** constructor, takes a sign symbol in 0..3 (for I, X, Y, Z) and a
-    *  permutation symbol 0..5 (for A, B, ..., F). */
+    *  permutation symbol 0..5 (for A, B, ..., F).
+    *  @param the sign symbol of this operator
+    *  @param the permutation symbol of this operator
+    */
    public LocalCliffordOperator (int signsymb, int permsymb) {
       //assert (signsymb < 4 && permsymb < 6);
       code = permsymb * 4 + signsymb;
@@ -379,11 +384,12 @@ public class LocalCliffordOperator {
    
    /** Returns this local Clifford operator as an array representing a 2x2 matrix 
     *  of complex numbers.
-    *  The indicies are organized as follows:
+    *  The indices are organized as follows:
     *  <pre>
     *    matrix[row][column][real/imaginary part]
     *  </pre>
     *  with the index ranges <code>matrix[0..1][0..1][0..1]</code>.
+    *  @return this local Clifford operator in a 2x2 complex matrix representation
     */
    public double[][][] getMatrix() {
       return matrices[code];

@@ -1205,7 +1205,7 @@ public class Register {
     *  
     *  <p>
     *  To implement the random collapse, a random number <i>f</i> with 
-    *  0 &#x2264; <i>f</i> < 1 is chosen.
+    *  0 &#x2264; <i>f</i> &lt; 1 is chosen.
     *  Then successively the probabilities of the single qubits are subtracted,
     *  starting with the first qubit state |0&gt;, until <i>f</i> gets negative. The last
     *  qubit |<i>j</i>&gt; that caused the sign change is the measured qubit state.

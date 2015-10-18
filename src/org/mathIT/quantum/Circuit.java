@@ -102,8 +102,8 @@ public class Circuit extends ArrayList<QuantumGate> implements java.io.Serializa
       return get(nextGateNumber);
    }
    
-   /** Yields the current gate in this quantum circuit which is to be executed next.
-    *  @return the next gate
+   /** Yields the previous gate in this quantum circuit which just had been executed.
+    *  @return the previous gate
     */
    public QuantumGate getPreviousGate() {
       return get(nextGateNumber - 1);
