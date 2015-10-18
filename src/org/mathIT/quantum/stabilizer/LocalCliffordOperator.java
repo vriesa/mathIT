@@ -255,7 +255,7 @@ public class LocalCliffordOperator {
    };
    
    /** Constructor, takes an integer in 0..23.
-    *  @param the code of this operator
+    *  @param code the code of this operator
     */
    public LocalCliffordOperator (int code) {
      this.code = code;
@@ -263,8 +263,8 @@ public class LocalCliffordOperator {
 
    /** constructor, takes a sign symbol in 0..3 (for I, X, Y, Z) and a
     *  permutation symbol 0..5 (for A, B, ..., F).
-    *  @param the sign symbol of this operator
-    *  @param the permutation symbol of this operator
+    *  @param signsymb the sign symbol of this operator
+    *  @param permsymb the permutation symbol of this operator
     */
    public LocalCliffordOperator (int signsymb, int permsymb) {
       //assert (signsymb < 4 && permsymb < 6);

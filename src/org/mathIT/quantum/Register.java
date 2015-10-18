@@ -929,7 +929,7 @@ public class Register {
    
    /**
     * Applies the inverse of the Grover operator.
-    * @param needle
+    * @param needle the value to be searched for
     * @see #grover(int)
     */
    public void inverseGrover(int needle) {

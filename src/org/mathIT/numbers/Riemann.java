@@ -22,12 +22,12 @@ package org.mathIT.numbers;
 /**
  *  This class provides the Riemann zeta function &#950;(<i>s</i>) for any
  *  comlex number <i>s</i> &#8712; <span style="font-size:large;">&#8450;</span>.
- *  In this version, the absolute  approximation error is about 1E-6 for <i>s</i>
+ *  In this version, the absolute  approximation error is about 10<sup>-6</sup> for <i>s</i>
  *  with relatively small absolute value, |<i>s</i>| smaller than 50.
  *  On the real line, the accuracy should be in that range even for much greater
- *  or smaller values of <i>s</i>, and on the "critical strip" 
+ *  or smaller values of <i>s</i>, and on the “critical strip” 
  *  0 &lt; Re <i>s</i> &lt; 1 the Riemann-Siegel formula is used, which
- *  guarantees a high accuracy especially for very high values of Im<i>s</i>.
+ *  guarantees a high accuracy especially for very high values of Im <i>s</i>.
  *
  *  @author  Andreas de Vries
  *  @version 1.2
@@ -80,7 +80,7 @@ public class Riemann {
     *  We have &#967;(<i>s</i>) &#967;(1 - <i>s</i>) = 1.
     *  [Eqs. (2.1.10)-(2.1.12) in E.C. Titchmarsh: <i>The Theory of the Riemann
     *  Zeta-function.</i> 2nd Edition, Oxford University Press, Oxford 1986],
-    *  <a href="https://books.google.com/books?id=1CyfApMt8JYC&pg=PA16">https://books.google.com/books?id=1CyfApMt8JYC&pg=PA16</a>
+    *  <a href="https://books.google.com/books?id=1CyfApMt8JYC&pg=PA16" target="_new">https://books.google.com/books?id=1CyfApMt8JYC&amp;pg=PA16</a>
     *  @param s a complex value
     *  @return &#967;(<i>s</i>)
     *  @see #zeta(double[])
@@ -403,7 +403,8 @@ public class Riemann {
     </table>
     * <p>
     * We have the equality <i>Z</i>(<i>t</i>) = e<sup>i &#952;(<i>t</i>)</sup> &#950;(&#189; + i<i>t</i>).
-    * Cf. §6.5 in H.M. Edwards: <i>Riemann's Zeta Function.</i> Academic Press, New York 1974.
+    * Cf. H.M. Edwards: <i>Riemann's Zeta Function.</i> Academic Press, New York 1974, 
+    * §6.5 (<a href="https://books.google.de/books?id=ruVmGFPwNhQC&pg=PA119" target="_new">https://books.google.de/books?id=ruVmGFPwNhQC&amp;pg=PA119</a>).
     * </p>
     * @param t value on the critical line <i>s</i> = &#189; + i<i>t</i>.
     * @return <i>Z</i>(<i>t</i>)

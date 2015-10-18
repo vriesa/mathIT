@@ -33,17 +33,27 @@ public class Probability {
     }
 
    //--- Probability distributions: --------------------------------------------
-   /** normal density.*/
+   /** Returns the normal density with the specified parameters.
+    *  @param x the current value
+    *  @param x0 the average value
+    *  @param sigma the standard deviation
+    *  @return the standard normal density of (x - x0) / sigma
+    */
    public static double normalDensity(double x, double x0, double sigma) {
       return standardNormalDensity( (x - x0) / sigma );
    }
    
-   /** normal distribution.*/
+   /** Returns normal distribution.
+    *  @param x the current value
+    *  @param x0 the average value
+    *  @param sigma the standard deviation
+    *  @return the standard normal density of (x - x0) / sigma
+    */
    public static double normalDistribution(double x, double x0, double sigma) {
       return standardNormalDistribution( ( x - x0) / sigma );
    }
 
-   /** computes the quantile of the normal distribution.
+   /** Computes the quantile of the normal distribution.
     *  @param p probability
     *  @param x0 width
     *  @param sigma standard deviation
@@ -53,7 +63,10 @@ public class Probability {
       return standardNormalQuantile(p) * sigma + x0;
    }
    
-   /** standard normal density.*/
+   /** Standard normal density function.
+    *  @param x value of random variable
+    *  @return standard normal density value
+    */
    public static double standardNormalDensity(double x) {
       double arg = x * x;
       if ( Math.abs(arg) >= 500. ) {
@@ -63,7 +76,10 @@ public class Probability {
       }
    }
 
-   /** standard normal distribution.*/
+   /** standard normal distribution.
+    * @param x value of random variable
+    * @return standard normal distribution value
+    */
    public static double standardNormalDistribution(double x) {
       final double c_dp5 = .5;
       double f, s, arg;
@@ -78,7 +94,11 @@ public class Probability {
       return (s * f + 1.) / 2;
    }
    
-   /** standard normal quantile.*/
+   /** Standard normal quantile. See 
+    * <a href="http://mathworld.wolfram.com/QuantileFunction.html">http://mathworld.wolfram.com/QuantileFunction.html</a>
+    * @param p the probability of the quantile
+    * @return the quantile of p
+    */
    public static double standardNormalQuantile(double p) {
       int c__0 = 0;
       double epsilon = 1e-8; //double c_d1em8 = 1e-8;
@@ -113,7 +133,7 @@ public class Probability {
    
    //--- Student t-distribution:
    /** Student t-density function for <i>n</i> degrees of freedom. It is defined by
-    *  <pre style="font-size:100%">
+    *  <pre>
     * 
     *                 ( 1 + t^2/n )^{-(n+1)/2}
     *         f(x) = --------------------------.
@@ -202,21 +222,23 @@ public class Probability {
    }
 
    //--- auxiliary functions: --------------------------------------------------
-   /** returns <i>p</i> minus cumulative standardized normal of <i>x</i>. 
+   /** Returns <i>p</i> minus cumulative standardized normal of <i>x</i>. 
     *  This is an auxiliary function which is invoked via callback ("reflection")
     *  and must therefore be declared "public".
+    *  @param x random variable value
+    *  @param p probability
     */
-   public static double szstnr(double x, double p) {
-      return p - standardNormalDistribution(x);
-   }
+   //private static double szstnr(double x, double p) {
+   //   return p - standardNormalDistribution(x);
+   //}
 
    /** returns <i>p</i> minus cumulative Student distribution of <i>x</i>.
     *  This is an auxiliary function which is invoked via callback ("reflection")
     *  and must therefore be declared "public".
     */
-   public static double szstud(double x, double p, int n) {
-      return p - studentDistribution(x, n);
-   }
+   //private static double szstud(double x, double p, int n) {
+   //   return p - studentDistribution(x, n);
+   //}
 
    /** yields two numbers which enclose a zero of the inputted function.
     *  The function has to be either implemented in the actual class, 
@@ -248,19 +270,13 @@ public class Probability {
          args[j] = argsMax[j];
       }
       Method func = Class.forName("org.mathIT.statistics.Probability").getMethod( function, argTypes );
-
-//Method m[] = Class.forName("Probability").getDeclaredMethods();
-//for (int ii = 0; ii < m.length; ii++) System.out.println(m[ii].toString());
-//System.out.println( "### Now trying to invoke " + function + ", "+ args.length+" arguments");
       f0 = ( (Double) func.invoke( null, args ) ).doubleValue();
-//System.out.println( "### It works! x=" + result.toString() );
       //f0=(*funct)(x0, par, npar1, npar2);
       args[0] = new Double(x1); 
       f1 = ( (Double) func.invoke( null, args ) ).doubleValue();
       //f1=(*funct)(x1, par, npar1, npar2);
       //while( (f0 * f1 > 0.) && i < iMax ) {
       while( signProd(f0, f1) > 0 && i < iMax ) {
-//System.out.println("### f0="+f0+", f1="+f1+", f0*f1="+ f0*f1);
          if ( Math.abs(f0) <= Math.abs(f1)) {
             xs = x0;
             x0 += (x0 - x1) * 2.;
@@ -278,10 +294,8 @@ public class Probability {
             f1 = ( (Double) func.invoke( null, args ) ).doubleValue();
             //f1 = (*funct)(x1, par, npar1, npar2);
          }
-//System.out.println("### f0="+f0+", f1="+f1+", xs="+xs);
         i++;
       }
-//System.out.println("### x0="+x0+", x1="+x1+", xs="+xs);
       double[] result = {x0,x1};
       return result;
    }
@@ -312,14 +326,6 @@ public class Probability {
       Method func = Class.forName("org.mathIT.statistics.Probability").getMethod( function, argTypes );
 
       for (i = 1; i <= iMax; ++i) {
-//System.out.println( "### Now trying to invoke " + function );
-//      Double result = (Double) func.invoke( null, theData );
-//      double result = ( (Double) func.invoke( null, args ) ).doubleValue();
-//System.out.println( "### It works! x=" + result.toString() );
-//            Method m[] = Class.forName("Probability").getDeclaredMethods();
-//            for (int ii = 0; ii < m.length; ii++)
-//               System.out.println(m[ii].toString());
-
          f0 = ( (Double) func.invoke( null, args ) ).doubleValue();
          //f0 = (*funct)(x0, par, npar1, npar2);
          args[0] = new Double(x1); 
