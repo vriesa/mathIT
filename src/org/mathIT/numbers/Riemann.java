@@ -88,7 +88,7 @@ public class Riemann {
     */
    public static double[] chi(double[] s) {
       // /*
-      if (s[0] > 0.5) { // gamma is approximated fast only for Re s > 0.
+      if (s[0] > .5) { // gamma is approximated fast only for Re s <= .5  <=> Re(1 - s) >= .5
          return Complex.divide( 1.0, chi( Complex.subtract(Complex.ONE_, s) ) );
       }
       double[] result;
@@ -203,8 +203,6 @@ public class Riemann {
     * @return the zeta function value
     */
    public static double[] zeta( double[] s ) {
-      //int nMax = 2000;
-      
       double[] sum = new double[2];
       double[] tmp = new double[2];         
       double[] exponent = { 1 - s[0], -s[1] };
@@ -218,9 +216,8 @@ public class Riemann {
       } else if ( s[0] < 0 && Math.abs( s[0] % 2 ) < EPSILON && Math.abs(s[1]) < EPSILON ) {
          // negative odds return zero, zeta(-2n) = 0:
          return sum;
-      // /*
       } else if ( s[0] > 0 && s[0] < 1 && Math.abs(s[1]) > 45 ) { // the "critical strip"
-         // use Riemann-Siegel formula sum ( n^(-s) + chi(s) n^(s-1) ):
+         // use Riemann-Siegel formula sum ( n^(-s) + chi(s) n^(s-1) ), cf. Titchmarsh 1986, Theorem 4.13:
          int m = (int) Math.sqrt( Math.abs(s[1]) / (2*Math.PI) );
          double[] chi = chi(s);
          exponent = Complex.subtract( s, Complex.ONE_); // = (s-1)
@@ -229,9 +226,8 @@ public class Riemann {
             sum = Complex.add( sum, Complex.multiply( chi, Complex.power(n, exponent) ) );
          }
          return sum;
-       // */
       } else if ( s[0] < 0.0 ) { // actually: s[0] < 0.5, but the result is unsatisfactory...
-         // use the reflection formula zeta(s) = chi(s) zeta(1-s):
+         // use the reflection functional equation zeta(s) = chi(s) zeta(1-s):
          return Complex.multiply( chi(s), zeta( Complex.subtract(Complex.ONE_, s) ) );
       } else if ( s[0] > 6 ) {
          int nMax = (int) Math.pow( EPSILON, -1/s[0] );
@@ -449,22 +445,16 @@ public class Riemann {
     
       Object[] msg = {"Re s:", feld1, "Im s:", feld2};
       javax.swing.JOptionPane optionPane = new javax.swing.JOptionPane( msg );
-    
       optionPane.createDialog(null,"Eingabe").setVisible(true);
-
-      double[] s = { Double.parseDouble( feld1.getText() ), Double.parseDouble( feld2.getText() ) }; 
-      
+      double[] s = { Double.parseDouble( feld1.getText() ), Double.parseDouble( feld2.getText() ) };      
       double[] result = {0.,.0};
       java.text.DecimalFormat digit = new java.text.DecimalFormat( "#,###.#############" );
       
-      String ausgabe = "";           // Ausgabestring
-        
+      String ausgabe = "";           // Ausgabestring        
       long start = System.currentTimeMillis();
-      
       result = zeta( s );
       
       long zeit = System.currentTimeMillis();
-
       ausgabe += "\n  \u03B6(" + Complex.toString( s, digit );
       ausgabe += ") = ";
       ausgabe += Complex.toString( result, digit );
