@@ -79,12 +79,7 @@ public class Complex {
     */
    public Complex(double[] z) {
       this.z = new double[z.length];
-       System.arraycopy(z, 0, this.z, 0, z.length);
-      /*
-      for (int i = 0; i < z.length; i++) {
-         this.z[i] = z[i];
-      }
-      // */
+      System.arraycopy(z, 0, this.z, 0, z.length);
    }
 
    /** Returns the real part Re<i>z</i> of this complex number <i>z</i>.
@@ -112,7 +107,7 @@ public class Complex {
     *  @param z the complex number <i>z</i> in the array representation
     *  @return |<i>z</i>|
     */
-   public static double abs( double[] z ) {
+   public static double abs(double[] z) {
       double x;
       double h;
 
@@ -166,10 +161,7 @@ public class Complex {
     *  @see #add(Complex)
     */
    public static double[] add( double[] x, double[] y ) {
-      double[] result = new double[2];
-      result[0] = x[0] + y[0];
-      result[1] = x[1] + y[1];
-      return result;
+      return new double[]{x[0] + y[0], x[1] + y[1]};
    }
 
    /**
@@ -228,7 +220,7 @@ public class Complex {
     * @param z the argument
     * @return the cosine
     */
-   public static double[] cos( double[] z ) {
+   public static double[] cos(double[] z) {
       double[] result = new double[2];
       
       result[0] = Math.cos(z[0]) * Math.cosh(z[1]);
@@ -256,7 +248,7 @@ public class Complex {
       double[] w = new double[2];
       double h;
 
-      if ( Math.abs(y[0]) == 0 && Math.abs(y[1]) == 0 ) {
+      if ( Math.abs(y[0]) <= ACCURACY && Math.abs(y[1]) <= ACCURACY ) {
          if ( x > 0 ) { 
             w[0] = Double.POSITIVE_INFINITY;
          } else if ( x < 0 ) {
@@ -287,7 +279,7 @@ public class Complex {
     *  @return <i>x/y</i>
     *  @see #divide(double, double[])
     */
-   public static Complex divide( double x, Complex y ) {
+   public static Complex divide(double x, Complex y) {
       return new Complex(divide(x, new double[]{y.z[0],y.z[1]}));
    }
 
@@ -297,11 +289,11 @@ public class Complex {
     *  @return <i>x/y</i>
     *  @see #divide(double, double[])
     */
-   public static double[] divide( double[] x, double[] y ) {
+   public static double[] divide(double[] x, double[] y) {
       double[] w = new double[2];
       double h;
 
-      if (Math.abs(y[0]) == 0 && Math.abs(y[1]) == 0) {
+      if (Math.abs(y[0]) <= ACCURACY && Math.abs(y[1]) <= ACCURACY) {
          if ( x[0] > 0 ) { 
             w[0] = Double.POSITIVE_INFINITY;
          } else if ( x[0] < 0 ) {
@@ -338,7 +330,7 @@ public class Complex {
     *  @return <code>this</code>/<i>z</i>
     *  @see #divide(double[], double[])
     */
-   public Complex divide( Complex z ) {
+   public Complex divide(Complex z) {
       return new Complex(divide(new double[]{this.z[0],this.z[1]}, new double[]{z.z[0],z.z[1]}));
    }
 
@@ -355,7 +347,7 @@ public class Complex {
     *  @return exp(<i>z</i>)
     *  @see #ln(double[])
     */
-   public static double[] exp( double[] z) {
+   public static double[] exp(double[] z) {
       if ( z[0] > 709 ) return multiply( Double.POSITIVE_INFINITY, ONE_);
 
       double[] w = {Math.exp(z[0]) * Math.cos(z[1]), Math.exp(z[0]) * Math.sin(z[1]) };
@@ -796,13 +788,8 @@ public class Complex {
     *  @param z a complex number in the array representation
     *  @return the product <i>xz</i>
     */
-   public static double[] multiply( double x, double[] z ) {
-      double[] w = new double[2];
-      
-      w[0] = x * z[0];
-      w[1] = x * z[1];
-      
-      return w;
+   public static double[] multiply(double x, double[] z) {
+      return new double[]{x*z[0], x*z[1]};
    }
 
    /** The product of a real number <i>x</i> with this complex number.
@@ -810,7 +797,7 @@ public class Complex {
     *  @return the product <i>xz</i> where <i>z</i> is this complex number
     */
    public Complex multiply(double x) {
-      return new Complex(x * z[0], x * z[1]);
+      return new Complex(x*z[0], x*z[1]);
    }
 
    /** The product of two complex numbers.
@@ -826,8 +813,8 @@ public class Complex {
     *  @param y the second factor in the array representation
     *  @return the product <i>xy</i>
     */
-   public static Complex multiply( Complex x, Complex y ) {
-      return new Complex(multiply(new double[]{x.z[0],x.z[1]},new double[]{y.z[0],y.z[1]}));
+   public static Complex multiply(Complex x, Complex y) {
+      return new Complex(x.z[0]*y.z[0] - x.z[1]*y.z[1], x.z[1]*y.z[0] + x.z[0]*y.z[1]);
    }
    
    /** The product of two complex numbers.
@@ -843,13 +830,8 @@ public class Complex {
     *  @param y the second factor in the array representation
     *  @return the product <i>xy</i>
     */
-   public static double[] multiply( double[] x, double[] y ) {
-      double[] w = new double[2];
-      
-      w[0] = x[0] * y[0] - x[1] * y[1];
-      w[1] = x[1] * y[0] + x[0] * y[1];
-      
-      return w;
+   public static double[] multiply(double[] x, double[] y) {
+      return new double[]{x[0]*y[0] - x[1]*y[1], x[1]*y[0] + x[0]*y[1]};
    }
 
    /** Returns the product of this complex number and the complex number <i>z</i>.
@@ -1014,19 +996,19 @@ public class Complex {
     *  @return <i>z<sup>s</sup></i>
     *  @see #power(double,double[])
     */
-   public static double[] power( double[] z, double[] s ) {
+   public static double[] power(double[] z, double[] s) {
       double r = abs(z);
 
-      if ( abs(s) < ACCURACY ) { // s=0?
+      if (abs(s) < ACCURACY) { // s=0?
          return ONE_;
-      } else if ( r < ACCURACY ) {  // z=0?
+      } else if (r < ACCURACY) {  // z=0?
          return ZERO_; // w=0
       }
             
       double phi = arg(z);
       double phase = s[0] * phi + s[1] * log(r);
       double[] w = new double[2];
-      w[0] = Math.pow( r, s[0] ) * Math.exp( - s[1] * phi );
+      w[0] = Math.pow(r, s[0]) * Math.exp(- s[1] * phi);
       w[1] = w[0];
       
       w[0] *= Math.cos( phase );
@@ -1351,8 +1333,6 @@ public class Complex {
 
       // Ausgabe auf dem Bildschirm:
       javax.swing.JOptionPane.showMessageDialog( null, ausgabe, "Ergebnis", javax.swing.JOptionPane.PLAIN_MESSAGE );
-        
-      System.exit( 0 );
    }
    // */
 }
