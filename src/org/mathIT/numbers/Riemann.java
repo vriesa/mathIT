@@ -25,16 +25,11 @@ import static org.mathIT.numbers.Complex.*;
 
 /**
  *  This class provides the Riemann zeta function &#950;(<i>s</i>) for any
- *  complex number <i>s</i> &#8712; <span style="font-size:large;">&#8450;</span>.
- *  In this version, the absolute  approximation error is about 10<sup>-6</sup> for <i>s</i>
- *  with relatively small absolute value, |<i>s</i>| smaller than 50.
- *  On the real line, the accuracy should be in that range even for much greater
- *  or smaller values of <i>s</i>, and on the “critical strip” 
- *  0 &lt; Re <i>s</i> &lt; 1 the Riemann-Siegel formula is used, which
- *  guarantees a high accuracy especially for very high values of Im <i>s</i>.
+ *  complex number <i>s</i> &#8712; <span style="font-size:large;">&#8450;</span>
+ *  and the Riemann-Siegel functions <i>Z</i> and &theta;.
  *
  *  @author  Andreas de Vries
- *  @version 1.3
+ *  @version 2.0
  */
 public class Riemann {
    // Suppresses default constructor, ensuring non-instantiability.
@@ -214,16 +209,14 @@ public class Riemann {
      </tr>
    </table>
    <p>
-     Note that the second formula holds for all <i>s</i> &#8800; 1.
-     However, the first sum converges faster.
-     On the critical strip 0 &lt; <i>s</i> &lt; 1, the Riemann-Siegel formula
-     is even faster.
-     For details see <a href="http://mathworld.wolfram.com/RiemannZetaFunction.html" target="_top">http://mathworld.wolfram.com/RiemannZetaFunction.html</a>    
+     However, in this method the algorithm is used which is documented as “Algorithm 1” in 
+     Borwein et al, <i>The Riemann Hypothesis</i>, Springer, Berlin 2008, p 35
+     (<a href="https://books.google.com/books?id=Qm1aZA-UwX4C&pg=PA35" target="_new">https://books.google.com/books?id=Qm1aZA-UwX4C&amp;pg=PA35</a>)
    </p>    
     * @param s the argument
     * @return the zeta function value &zeta;(<i>s</i>)
     */
-   public static double[] zeta( double[] s ) {
+   public static double[] zeta(double[] s) {
       double[] sum = new double[2];
       
       if ( abs(s[0] - 1) < EPSILON && abs(s[1]) < EPSILON ) {
@@ -239,7 +232,7 @@ public class Riemann {
       } else if ( s[0] < 0.5 ) { // necessary?
          // use the reflection functional equation zeta(s) = chi(s) zeta(1-s):
          return multiply( chi(s), zeta( subtract(Complex.ONE_, s) ) );
-      } else { // else - s[0] < 0 (?)
+      } else {
          // Algorithm according to Borwein et al (2008), p 35:
          int n = 70; // should not be greater than 75, because overflow in factorial method
          
@@ -257,9 +250,9 @@ public class Riemann {
     * -<i>C</i><sub>3</sub>, <i>C</i><sub>4</sub>,
     * cf. H.M. Edwards, Riemann's Zeta Function. Academic Press, Ne York 1974, p 158.
     * @author Jose Menez (https://gist.github.com/cab1729/1317706).
-    * @param n
-    * @param z
-    * @return
+    * @param n the index of the coefficient <i>C<sub>n</sub></i>
+    * @param z the variable to which the Taylor series is expanded
+    * @return the error correction term <i>C<sub>n</sub></i>
     */
    private static double C(int n, double z) {
       if (n==0)
@@ -578,7 +571,7 @@ public class Riemann {
     * @param t value on the critical line <i>s</i> = &#189; + i<i>t</i>.
     * @return <i>&theta;</i>(<i>t</i>)
     * @see #zeta(double[])
-    * @see #Z(double[])
+    * @see #Z(double)
     */
    public static double theta(double t) {
       return -0.5 * t * (1 + log(2) + log(PI) + log(1/t) ) - PI/8
