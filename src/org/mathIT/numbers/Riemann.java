@@ -29,7 +29,7 @@ import static org.mathIT.numbers.Complex.*;
  *  and the Riemann-Siegel functions <i>Z</i> and &theta;.
  *
  *  @author  Andreas de Vries
- *  @version 2.0
+ *  @version 2.01
  */
 public class Riemann {
    // Suppresses default constructor, ensuring non-instantiability.
@@ -252,7 +252,7 @@ public class Riemann {
       } else if ( s[0] < 0 && abs( s[0] % 2 ) < EPSILON && abs(s[1]) < EPSILON ) {
          // negative evens return zero, zeta(-2n) = 0:
          return sum;
-      } else if ( s[0] < 0.5 ) { // necessary?
+      } else if ( s[0] < 0 ) { // actually: s[0] < 0.5, but the result is not satisfactory ...
          // use the reflection functional equation zeta(s) = chi(s) zeta(1-s):
          return multiply( chi(s), zeta( subtract(Complex.ONE_, s) ) );
       } else {
