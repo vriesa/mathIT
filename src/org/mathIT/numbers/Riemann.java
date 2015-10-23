@@ -76,13 +76,29 @@ public class Riemann {
        </td>
      </tr>
    </table>
+    *  <p>
     *  We have &#967;(<i>s</i>) &#967;(1 - <i>s</i>) = 1.
     *  [Eqs. (2.1.10)-(2.1.12) in E.C. Titchmarsh: <i>The Theory of the Riemann
     *  Zeta-function.</i> 2nd Edition, Oxford University Press, Oxford 1986],
     *  <a href="https://books.google.com/books?id=1CyfApMt8JYC&pg=PA16" target="_new">https://books.google.com/books?id=1CyfApMt8JYC&amp;pg=PA16</a>
+    *  </p>
+    *  <p>
+    *  Moreover &chi; is related to the Riemann-Siegel theta function {@link #theta(double) &theta;}
+    *  by the equation
+    *  </p>
+    *  <p style="text-align:center;">
+    *  &chi;(&frac12; + i<i>t</i>) = e<sup>-2i&theta;(<i>t</i>)</sup>,
+    *  </p>
+    *  <p>
+    *  see E.C. Titchmarsh: <i>The Theory of the Riemann
+    *  Zeta-function.</i> 2nd Edition, Oxford University Press, Oxford 1986,
+    *  p. 89
+    *  <a href="https://books.google.com/books?id=1CyfApMt8JYC&pg=PA89" target="_new">https://books.google.com/books?id=1CyfApMt8JYC&amp;pg=PA89</a>.
+    *  </p>
     *  @param s a complex value
     *  @return &#967;(<i>s</i>)
     *  @see #zeta(double[])
+    *  @see #theta(double)
     *  @see Complex#gamma(double[])
     */
    public static double[] chi(double[] s) {
@@ -208,13 +224,20 @@ public class Riemann {
        </td>
      </tr>
    </table>
-   <p>
-     However, in this method the algorithm is used which is documented as “Algorithm 1” in 
-     Borwein et al, <i>The Riemann Hypothesis</i>, Springer, Berlin 2008, p 35
-     (<a href="https://books.google.com/books?id=Qm1aZA-UwX4C&pg=PA35" target="_new">https://books.google.com/books?id=Qm1aZA-UwX4C&amp;pg=PA35</a>)
-   </p>    
+    * <p>
+    * However, in this method the algorithm is used which is documented as “Algorithm 1” in 
+    * Borwein et al, <i>The Riemann Hypothesis</i>, Springer, Berlin 2008, p 35
+    * (<a href="https://books.google.com/books?id=Qm1aZA-UwX4C&pg=PA35" target="_new">https://books.google.com/books?id=Qm1aZA-UwX4C&amp;pg=PA35</a>)
+    * </p>
+    * <p>
+    * The functions &zeta;, <i>Z</i> and &theta; are related by the equality <i>Z</i>(<i>t</i>) = e<sup>i &#952;(<i>t</i>)</sup> &#950;(&#189; + i<i>t</i>).
+    * Cf. H.M. Edwards: <i>Riemann's Zeta Function.</i> Academic Press, New York 1974, 
+    * §6.5 (<a href="https://books.google.de/books?id=ruVmGFPwNhQC&pg=PA119" target="_new">https://books.google.de/books?id=ruVmGFPwNhQC&amp;pg=PA119</a>).
+    * </p>
     * @param s the argument
     * @return the zeta function value &zeta;(<i>s</i>)
+    * @see #Z(double)
+    * @see #theta(double)
     */
    public static double[] zeta(double[] s) {
       double[] sum = new double[2];
@@ -439,14 +462,14 @@ public class Riemann {
      and &theta; denotes the Riemann-Siegel {@link #theta(double) theta function}.
    </p>
     * <p>
-    * We have the equality <i>Z</i>(<i>t</i>) = e<sup>i &#952;(<i>t</i>)</sup> &#950;(&#189; + i<i>t</i>).
+    * The functions &zeta;, <i>Z</i> and &theta; are related by the equality <i>Z</i>(<i>t</i>) = e<sup>i &#952;(<i>t</i>)</sup> &#950;(&#189; + i<i>t</i>).
     * Cf. H.M. Edwards: <i>Riemann's Zeta Function.</i> Academic Press, New York 1974, 
     * §6.5 (<a href="https://books.google.de/books?id=ruVmGFPwNhQC&pg=PA119" target="_new">https://books.google.de/books?id=ruVmGFPwNhQC&amp;pg=PA119</a>).
     * </p>
     * @param t value on the critical line <i>s</i> = &#189; + i<i>t</i>.
     * @return <i>Z</i>(<i>t</i>)
     * @see #zeta(double[])
-    * @see #theta(double[])
+    * @see #theta(double)
     */
    public static double Z (double t) {
       if (Math.abs(t) < 10) {
@@ -563,8 +586,7 @@ public class Riemann {
     </table>
     * <p>
     * <!-- up to the order of <i>t</i><sup>-7</sup>. -->
-    * We have the equality <i>Z</i>(<i>t</i>) = e<sup>i &#952;(<i>t</i>)</sup> &#950;(&#189; + i<i>t</i>).
-    * </p>
+    * The functions &zeta;, <i>Z</i> and &theta; are related by the equality <i>Z</i>(<i>t</i>) = e<sup>i &#952;(<i>t</i>)</sup> &#950;(&#189; + i<i>t</i>).
     * Cf. H.M. Edwards: <i>Riemann's Zeta Function.</i> Academic Press, New York 1974, 
     * §6.5 (<a href="https://books.google.de/books?id=ruVmGFPwNhQC&pg=PA119" target="_new">https://books.google.de/books?id=ruVmGFPwNhQC&amp;pg=PA119</a>).
     * </p>
