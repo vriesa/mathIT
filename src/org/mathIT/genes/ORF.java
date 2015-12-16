@@ -105,7 +105,7 @@ public class ORF implements java.io.Serializable {
     */
    public ORF(String info, CharSequence string) {
       this.info = info;
-      ArrayList<ORF> genes = new ArrayList<>();
+      //ArrayList<ORF> genes = new ArrayList<>();
       int offset = 0, max = string.length() - 3;
       String triplet;
       ArrayList<Codon> sequence = new ArrayList<>();
@@ -198,6 +198,13 @@ public class ORF implements java.io.Serializable {
       return p;
    }
    
+   /** Returns the info of this ORF.
+    *  @return the info of this ORF
+    */
+   public String getInfo() {
+      return info;
+   }
+
    /** Returns the codon sequence of this gene.
     *  @return the codon sequence of this gene
     */
@@ -358,7 +365,7 @@ public class ORF implements java.io.Serializable {
     *  @param completeGenome flag specifying whether the file represents a complete genome
     *  @return a genome determined by the FASTA file, or null if no file is selected
     */
-   @SuppressWarnings("unchecked")  // reading files cannot be guaranteed by no compiler at all!
+   //@SuppressWarnings("unchecked")  // reading files cannot be guaranteed by no compiler at all!
    public static ArrayList<ORF> loadFASTA(boolean completeGenome) {
       final int BUFFER_SIZE = 200; // in bytes
 

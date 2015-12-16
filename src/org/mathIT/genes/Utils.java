@@ -142,7 +142,7 @@ public class Utils {
     *  @param n the tuple size
     *  @return the frequency distribution of n-tuples over the base alphabet
     */
-   @SuppressWarnings("unchecked")  // reading files cannot be guaranteed by no compiler at all!
+   //@SuppressWarnings("unchecked")  // reading files cannot be guaranteed by no compiler at all!
    public static TreeMap<String, Integer> computeTupleFrequencies(int n) {
       return computeTupleFrequencies(n,null);
    }
@@ -206,7 +206,7 @@ public class Utils {
     *  @param n the tuple size
     *  @return the frequency distribution of n-tuples over the base alphabet
     */
-   @SuppressWarnings("unchecked")  // reading files cannot be guaranteed by no compiler at all!
+   //@SuppressWarnings("unchecked")  // reading files cannot be guaranteed by no compiler at all!
    public static TreeMap<String, Integer> computeTupleFrequencies(File[] files, int n) {
       if (n <= 0) {
          throw new IllegalArgumentException("Parameter n must be positive: " + n);
@@ -219,12 +219,13 @@ public class Utils {
          System.out.println("Opened file " + file + " ...");
          
          char[] buffer;
-         String name = "";
+         //String name = "";
+         //boolean named = false;
          
-         boolean comment, named = false; // comment is necessary since a comment line may be split up by buffer size!
+         boolean comment; // comment is necessary since a comment line may be split up by buffer size!
          
          String tuple;
-         int i, j, k, f;
+         int i, j;
          
          char[][] sequence = new char[n][n];
          int[] length = new int[n];
@@ -243,12 +244,12 @@ public class Utils {
                      comment = true;
                      i++;
                      while(i < buffer.length && buffer[i] != '\n') {
-                        if (!named) name += buffer[i];
+                        //if (!named) name += buffer[i];
                         i++;
                      }
                      if (i < buffer.length) {
                         comment = false;
-                        named = true;
+                        //named = true;
                      }
                   } else if (buffer[i] == '\n') {
                      continue;
@@ -299,7 +300,7 @@ public class Utils {
     *  @param base the base alphabet (important for finding zero occurrences)
     *  @return the frequency distribution of n-tuples over the base alphabet
     */
-   @SuppressWarnings("unchecked")  // reading files cannot be guaranteed by no compiler at all!
+   //@SuppressWarnings("unchecked")  // reading files cannot be guaranteed by no compiler at all!
    public static TreeMap<String, Integer> computeTupleFrequencies(File file, int n, char[] base) {
       if (n <= 0) {
          throw new IllegalArgumentException("Parameter n must be positive: " + n);
@@ -309,13 +310,13 @@ public class Utils {
       System.out.println("Opened file " + file + " ...");
       
       char[] buffer;
-      String name = "";
-      
-      boolean comment, named = false; // comment is necessary since a comment line may be split up by buffer size!
+      //String name = "";      
+      //boolean named = false;
+      boolean comment = false; // comment is necessary since a comment line may be split up by buffer size!
       TreeMap<String, Integer> frequencies = null;
       
       String tuple;
-      int i, j, k, f;
+      int i, j;
       
       frequencies = new TreeMap<>();
       if (base != null) { // initialize frequency distribution .
@@ -343,12 +344,12 @@ public class Utils {
                   comment = true;
                   i++;
                   while(i < buffer.length && buffer[i] != '\n') {
-                     if (!named) name += buffer[i];
+                     //if (!named) name += buffer[i];
                      i++;
                   }
                   if (i < buffer.length) {
                      comment = false;
-                     named = true;
+                     //named = true;
                   }
                } else if (buffer[i] == '\n') {
                   continue;
@@ -403,8 +404,7 @@ public class Utils {
    ) {
       StringBuilder out = new StringBuilder(
         "Occurrences with frequency " + frequency + " (" + fileName + "):\n"
-      );        
-      int i;
+      );
       int count = 1;
       int linebreak = 2;
       for (String tuple : distribution.keySet()) {
@@ -663,7 +663,6 @@ public class Utils {
       char[] alphabet = Genome.VALUES, ignore = {'U', 'N', '?'};      
       
       TreeMap<String, Integer> distribution;
-      TreeMap<String, Integer> distributionTotal = new TreeMap<>();
       ArrayList<Character> b = new ArrayList<>();
       char[] base;
       

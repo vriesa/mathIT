@@ -21,7 +21,6 @@
 package org.mathIT.graphs;
 
 import java.util.HashSet;
-import static org.mathIT.graphs.WeightedGraph.*;
 
 /**
  * <p style="text-align:justify;">
@@ -330,7 +329,7 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
       if (text == null) return null;
 
       // Determine whether the graph is undirected:
-      int pos = text.indexOf(separator), pre, length = text.length(), i, j, k;
+      int pos = text.indexOf(separator), pre, i, j;
       if (pos < 0) {
          throw new IllegalArgumentException("No valid CSV format!");
       }
@@ -361,12 +360,10 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
       if ("active".equals(text.substring(pos+1, text.indexOf(separator, pos+1)))) {
          pre = text.indexOf(separator, pos+1) + 1;
          pos = text.indexOf("\n", pre);
-         String[] activate = text.substring(pre, pos).split(separator);
-         for (i = 0; i < names.length; i++) {
-            if (activate[i].equals("1")) {
+         String[] activated = text.substring(pre, pos).split(separator);
+         for (i = 0; i < activated.length; i++) {
+            if (activated[i].equals("1")) {
                vertices[i].setActive(true);
-            //} else {
-            //   vertices[i].setActive(false);
             }
          }
          active = true;
@@ -392,9 +389,9 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
    }
    
    public static void main(String[] args) {
-      double inf = WeightedGraph.INFINITY;
+      //double inf = WeightedGraph.INFINITY;
       boolean binary = false;  // whether vertex number should be shown in binary format
-      int s;
+      //int s;
       
       // /* Easley-Kleinberg example: ---
       double[][] w = {

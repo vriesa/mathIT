@@ -37,7 +37,7 @@ import static org.mathIT.numbers.BigNumbers.*;
  * @version 1.1
  */
 public class Rational {
-   private static final long serialVersionUID = 491437390;
+   //private static final long serialVersionUID = 491437390;
    /** The numerator of this rational number.*/
    private BigInteger p;
    /** The denominator of this rational number.*/

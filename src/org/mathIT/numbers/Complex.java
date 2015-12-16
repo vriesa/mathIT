@@ -39,7 +39,7 @@ import static java.lang.Math.*;
  * @version 1.1
  */
 public class Complex {
-   private static final long serialVersionUID = -1679819632;   
+   //private static final long serialVersionUID = -1679819632;   
    /** Accuracy up to which equality of double values are computed in
     *  methods of this class. Its current value is {@value}.
     *  It is used, for instance, in the methods {@link #gamma(Complex)},

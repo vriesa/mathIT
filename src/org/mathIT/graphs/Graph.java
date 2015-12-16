@@ -20,20 +20,6 @@
  */
 package org.mathIT.graphs;
 
-/*
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-*/
 import java.util.ArrayList;
 import java.util.Arrays;
 import static java.util.Arrays.copyOf;
@@ -43,7 +29,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
 import javax.swing.JTable;
-//import org.mathIT.algebra.MathSet;
 import org.mathIT.algebra.OrderedSet;
 import org.mathIT.algebra.Matrix;
 import org.mathIT.numbers.Numbers;
@@ -105,7 +90,6 @@ import org.mathIT.numbers.Numbers;
  * @param <V> the type of the vertices
  * @see WeightedGraph
  */
-//public class Graph<V extends Vertex<V>> {
 public class Graph<V extends Vertible<V>> {
    /** Version ID for serialization. */
    //private static final long serialVersionUID = 69062958L;  // = "Graph".hashCode()
@@ -124,13 +108,7 @@ public class Graph<V extends Vertible<V>> {
    protected int[][] adjacency;
    /** Number of edges. */
    protected int numberOfEdges;
-   /**
-    * This preference stores in the user's preferences the directory
-    * which has been opened recently for loading or saving files.
-    */
-   private final String pref_currentDirectory = "pref_currentDirectory";
-   
-   /** Stores the GrpahVioewer object if this graph is visualized. */
+   /** Stores the GraphViewer object if this graph is visualized. */
    private GraphViewer<V,?> gv;
    
    /**
@@ -148,17 +126,6 @@ public class Graph<V extends Vertible<V>> {
       this.undirected = false;
       this.weighted = false;
       this.vertices = vertices.toArray(arrayTemplate);
-
-//   public Graph(ArrayList<V> vertices) {
-//      this.vertices = (V[]) vertices.toArray(); //java.util.Array.newInstance(Class<V>.forName(E.class), vertices.size());
-      //this.vertices = (V[]) java.util.Array.newInstance(Class<V>.forName(E), vertices.size());
-      /*
-      for (int i = 0; i < this.vertices.length; i++) {
-         this.vertices[i] = (E) vertices.get(i);
-         System.out.println("### vertices:" + this.vertices[i]);
-      }
-      // */
-      //System.out.println("### vertices:" + this.vertices);
    }
 
    /** Creates an directed graph with the specified vertices. The adjacency matrix is created as the
@@ -321,7 +288,7 @@ public class Graph<V extends Vertible<V>> {
     *  In each vertex, previously stored values for its index or its adjacency
     *  list are always overwritten with the ones derived by the adjacency matrix!
     *  @param vertices array of the vertices forming this graph
-    *  @param adjacency the adjacency matrix determing the adjacencys of each edge of this graph
+    *  @param adjacency the adjacency matrix determining the adjacency of each edge of this graph
     *  @param arrayTemplate an array of the type of vertices. This array may be empty.
     *  It is necessary technically because generic array creation is prohibited in Java.
     */
@@ -348,9 +315,6 @@ public class Graph<V extends Vertible<V>> {
          this.vertices[i].setAdjacency(adj.toArray(copyOf(this.vertices,0)));
          this.vertices[i].setIndex(i);
       }
-      // type-safety is guaranteed (?):
-      //this.vertices = (V[]) vertices.toArray(Arrays.<V>copyOf((V[]) new Vertible[1],1));
-      //this.vertices = (V[]) vertices.toArray(Arrays.<V>copyOf((V[]) new Object[1],1));
       this.adjacency = adjacency;
       this.numberOfEdges = computeNumberOfEdges();
    }
@@ -451,9 +415,6 @@ public class Graph<V extends Vertible<V>> {
     *  @return the vertices of this graph
     */
    public int getNumberOfEdges() {
-      //if (this.numberOfEdges == 0) {
-      //   this.numberOfEdges = computeNumberOfEdges();
-      //}
       return this.numberOfEdges;
    }
 
@@ -466,7 +427,7 @@ public class Graph<V extends Vertible<V>> {
       int jMin;
       double[][] weight = null;
       if (weighted) {
-         weight = ((WeightedGraph) this).getWeight();
+         weight = ((WeightedGraph<V>) this).getWeight();
       }
       for (int i = 0; i < adjacency.length; i++) {
          if (undirected) {
@@ -503,7 +464,6 @@ public class Graph<V extends Vertible<V>> {
     *  @see #getOutdegree(org.mathIT.graphs.Vertible)
     */
    public int getDegree(V vertex) {
-      //if (!undirected) { throw new IllegalArgumentException("This graph is directed!"); }
       return getDegree(vertex.getIndex());
    }
 
@@ -729,7 +689,6 @@ public class Graph<V extends Vertible<V>> {
    public int depthFirstSearch(int start, V goal) {
       // Stack of vertex indices to be visited next:
       Stack<Integer> next = new Stack<>();
-      boolean found = false;
       int i, k;
 
       // initialize mark flags:
@@ -742,10 +701,7 @@ public class Graph<V extends Vertible<V>> {
          i = next.pop();
          vertices[i].mark();
 
-         //System.out.println("### marked v["+i+"]="+vertices[i].getName());
-
          if (vertices[i].equals(goal)) {
-            found = true;
             return i;
          } else {
             //Enqueue new neighbors
@@ -795,9 +751,7 @@ public class Graph<V extends Vertible<V>> {
    private void traverseDepthFirst(V x, V goal) {
       if (!x.isMarked() && (goal == null || !goal.isMarked())) {
          x.mark();
-         //System.out.println("### marked vertex " + x.getName());
          for (V y : x.getAdjacency()) {
-            //System.out.println("### visit vertex " + y.getName());
             traverseDepthFirst(y, goal);
          }
       }
@@ -829,8 +783,6 @@ public class Graph<V extends Vertible<V>> {
       while (!found & !queue.isEmpty()) {
          //Dequeue next node for comparison
          node = queue.remove();
-
-         //System.out.println("### visited vertex "+node.getName());
 
          if (node.equals(goal)) {
             found = true;
@@ -869,7 +821,6 @@ public class Graph<V extends Vertible<V>> {
          vertices[i].setInProcess(false);
       }
       LinkedList<V> path = new LinkedList<>();
-      //cycles = new LinkedList<LinkedList<V>>();
       cycles = new LinkedList<>();
       cycleFinder(x, path);
       return cycles;
@@ -932,11 +883,8 @@ public class Graph<V extends Vertible<V>> {
          vertices[i].setInProcess(false);
       }
       level = 0;
-      //components = new HashMap<Integer,HashSet<Integer>>();
       HashMap<V,Integer> componentNumber = new HashMap<>();
       HashMap<V,Integer> dfsLevel = new HashMap<>();
-      //HashMap<V,Integer> componentNumber = new HashMap<V,Integer>();
-      //HashMap<V,Integer> dfsLevel = new HashMap<V,Integer>();
       componentFinder(x, componentNumber, dfsLevel); //, componentSets);
 
       // Determine the sets of the strongly connected components:
@@ -945,18 +893,14 @@ public class Graph<V extends Vertible<V>> {
 
       // 1) Determine the set of component numbers:
       HashSet<Integer> numbers = new HashSet<>();
-//      HashSet<Integer> numbers = new HashSet<Integer>();
       for (V v : componentNumber.keySet()) {
          numbers.add(componentNumber.get(v));
       }
       // 2) Determine the list of all components:
       for (Integer n : numbers) {
-         //System.out.println("+++  n=" + n);
          HashSet<V> s = new HashSet<>();
-         //(Arrays.copyOf(this.vertices, 0));
          for (V v : componentNumber.keySet()) {
             if (componentNumber.get(v) == n) {
-               //System.out.println("+++  v=" + v);
                s.add(v);
             }
          }
@@ -996,29 +940,17 @@ public class Graph<V extends Vertible<V>> {
          x.setInProcess(true);
          component.put(x,level);
          dfsLevel.put(x,level);
-         //System.out.println("### put x=" + x.getName() + " at level="+level);
          level++;
          for (V y : x.getAdjacency()) {
             if (!y.isMarked()) {
                componentFinder(y, component, dfsLevel);
                if (component.get(y) < component.get(x)) {  // cycle!!
-                  // component(x) := component(y):
                   component.put(x, component.get(y));
                }
             }
-            //System.out.println("### dfs="+dfsLevel+", cmp="+component);
          }
          x.mark();
          x.setInProcess(false);
-         /*
-         if (dfsLevel.get(x) == component.get(x)) {
-            if (components.get(component.get(x)) == null) {
-               components.put(component.get(x), new HashSet<Integer>());
-            }
-            components.get(component.get(x)).add(x.getIndex());
-            System.out.println("### found SCC: "+x.getName()+" in "+component.get(x));
-         }
-         */
       }
    }
 
@@ -1048,7 +980,6 @@ public class Graph<V extends Vertible<V>> {
 
       V v;
       int i = 1;
-      //System.out.println("### L="+L);
       while (!L.isEmpty()) {
          v = L.remove();
          sigma[v.getIndex()] = i;
@@ -1059,7 +990,6 @@ public class Graph<V extends Vertible<V>> {
                L.add(w);
             }
          }
-         //System.out.println("### L="+L);
       }
       if (i < vertices.length) {  // graph is not acyclic
          return new int[0];
@@ -1174,10 +1104,7 @@ public class Graph<V extends Vertible<V>> {
 
    /** Finds an optimum clustering by exhaustion. Advisable only for vertices.length < 13.*/
    Clustering detectClustersExactly() {
-      OrderedSet<Integer> set = new OrderedSet<>();
       ArrayList<Clustering> clustering = new ArrayList<>();
-      ArrayList<Double> modularity = new ArrayList<>();
-      Clustering c;
       int m = getNumberOfEdges();
       int[] deg, indeg, outdeg;
       if (undirected) {
@@ -1348,7 +1275,6 @@ public class Graph<V extends Vertible<V>> {
     */
    public StringBuilder toCSV() {
       int i, j;
-      V entry;
       StringBuilder csv = new StringBuilder();
       
       //undirected ? csv = csv.append("undirected") : csv = csv.append("directed");
@@ -1398,128 +1324,6 @@ public class Graph<V extends Vertible<V>> {
          gv.setVisible(false);
       }
    }
-
-   /*
-   public void save() {
-      byte[] bytesToSave;
-      try {
-         bytesToSave = prepareSaveFile();
-      } catch (IOException ex) {
-         System.err.print("Cannot create file contents: " + ex.getMessage());
-         return;
-      }
-
-      String fileDirectoryHint = Preferences.userNodeForPackage(getClass())
-              .get(pref_currentDirectory, null);
-      JFileChooser fileChooser = new JFileChooser(fileDirectoryHint);
-      if (currentFileName != null) {
-         fileChooser.setSelectedFile(new File(currentFileName));
-      }
-      int returnVal = fileChooser.showSaveDialog(null);
-      if (returnVal == JFileChooser.APPROVE_OPTION) {
-         File file = fileChooser.getSelectedFile();
-         try {
-            FileOutputStream fileOutput = new FileOutputStream(file);
-            fileOutput.write(bytesToSave);
-            fileOutput.flush();
-            fileOutput.close();
-            Preferences.userNodeForPackage(getClass())
-                    .put(pref_currentDirectory, file.getParent());
-         } catch (Exception e) {
-            System.err.println(e.getMessage());
-         }
-      }
-   }
-
-   private byte[] prepareSaveFile() throws IOException {
-      ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-      ObjectOutputStream output = new ObjectOutputStream(buffer);
-      //output.writeObject(new int[]{circuit.getXRegisterSize(), circuit.getYRegisterSize()});
-      //output.writeObject(circuit.getGates());
-      output.flush();
-
-      return buffer.toByteArray();
-   }
-   // */
-
-   /*
-   public void loadFile() {
-      //Not running in Java Web Start environment
-      String fileDirectoryHint = Preferences.userNodeForPackage(getClass())
-              .get(pref_currentDirectory, null);
-      JFileChooser fileChooser = new JFileChooser(fileDirectoryHint);
-
-      int returnVal = fileChooser.showOpenDialog(null);
-      if (returnVal == JFileChooser.APPROVE_OPTION) {
-         File file = fileChooser.getSelectedFile();
-         try {
-            InputStream fileInput = new FileInputStream(file);
-            loadFile(file.getName(), fileInput);
-            currentFileName = file.getName();
-            Preferences.userNodeForPackage(getClass())
-                    .put(pref_currentDirectory, file.getParent());
-         } catch (Exception e) {
-            System.err.println(e.getMessage());
-         }
-      }
-   }
-   // */
-    
-   /*
-   @SuppressWarnings("unchecked")  // reading files cannot be guaranteed by no compiler at all!
-   private Graph loadFile(String fileName, InputStream fileInput) {
-      assert fileName != null;
-      assert fileInput != null;
-      Graph graph = null;
-      // open the file:
-      ObjectInputStream input = null;
-      try {
-         input = new ObjectInputStream(fileInput);
-         try {
-            graph = (Graph) input.readObject();
-         } catch (ClassNotFoundException cnf) {
-            String title = "Load Error"; //bundle.getProperty("jQuantum.loadError.title");
-            String message = "<html>" + fileName + " ";
-            message += " could not be loaded."; //bundle.getProperty("jQuantum.loadError.text");
-            message = message.replaceAll("\n", "");
-            message += "<br><br>";
-            message += "No graph found!"; //bundle.getProperty("jQuantum.loadError.textsupplement");
-            message = message.replaceAll("\n", "");
-
-            JOptionPane.showMessageDialog(
-                    null, message, title, JOptionPane.ERROR_MESSAGE);
-         } catch (ClassCastException cce) {
-            String title = "Load Error"; //bundle.getProperty("jQuantum.loadError.title");
-            String message = "<html>" + fileName + " ";
-            message += " could not be loaded."; //bundle.getProperty("jQuantum.loadError.text");
-            message = message.replaceAll("\n", "");
-
-            JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
-         } catch (EOFException eof) {
-            // do nothing, the stream will be closed in the finally clause
-         } catch (IOException ioe) {
-            ioe.printStackTrace();
-         }
-      } catch (IOException ioe) {
-         //ioe.printStackTrace();
-         String title = "Load Error"; //bundle.getProperty("jQuantum.loadError.title");
-         String message = "<html>" + fileName + " ";
-         message += " could not be loaded."; //bundle.getProperty("jQuantum.loadError.text");
-         message = message.replaceAll("\n", "");
-
-         JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
-      } finally {
-         try {
-            if (input != null) {
-               input.close();
-            }
-         } catch (IOException ioe) {
-            ioe.printStackTrace();
-         }
-      }
-      return graph;
-   }
-   // */
    
    /** This method asks the user to select a file name
     *  and saves a representation of this graph as a CSV file.
@@ -1544,7 +1348,7 @@ public class Graph<V extends Vertible<V>> {
       if (text == null) return null;
       
       // Determine whether the graph is undirected:
-      int pos = text.indexOf(separator), pre, i, j, k;
+      int pos = text.indexOf(separator), pre, i, j;
       if (pos < 0) { // || text.indexOf(separator) > text.indexOf("\n")) {
          throw new IllegalArgumentException("No valid CSV format!");
       }
@@ -1618,7 +1422,6 @@ public class Graph<V extends Vertible<V>> {
       //ArrayList<Vertible<Vertex>> adjacency;  // array list since the size of adjacency is unknown at this moment
       ArrayList<SimpleVertex> adj;  // array list since the size of adjacency is unknown at this moment
       for (int i = 0; i < vertices.length; i++) {
-         //adjacency = new ArrayList<Vertible<Vertex>>(vertices.length);
          adj = new ArrayList<>(vertices.length);
          for(int j = 0; j < adjacency[0].length; j++) {
             if ( adjacency[i][j] == 1 ) { // is there an edge from i to j?
@@ -1649,7 +1452,7 @@ public class Graph<V extends Vertible<V>> {
       String entry;
       int i = -1, j = -1;
       try {
-         // create vertices and adjacencys:
+         // create vertices and adjacencies:
          SimpleVertex[]  vertices = new SimpleVertex[n];
          int[][] adjacencys = new int[n][n];
          for (i = 0; i < n; i++) {
@@ -1706,7 +1509,7 @@ public class Graph<V extends Vertible<V>> {
 //      System.exit(0);
       Graph<SimpleVertex> network;
       //Entfernungsmatrix
-      int inf = 0;
+      //int inf = 0;
       int[][] y;
       // /*
       y = new int[][] {

@@ -819,7 +819,6 @@ public class PolynomialZ extends TreeMap<BigInteger, BigInteger> {
        // This method requires that a_0 = 1! This constraint will not be checked ...
        
        PolynomialZ h;  // auxiliary polynomial
-       BigInteger i;
        PolynomialZ two = new PolynomialZ(ZERO,org.mathIT.numbers.BigNumbers.TWO);
        
        // 1. Initialize:
@@ -856,7 +855,6 @@ public class PolynomialZ extends TreeMap<BigInteger, BigInteger> {
        // This method requires that a_0 = 1! This constraint will not be checked ...
        
        PolynomialZ h;  // auxiliary polynomial
-       BigInteger i;
        PolynomialZ two = new PolynomialZ(ZERO,org.mathIT.numbers.BigNumbers.TWO);
        
        // 1. Initialize:

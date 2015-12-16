@@ -227,7 +227,7 @@ public enum Codon {
    }
    
    public static void main(String... args) {
-      String out = "";
+      //String out = "";
       
       //javax.swing.JOptionPane.showMessageDialog(null, out);
       

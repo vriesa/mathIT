@@ -53,7 +53,7 @@ public class Genome implements java.io.Serializable {
    private static String fileName = "Test";
    
    /** Constant determining the "corridor of equality" of two double values.*/
-   private static final double EPSILON = 1.e-12;
+   //private static final double EPSILON = 1.e-12;
    
    /** Nucleobases. These are U (RNA), T (DNA), C, A, G (RNA and DNA). N means unknown.*/
    static final char[] VALUES = {'U', 'T', 'C', 'A', 'G', 'N', '?'};
@@ -733,7 +733,7 @@ public class Genome implements java.io.Serializable {
     *  determined by a file chooser dialog.
     *  @return a genome determined by the FASTA file, or null if no file is selected
     */
-   @SuppressWarnings("unchecked")  // reading files cannot be guaranteed by no compiler at all!
+   //@SuppressWarnings("unchecked")  // reading files cannot be guaranteed by no compiler at all!
    public static Genome loadFASTA() {
       final int BUFFER_SIZE = 200; // in bytes
       
@@ -922,7 +922,7 @@ public class Genome implements java.io.Serializable {
    /** Returns a genome after opening a file in GNOM format, found by a file chooser dialog.
     *  @return a genome determined by the GNOM file, or null if no file is selected
     */
-   @SuppressWarnings("unchecked")  // reading files cannot be guaranteed by no compiler at all!
+   //@SuppressWarnings("unchecked")  // reading files cannot be guaranteed by no compiler at all!
    public static Genome loadGenome() {
       JFileChooser fileChooser;
       try {

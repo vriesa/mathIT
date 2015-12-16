@@ -35,8 +35,11 @@ import java.util.Iterator;
  * @author Andreas de Vries
  * @version 0.9
  */
-@SuppressWarnings("serial")
+//@SuppressWarnings("serial")
 public final class Tuple<T> implements Collection<T>, Serializable {
+   /** Version ID for serialization. */
+   private static final long serialVersionUID = 9223372036773603415L; // = Long.MAX_VALUE - Tuple.hashCode()
+   /** List of elements of this tuple.*/
    private ArrayList<T> elements;
 
    /**
@@ -104,7 +107,7 @@ public final class Tuple<T> implements Collection<T>, Serializable {
       return elements.get(1);
    }
 
-   @SuppressWarnings("unchecked")
+   //@SuppressWarnings("unchecked")
    @Override
    public boolean equals(Object o) {
       if (o == this) {
@@ -197,7 +200,6 @@ public final class Tuple<T> implements Collection<T>, Serializable {
       return elements.toArray();
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public <S> S[] toArray(S[] a) {
       return elements.toArray(a);

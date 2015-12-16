@@ -150,7 +150,6 @@ public class Matrix {
     */
    public Matrix copy() {
       Matrix A = new Matrix(rows, columns);
-      int j;
       for (int i = 0; i < rows; i++) {
          /*
          for (j = 0; j < columns; j++) {

@@ -50,6 +50,8 @@ import static java.lang.Math.*;
  * @version 1.1
  */
 public class Quaternion extends Number {
+   /** Version ID for serialization. */
+   private static final long serialVersionUID = 9223372036485945537L; // = Long.MAX_VALUE - "Quaternion".hashCode()
    
    /** Accuracy up to which equality of double values are computed in
     *  methods of this class. Its current value is {@value}.

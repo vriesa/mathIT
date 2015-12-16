@@ -20,18 +20,18 @@
  */
 package org.mathIT.util;
 
-import java.io.ByteArrayOutputStream;
+//import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.File;
-import java.io.FileInputStream;
+//import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+//import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+//import java.io.InputStream;
+//import java.io.ObjectInputStream;
+//import java.io.ObjectOutputStream;
 import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
 
@@ -231,12 +231,13 @@ public class Files {
                }
             }
          }
+         input.close();
       } catch (ClassNotFoundException cnf) {
          System.err.println(cnf.getMessage());
       } catch (IOException ioe) {
          System.err.println(ioe.getMessage());
       }
-     return text;
+      return text;
    }
 
    /* For test purposes ... */

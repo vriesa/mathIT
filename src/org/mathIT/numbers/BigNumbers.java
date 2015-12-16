@@ -730,12 +730,9 @@ public class BigNumbers {
       //int minOrder = lgn*lgn;
       int r = 1;
       int a, k;
-      int end;
       PolynomialZ poly1, poly2;
       BigInteger r_;
-//start = System.currentTimeMillis();
 
-//System.out.println("1st loop");
       // Step 2: Determine the smallest r such that r does not divide n^k for all k <= minOrder
       while (rDivides) {
          r++; // ??? r += 2;
@@ -762,8 +759,8 @@ public class BigNumbers {
 //System.out.println("\nfuer while-loop: " + (System.currentTimeMillis() - start) + " ms");
 
       // r is always prime, i.e., phi(r) = r-1:
-      end = (int) (Math.sqrt((r-1)/12.0) * lgn) + 8;
-      // //end = (int) (Math.sqrt(r-1) * lgn);
+      int end = (int) (Math.sqrt((r-1)/12.0) * lgn) + 8;
+      // //int end = (int) (Math.sqrt(r-1) * lgn);
 
 //System.out.print("after loop: ");
 //System.out.println("r="+r+", n="+n+", minOrder="+minOrder+", end="+end);
@@ -810,7 +807,7 @@ public class BigNumbers {
     */
    public static boolean nakedAKS(BigInteger n, int r) {
       //if (n.mod(TWO).equals(ZERO)) return false;
-      int a, k;
+      int a;
       PolynomialZ poly1, poly2;
 
       a = 1;

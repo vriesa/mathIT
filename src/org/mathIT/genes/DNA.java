@@ -39,7 +39,7 @@ public class DNA implements java.io.Serializable {
      System.getProperty("user.home") + System.getProperty("file.separator") + "DNA.xml";
      
    /** Constant determining the "corridor of equality" of two double values.*/
-   private static final double EPSILON = 1.e-12;
+   //private static final double EPSILON = 1.e-12;
    
    private static final char[] VALUES = {'T', 'C', 'A', 'G'}; // DNA
    
@@ -409,7 +409,7 @@ public class DNA implements java.io.Serializable {
    /** Returns a genome after opening a file in FASTA format, determined by a file chooser dialog.
     *  @return a genome determined by the FASTA file, or null if no file is selected
     */
-   @SuppressWarnings("unchecked")  // reading files cannot be guaranteed by no compiler at all!
+   //@SuppressWarnings("unchecked")  // reading files cannot be guaranteed by no compiler at all!
    public static DNA loadFASTA() {
       final int BUFFER_SIZE = 200; // in bytes
       
@@ -540,7 +540,7 @@ public class DNA implements java.io.Serializable {
    /** Returns a genome after opening a file in GNOM format, found by a file chooser dialog.
     *  @return a genome determined by the GNOM file, or null if no file is selected
     */
-   @SuppressWarnings("unchecked")  // reading files cannot be guaranteed by no compiler at all!
+   //@SuppressWarnings("unchecked")  // reading files cannot be guaranteed by no compiler at all!
    public static DNA loadDNA() {
       JFileChooser fileChooser;
       try {

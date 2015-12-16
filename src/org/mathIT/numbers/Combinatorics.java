@@ -38,28 +38,26 @@ public class Combinatorics {
     *  of length <i>k</i> over the specified alphabet is returned.
     *  There are <i>n<sup>k</sup></i> words of this kind.
     *  The input set <i>s</i> itself is <i>not</i> modified by this method.
-    *  @param <T> subclass of {@link StringBuilder}
     *  @param k a nonnegative integer &le; <i>n</i>
     *  @param alphabet the alphabet
     *  @return a set of all words of length <i>k</i>
     *  @throws IllegalArgumentException if <i>k</i> &le; 0
     */
-   @SuppressWarnings("unchecked")  // there is an add of a cast of a string builder ...
-   public static <T extends StringBuilder> HashSet<T> words(int k, HashSet<T> alphabet) {
+   public static HashSet<StringBuilder> words(int k, HashSet<StringBuilder> alphabet) {
       if ( k <= 0 ) {
          throw new IllegalArgumentException("k must satisfy 0 < k <= alphabet.size(), but k="+k);
       }
       
-      HashSet<T> words, list;
+      HashSet<StringBuilder> words, list;
       
       if (k == 1) {  // base case: words of length 1
          return alphabet;
       } else {
          list = words(k - 1, alphabet);  // recursion
          words = new HashSet<>();
-         for (T letter : alphabet) {
-            for (T w : list) {
-               words.add((T) (new StringBuilder(letter)).append(w));
+         for (StringBuilder letter : alphabet) {
+            for (StringBuilder w : list) {
+               words.add((new StringBuilder(letter)).append(w));
             }
          }
          return words;
@@ -115,7 +113,6 @@ public class Combinatorics {
       }
       
       StringBuilder[] words, list;
-      StringBuilder word;
       int i;
       
       if (k == 1) {  // base case: words of length 1
@@ -152,7 +149,6 @@ public class Combinatorics {
       }
       
       ArrayList<StringBuilder> words, list;
-      StringBuilder word;
       
       if (k == 1) {  // base case: words of length 1
          words = new ArrayList<>(alphabet.size());

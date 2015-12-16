@@ -45,7 +45,7 @@ import org.mathIT.numbers.Numbers;
  * @author JAMA, Andreas de Vries
  */
 public class SingularValueDecomposition { // implements java.io.Serializable {
-   private static final long serialVersionUID = 1011941679L; // = "SingularValueDecomposition".hashCode()
+   //private static final long serialVersionUID = 1011941679L; // = "SingularValueDecomposition".hashCode()
 
    /* ------------------------
     Class variables

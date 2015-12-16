@@ -52,7 +52,7 @@ import org.mathIT.numbers.Numbers;
  *
  */
 public class EigenvalueDecomposition { // implements java.io.Serializable {
-   private static final long serialVersionUID = 577110468L; // = "EigenValueDecomposition".hashCode()
+   //private static final long serialVersionUID = 577110468L; // = "EigenValueDecomposition".hashCode()
 
    /* ------------------------
     Class variables

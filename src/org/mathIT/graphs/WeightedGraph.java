@@ -381,7 +381,6 @@ public class WeightedGraph<V extends Vertible<V>> extends Graph<V> {
    public StringBuilder toCSV() {
       //final char separator = Graph.separator;
       int i, j;
-      V entry;
       StringBuilder csv = new StringBuilder();
       
       //undirected ? csv = csv.append("undirected") : csv = csv.append("directed");
@@ -520,7 +519,7 @@ public class WeightedGraph<V extends Vertible<V>> extends Graph<V> {
       StringBuilder text = org.mathIT.util.Files.loadTextFile();
 
       // Determine whether the graph is undirected:
-      int pos = text.indexOf(separator), pre, length = text.length(), i, j, k;
+      int pos = text.indexOf(separator), pre, i, j;
       if (pos < 0) { // || text.indexOf(separator) > text.indexOf("\n")) {
          throw new IllegalArgumentException("No valid CSV format!");
       }

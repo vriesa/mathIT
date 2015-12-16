@@ -1340,7 +1340,7 @@ public class Numbers {
          partitions.add(part);
          return partitions;
       } else {
-         int stage, i, j;
+         int stage, i;
          int pos = 0; // position for next stage
          LinkedList<Integer> part;
          ArrayList<LinkedList<Integer>> p_prev = partitions(n-1);
@@ -1451,7 +1451,7 @@ public class Numbers {
    public static String decToBin(long n) {
      int base = 2;
      boolean negative = false;
-     String symbols = "", result = "";
+     String symbols = "";
      long q = n, r;
      
      if (n == 0) {
@@ -2281,8 +2281,6 @@ public class Numbers {
     *  @throws NumberFormatException if the string is not ternary
     */
    public static String ternToTernB(String tern) {
-      // /*
-      boolean negative = false;
       String tb = "";
       String ones = "";
       int point, i;
@@ -2290,11 +2288,9 @@ public class Numbers {
       
       // Determine whether tern is negative:
       if (tern.substring(0,1).equals("-")) {
-         negative = true;
          tern = tern.substring(1);
       }
       if (tern.substring(tern.length()-1, tern.length()).equals("-")) {
-         negative = true;
          tern = tern.substring(0, tern.length() - 1);
       }
       
@@ -2314,7 +2310,7 @@ public class Numbers {
       while (i > point && tern.charAt(i) == '0') {
          i--;
       }
-      //System.out.println("### i="+i);
+      
       if (point != tern.length()) {
          tmp += ".";
       }
@@ -2342,13 +2338,9 @@ public class Numbers {
             ones += "1";
          }
       }
-      //System.out.println("*** tmp  = "+tmp);
-      //System.out.println("*** ones = "+ones);
-      
       
       // Add ones + tern:
       tern = add3(ones, tern);
-      //System.out.println("*** tern = "+tern);
       tmp = tern.substring(0);
       
       for (i = 0; i < tmp.length(); i++) {

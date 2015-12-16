@@ -668,8 +668,8 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
          }
       }
       //System.out.println("+++ activated before: " + activeGeneration);
-      HashSet<Activatable> actives =
-         ((NetworkOfActivatables<Activatable>) invokerGraph).runActivation(activeGeneration);
+      //HashSet<Activatable> actives =
+      //   ((NetworkOfActivatables<Activatable>) invokerGraph).runActivation(activeGeneration);
       //System.out.println("+++ activated after: " + actives);
       for (V v : graph.getVertices()) {
          if (((Activatable) v).isActive()) {
@@ -684,7 +684,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
    private void detectClusters() {
       ArrayList<OrderedSet<Integer>> list = invokerGraph.detectClusters().getClusters();
       // ---- Vertex color: ----
-      canvas.getRenderer().setVertexRenderer(new GraphViewer<V,E>.VertexFillColor<V>(list));
+      canvas.getRenderer().setVertexRenderer(new VertexFillColor(list));
       canvas.repaint();
    }
    
@@ -720,7 +720,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       time = System.currentTimeMillis() - time;
       System.out.println("- Running time for brute force clustering: "+time/1000.+" sec");
       // ---- Vertex color: ----
-      canvas.getRenderer().setVertexRenderer(new GraphViewer<V,E>.VertexFillColor<V>(list));
+      canvas.getRenderer().setVertexRenderer(new VertexFillColor(list));
       canvas.repaint();
    }
    
@@ -875,7 +875,9 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       Color.YELLOW, Color.RED, Color.BLUE, Color.GREEN, Color.CYAN, Color.MAGENTA,
       Color.ORANGE, Color.LIGHT_GRAY, Color.PINK, Color.BLACK
    };
-   private final class VertexFillColor<V extends Vertible<V>> extends edu.uci.ics.jung.visualization.renderers.GradientVertexRenderer<V, E> {
+   
+   // inner class:
+   private final class VertexFillColor extends edu.uci.ics.jung.visualization.renderers.GradientVertexRenderer<V, E> {
 
       private ArrayList<OrderedSet<Integer>> vertexSetList;
 
@@ -891,7 +893,6 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
          java.awt.Paint oldPaint = g.getPaint();
          java.awt.Rectangle r = shape.getBounds();
          float y2 = (float) r.getMaxY();
-         java.awt.Paint fillPaint = null;
          int i = 0;
          for (int j = 0; j < vertexSetList.size(); j++) {
             if (vertexSetList.get(j).contains(v.getIndex())) {
@@ -900,7 +901,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
             }
          }
          
-         fillPaint = new java.awt.GradientPaint((float) r.getMinX(), (float) r.getMinY(),
+         java.awt.Paint fillPaint = new java.awt.GradientPaint((float) r.getMinX(), (float) r.getMinY(),
                  Color.WHITE, //palette[i],
                  (float) r.getMinX(), y2,
                  palette[i],

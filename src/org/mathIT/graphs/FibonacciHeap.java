@@ -252,9 +252,9 @@ public class FibonacciHeap<V extends Vertible<V>> {
     *
     * @return heap node with the smallest key
     */
-   private FibonacciHeapNode<V> min() {
-      return minNode;
-   }
+   //private FibonacciHeapNode<V> min() {
+   //   return minNode;
+   //}
 
    // min
 
