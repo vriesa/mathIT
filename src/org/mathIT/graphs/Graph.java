@@ -106,8 +106,13 @@ public class Graph<V extends Vertible<V>> {
    protected V[] vertices;
    /** Adjacency matrix. adjacency[i][j] indicates whether there is an edge from vertex i to vertex j.*/
    protected int[][] adjacency;
-   /** Number of edges. */
+   /** Number of edges.*/
    protected int numberOfEdges;
+   /** The Hashimoto matrix, also called non-backtracking matrix or edge adjacency matrix.
+    *  It encodes those pairs of adjacent edges for which the start vertex is 
+    *  different from the end vertex (i.e., backtracks are excluded).
+    */
+   //protected int[][] hashimoto;
    /** Stores the GraphViewer object if this graph is visualized. */
    private GraphViewer<V,?> gv;
    
@@ -126,6 +131,8 @@ public class Graph<V extends Vertible<V>> {
       this.undirected = false;
       this.weighted = false;
       this.vertices = vertices.toArray(arrayTemplate);
+      //this.numberOfEdges = computeNumberOfEdges(adjacency);
+      //this.hashimoto = computeHashimoto();
    }
 
    /** Creates an directed graph with the specified vertices. The adjacency matrix is created as the
@@ -146,6 +153,8 @@ public class Graph<V extends Vertible<V>> {
       this.weighted = false;
       this.vertices = vertices;
       this.adjacency = new int[vertices.length][vertices.length];
+      //this.numberOfEdges = computeNumberOfEdges(undirected, adjacency);
+      //this.hashimoto = computeHashimoto();
    }
 
    /** Creates a graph from the specified adjacency matrix.
@@ -212,6 +221,7 @@ public class Graph<V extends Vertible<V>> {
       }
       this.adjacency = adjacency;
       this.numberOfEdges = computeNumberOfEdges();
+      //this.hashimoto = computeHashimoto();
    }
 
    /** Creates a graph from the specified array of vertices and the adjacency matrix.
@@ -278,6 +288,7 @@ public class Graph<V extends Vertible<V>> {
       this.vertices  = vertices;
       this.adjacency = adjacency;
       this.numberOfEdges = computeNumberOfEdges();
+     //this.hashimoto = computeHashimoto();
    }
    
    /** Creates a graph from the specified array list of vertices and the adjacency matrix.
@@ -317,8 +328,85 @@ public class Graph<V extends Vertible<V>> {
       }
       this.adjacency = adjacency;
       this.numberOfEdges = computeNumberOfEdges();
+      //this.hashimoto = computeHashimoto();
    }
 
+   /** Returns the number of edges of this graph.
+    *  @return the number of edges
+    */
+   protected final int computeNumberOfEdges() {
+      int i, j, m = 0;
+      if (undirected) { // symmetric adjacency matrix
+         for (i = 0; i < adjacency.length; i++) {
+            for (j = 0; j <= i; j++) {
+               m += adjacency[i][j];
+            }
+         }
+      } else {
+         for (i = 0; i < adjacency.length; i++) {
+            for (j = 0; j < adjacency.length; j++) {
+               m += adjacency[i][j];
+            }
+         }
+      }
+      return m;
+   }
+
+   /** The Hashimoto matrix of this graph, also called non-backtracking matrix 
+    *  or edge adjacency matrix.
+    *  It encodes those pairs of adjacent edges for which the start vertex is 
+    *  different from the end vertex (i.e., backtracks are excluded).
+    *  @return the Hashimoto matrix
+    */
+   public int[][] computeHashimoto() {
+      int i, j, k, l, m = 0;
+      
+      // Determine the number of edges without self-loops:
+      if (undirected) { // symmetric adjacency matrix
+         for (i = 0; i < adjacency.length; i++) {
+            for (j = 0; j < i; j++) {
+               m += adjacency[i][j];
+            }
+         }
+         m *= 2;
+      } else {
+         for (i = 0; i < adjacency.length; i++) {
+            for (j = 0; j < adjacency.length; j++) {
+               if (i == j) continue;
+               m += adjacency[i][j];
+            }
+         }
+      }
+      
+
+      int[][] b = new int[m][m];
+      
+      // Indexing the edges, where e[k] has two components, 
+      // where e[k][s] the start vertex and e[k][f] the end vertex:
+      int[][] e = new int[m][2];
+      
+      k = 0;
+      for (i = 0; i < adjacency.length; i++) {
+         for (j = 0; j < adjacency.length; j++) {
+            if (i == j) continue; // self-loops are ignored
+            if (adjacency[i][j] == 1) {
+                e[k][0] = i;
+                e[k][1] = j;
+                k++;
+            }
+         }
+      }
+      
+      for (k = 0; k < b.length; k++) {
+         for (l = 0; l < b.length; l++) {
+            if (e[k][1] == e[l][0] && e[k][0] != e[l][1]) {
+               b[k][l] = 1;
+            }
+         }
+      }
+      return b;
+   }
+   
    /** Sets the flag whether this graph is undirected.
     *  @param undirected flag which is true if this graph is undirected
     */
@@ -339,28 +427,6 @@ public class Graph<V extends Vertible<V>> {
          }
       }
       return true;
-   }
-
-   /** Returns the number of edges of this graph.
-    *  @return the number of edges
-    */
-   protected final int computeNumberOfEdges() {
-      int i, j, m = 0;
-      if (undirected) { // symmetric adjacency matrix
-         for (i = 0; i < adjacency.length; i++) {
-            for (j = 0; j <= i; j++) {
-               m += adjacency[i][j];
-            }
-         }
-      } else {
-         for (i = 0; i < adjacency.length; i++) {
-            for (j = 0; j < i; j++) {
-               m += adjacency[i][j];
-            }
-         }
-      }
-      //System.out.print("m="+m);
-      return m;
    }
 
    /** Gets the flag whether this graph is undirected.
@@ -1511,6 +1577,17 @@ public class Graph<V extends Vertible<V>> {
       //Entfernungsmatrix
       //int inf = 0;
       int[][] y;
+      // /*
+      y = new int[][] {
+          {0,1,0},
+          {0,0,1},
+          {1,0,0},
+      };
+      network = new Graph<>(false, y, new SimpleVertex[]{new SimpleVertex(0)});
+      network.computeHashimoto();
+      System.exit(0);;
+      // */
+      
       // /*
       y = new int[][] {
                   { 0, 1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0},

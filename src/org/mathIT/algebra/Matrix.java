@@ -22,7 +22,7 @@ package org.mathIT.algebra;
 import java.util.ArrayList;
 import org.mathIT.numbers.Numbers;
 /** 
- * This class enables to contruct a matrix which can be manipulated by various
+ * This class enables to construct a matrix which can be manipulated by various
  * matrix operations.
  * @author  Andreas de Vries
  * @version 1.2
