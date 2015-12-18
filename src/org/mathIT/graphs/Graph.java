@@ -1,7 +1,7 @@
 /*
  * Graph.java - Class representing a graph
  *
- * Copyright (C) 2009-2013 Andreas de Vries
+ * Copyright (C) 2009-2016 Andreas de Vries
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ import org.mathIT.numbers.Numbers;
  *   }
  * </pre>
  * @author Andreas de Vries
- * @version 1.0
+ * @version 1.1
  * @param <V> the type of the vertices
  * @see WeightedGraph
  */
@@ -356,28 +356,21 @@ public class Graph<V extends Vertible<V>> {
     *  or edge adjacency matrix.
     *  It encodes those pairs of adjacent edges for which the start vertex is 
     *  different from the end vertex (i.e., backtracks are excluded).
+    *  For symmetric adjacency matrices, the labeling of edges follows the
+    *  scheme in 
+    *  A. Terras: <i>Zeta Functions of Graphs.</i> Cambridge University Press, 
+    *  Cambridge New York 2011
     *  @return the Hashimoto matrix
     */
    public int[][] computeHashimoto() {
       int i, j, k, l, m = 0;
       
-      // Determine the number of edges without self-loops:
-      if (undirected) { // symmetric adjacency matrix
-         for (i = 0; i < adjacency.length; i++) {
-            for (j = 0; j < i; j++) {
-               m += adjacency[i][j];
-            }
-         }
-         m *= 2;
-      } else {
-         for (i = 0; i < adjacency.length; i++) {
-            for (j = 0; j < adjacency.length; j++) {
-               if (i == j) continue;
-               m += adjacency[i][j];
-            }
+      // Determine the number of oriented edges, ignoring self-loops:
+      for (i = 0; i < adjacency.length; i++) {
+         for (j = 0; j < i; j++) {
+            m += adjacency[i][j] + adjacency[j][i];
          }
       }
-      
 
       int[][] b = new int[m][m];
       
@@ -386,13 +379,34 @@ public class Graph<V extends Vertible<V>> {
       int[][] e = new int[m][2];
       
       k = 0;
-      for (i = 0; i < adjacency.length; i++) {
-         for (j = 0; j < adjacency.length; j++) {
-            if (i == j) continue; // self-loops are ignored
-            if (adjacency[i][j] == 1) {
-                e[k][0] = i;
-                e[k][1] = j;
-                k++;
+      
+      if (isSymmetric(adjacency)) {
+         // Label the edges as Eq. (2.1) in A. Terras: Zeta Functions of Graphs. Cambridge 2011:
+         m /= 2;
+         for (i = 0; i < adjacency.length; i++) {
+            for (j = 0; j < i; j++) {
+               if (adjacency[i][j] == 1) {
+                  e[k][0] = j;
+                  e[k][1] = i;
+                  e[k+m][0] = i;
+                  e[k+m][1] = j;
+                  k++;
+               }
+            }
+         }
+      } else {
+         for (i = 0; i < adjacency.length; i++) {
+            for (j = 0; j < i; j++) {
+               if (adjacency[j][i] == 1) {
+                  e[k][0] = j;
+                  e[k][1] = i;
+                  k++;
+               }
+               if (adjacency[i][j] == 1) {
+                  e[k][0] = i;
+                  e[k][1] = j;
+                  k++;
+               }
             }
          }
       }
@@ -1580,8 +1594,8 @@ public class Graph<V extends Vertible<V>> {
       // /*
       y = new int[][] {
           {0,1,0},
-          {0,0,1},
-          {1,0,0},
+          {1,0,1},
+          {0,0,0},
       };
       network = new Graph<>(false, y, new SimpleVertex[]{new SimpleVertex(0)});
       network.computeHashimoto();

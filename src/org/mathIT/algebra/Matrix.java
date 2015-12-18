@@ -55,8 +55,22 @@ public class Matrix {
    
    /** Constructs a matrix from the given two-dimensional array.
     *  @param matrix the matrix entries as an array
-    * @param rows number of rows
-    * @param columns  number of columns
+    */
+   public Matrix(int[][] matrix) {
+      this.rows    = matrix.length;
+      this.columns = matrix[0].length;
+      this.matrix  = new double[rows][columns];
+      for(int i = 0; i < matrix.length; i++) {
+         for(int j = 0; j < matrix[0].length; j++) {
+            this.matrix[i][j] = matrix[i][j];
+         }
+      }
+   }
+   
+   /** Constructs a matrix from the given two-dimensional array.
+    *  @param matrix the matrix entries as an array
+    *  @param rows number of rows
+    *  @param columns  number of columns
     */
    public Matrix(double[][] matrix, int rows, int columns) {
       this.rows    = rows;
@@ -969,7 +983,7 @@ public class Matrix {
   
    /** Returns a String representation of this matrix as an HTML table where each
     *  entry is aligned according to the specified value. The possible values are
-    *  "left", "center", "right" (in case insensitive manner). If the specified string
+    *  "left", "center", "right" (in case-insensitive manner). If the specified string
     *  has another value, it is set internally to the default value "center".
     *  @param align the alignment of each matrix entry, either "left", "center", or "right"
     *  @return a String representation of this matrix as an HTML table.
@@ -990,19 +1004,19 @@ public class Matrix {
    @Override
    public String toString() {
       int i, j;
-      String output = "{";
+      String output = "[";
       for (i = 0; i < matrix.length - 1; i++) {
-         output += "{";
+         output += "[";
          for (j = 0; j < matrix[0].length - 1; j++) {
             output += numberFormat.format(matrix[i][j]) + ", ";
          }
-         output += numberFormat.format(matrix[i][j]) + "}\n ";
+         output += numberFormat.format(matrix[i][j]) + "]\n ";
       }
-      output += "{";
+      output += "[";
       for (j = 0; j < matrix[0].length - 1; j++) {
          output += numberFormat.format(matrix[i][j]) + ", ";
       }
-      output += numberFormat.format(matrix[i][j]) + "}}";
+      output += numberFormat.format(matrix[i][j]) + "]]";
       return output;
    }
 

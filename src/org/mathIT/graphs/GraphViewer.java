@@ -568,6 +568,19 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
             }
          });
          clusterControls.add(detectExactly);
+         
+         JButton computeHashimoto = new JButton("Hashimoto matrix");
+         computeHashimoto.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               org.mathIT.algebra.Matrix B = new org.mathIT.algebra.Matrix(invokerGraph.computeHashimoto());
+               int size = 27 * B.getRows();
+               if (size < 200) size = 200;
+               if (size > 600) size = 600;
+               new org.mathIT.util.OutputFrame("<html>" + B.toHTML(), "Hashimoto matrix", size, size);
+            }
+         });
+         clusterControls.add(computeHashimoto);
       }
       
       

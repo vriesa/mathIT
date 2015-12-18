@@ -391,9 +391,22 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
    public static void main(String[] args) {
       //double inf = WeightedGraph.INFINITY;
       boolean binary = false;  // whether vertex number should be shown in binary format
+      boolean undirected = true;
       //int s;
       
       // /* Easley-Kleinberg example: ---
+      undirected = false;
+      double[][] w = {
+         //1  2  3  4  5
+         { 0, 1, 1, 0, 0}, //  1
+         { 0, 0, 1, 1, 0}, //  2
+         { 0, 0, 0, 1, 0}, //  3
+         { 1, 0, 0, 0, 1}, //  4
+         { 0, 1, 0, 0, 0}, //  5
+      };
+      // */
+
+      /* Easley-Kleinberg example: ---
       double[][] w = {
          //0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16
          { 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //  0
@@ -417,6 +430,7 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
       // */
 
       /* Permutation matrix: ---
+      undirected = false;
       double[][] w = {
          //0  1  2  3  4 
          { 0, 0, 1, 0, 0}, //  0
@@ -428,6 +442,7 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
       // */
       
       /* Permutation matrix 2: ---
+      undirected = false;
       double[][] w = {
          //0  1  2  3  4 
          { 0, 1, 0, 0, 0}, //  0
@@ -439,6 +454,7 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
       // */
       
       /* Permutation matrix 2: ---
+      undirected = false;
       double[][] w = {
          //0  1  2  3  4  5
          { 0, 1, 1, 1, 1, 1}, //  0
@@ -451,6 +467,7 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
       // */
       
       /* 3 cycles: ---
+      undirected = false;
       double[][] w = {
          //1  2  3  4  5  6  7  8  9 10 11 12
          { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //  1
@@ -469,6 +486,7 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
       // */
       
       /* shear mapping: ---
+      undirected = false;
       double[][] w = {
          //1  2
          { 1, 1}, //  1
@@ -477,6 +495,7 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
       // */
       
       /* Adder gate: ---
+      undirected = false;
       double[][] w = {
          //1  2  3  4  5  6  7  8
          { 1, 0, 0, 0, 0, 0, 0, 0}, //  1
@@ -492,6 +511,7 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
       // */
       
       /* 2-bit adder gate: ---
+      undirected = false;
       double[][] w = {
          //1  2  3  4
          { 1, 0, 0, 0}, //  1
@@ -503,6 +523,7 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
       // */
       
       /* Easley-Kleinberg toy web: ---
+      undirected = false;
       double[][] w = {
          //1  2  3  4
          { 0, 1, 0, 1}, //  1
@@ -513,6 +534,7 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
       // */
       
       /* Easley-Kleinberg toy web variation: ---
+      undirected = false;
       double[][] w = {
          //1  2  3  4
          { 0, 1, 0, 1}, //  1
@@ -523,6 +545,7 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
       // */
       
       /* Krumke-Noltemeier 3.4: ---
+      undirected = false;
       double[][] w = {
          //1  2  3  4  5  6  7
          { 0, 1, 0, 0, 0, 0, 0}, //  1
@@ -551,6 +574,7 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
       // */
       
       /* cOR gate: ---
+      undirected = false;
       double[][] w = {
          //1  2  3  4  5  6  7  8
          { 0, 1, 0, 0, 0, 0, 0, 0}, //  1
@@ -595,11 +619,12 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
          x[i] = new Actor(i, name, .5);
       }
       
-      SocialNetwork graph = new SocialNetwork(true,x,w);
+      SocialNetwork graph = new SocialNetwork(undirected,x,w);
       
       //graph.activate(x[6], x[9]);
       
       graph.visualize();
+      
       /*
       s = 1;
       int ai = 1;
