@@ -695,7 +695,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
                layoutC.getName().equals("edu.uci.ics.jung.algorithms.layout.BalloonLayout")
             ) {
                if (!(graph instanceof edu.uci.ics.jung.graph.DirectedSparseGraph)) {
-                  javax.swing.JOptionPane.showMessageDialog(null, "Graph must be a directed tree-like graph!");
+                  javax.swing.JOptionPane.showMessageDialog(null, "Graph must be a tree or a forest!");
                   return;
                }
                constructor = layoutC.getConstructor(new Class[]{edu.uci.ics.jung.graph.Forest.class});
@@ -706,7 +706,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
                l.setInitializer(canvas.getGraphLayout());
             } else if (layoutC.getName().equals("edu.uci.ics.jung.algorithms.layout.DAGLayout")){
                if (!(graph instanceof edu.uci.ics.jung.graph.DirectedSparseGraph)) {
-                  javax.swing.JOptionPane.showMessageDialog(null, "Graph must be a tree or a forest!");
+                  javax.swing.JOptionPane.showMessageDialog(null, "Graph must be a directed tree-like graph!");
                   return;
                }
                constructor = layoutC.getConstructor(new Class[]{edu.uci.ics.jung.graph.Graph.class});

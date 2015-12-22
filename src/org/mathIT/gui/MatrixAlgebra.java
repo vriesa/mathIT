@@ -93,7 +93,7 @@ public class MatrixAlgebra extends javax.swing.JFrame {
 
       inputPanel.setLayout(new java.awt.BorderLayout());
 
-      matrixAInput.setMaximumSize(new java.awt.Dimension(400, 400));
+      //matrixAInput.setMaximumSize(new java.awt.Dimension(400, 400));
 
       jScrollPaneA.setViewportBorder(javax.swing.BorderFactory.createTitledBorder("Matrix A"));
       jScrollPaneA.setPreferredSize(new java.awt.Dimension(300, 300));
@@ -186,6 +186,21 @@ public class MatrixAlgebra extends javax.swing.JFrame {
       matrixATable = createTable(A);
       jScrollPaneA.setViewportView(matrixATable);
       
+      // /*
+      addComponentListener(new java.awt.event.ComponentAdapter() {
+         @Override
+         public void componentResized(java.awt.event.ComponentEvent e) {
+            //System.out.println("### width: " + getWidth());
+            int width = getWidth() / 2 - 50;
+            java.awt.Dimension dimension = new java.awt.Dimension(width,width);
+            jScrollPaneA.setPreferredSize(dimension);
+            matrixAInput.revalidate();
+            jScrollPaneResult.setPreferredSize(dimension);
+            resultPanel.revalidate();
+         }
+      });
+      // */
+      
       pack();
       setVisible(true);
    }
@@ -205,6 +220,24 @@ public class MatrixAlgebra extends javax.swing.JFrame {
       matrixBTable = createTable(B);
       jScrollPaneB.setViewportView(matrixBTable);
       //pack();
+      
+      // /*
+      addComponentListener(new java.awt.event.ComponentAdapter() {
+         @Override
+         public void componentResized(java.awt.event.ComponentEvent e) {
+            //System.out.println("### width: " + getWidth());
+            int width = getWidth() / 3 - 50;
+            java.awt.Dimension dimension = new java.awt.Dimension(width,width);
+            jScrollPaneA.setPreferredSize(dimension);
+            matrixAInput.revalidate();
+            jScrollPaneB.setPreferredSize(dimension);
+            matrixBInput.revalidate();
+            jScrollPaneResult.setPreferredSize(dimension);
+            resultPanel.revalidate();
+         }
+      });
+      // */
+
       setVisible(true);
    }
    
