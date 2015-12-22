@@ -86,6 +86,7 @@ public class PolynomialZ extends TreeMap<BigInteger, BigInteger> {
    }
    
    /** Creates an empty polynomial with the given {@link BigExponentComparator}.
+    *  @param ec an exponent comparator
     */
    public PolynomialZ(BigExponentComparator ec) {
       super(ec);
@@ -163,6 +164,7 @@ public class PolynomialZ extends TreeMap<BigInteger, BigInteger> {
    /** Returns the sum this + <i>q</i> of this polynomial and the specified 
     *  polynomial <i>q</i>, with coefficients modulo <i>m</i>.
     *  @param q the polynomial to be added to this polynomial
+    *  @param m the summand
     *  @return the sum this + <i>q</i>
     */
    public PolynomialZ plus(PolynomialZ q, BigInteger m) {

@@ -42,12 +42,16 @@ public class Interpolation {
       this.yValues = yValues;
    }
     
-   /** Returns the <i>x</i>-values of the data points (<i>x</i>, <i>y</i>).*/
+   /** Returns the <i>x</i>-values of the data points (<i>x</i>, <i>y</i>).
+    * @return the <i>x</i>-values of the data points
+    */
    public double[] getXValues() {
       return xValues;
    }
    
-   /** Returns the array of <i>y</i>-values of the data points (<i>x</i>, <i>y</i>).*/
+   /** Returns the array of <i>y</i>-values of the data points (<i>x</i>, <i>y</i>).
+    * @return the <i>y</i>-values of the data points
+    */
    public double[][] getYValues() {
       return yValues;
    }

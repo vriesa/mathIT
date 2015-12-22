@@ -289,6 +289,7 @@ public class OrderedSet<E extends Comparable<E>> extends java.util.TreeSet<E> {
     *  separate OrderedSet object for each call.
     *  If an explicit variable for the empty set is not desired, the method
     *  {@link #emptySet(OrderedSet)} may be used..
+    *  @param <E> type of elements of this set
     *  @return the empty set
     *  @see #emptySet(OrderedSet)
     *  @see java.util.Collections#emptySet()
@@ -304,6 +305,8 @@ public class OrderedSet<E extends Comparable<E>> extends java.util.TreeSet<E> {
     *  </pre>
     *  This method is appropriate if an explicit variable for the empty set is 
     *  not desired.
+    *  @param <E> type of elements of this set
+    *  @param set a set
     *  @return the empty set
     *  @see #emptySet()
     */
@@ -317,6 +320,7 @@ public class OrderedSet<E extends Comparable<E>> extends java.util.TreeSet<E> {
     *  Especially, the array contains only the empty set if <i>k</i>=0, and
     *  only the entire set <i>s</i> if <i>k</i> = <i>n</i> where <i>n</i> is the 
     *  size of <i>s</i>. If <i>k</i> &gt; <i>n</i>, the array list is empty.
+    *  @param <E> type of elements of this set
     *  @param set a set
     *  @param k an integer
     *  @return a list of all <i>k</i>-element subsets of the set <i>s</i>

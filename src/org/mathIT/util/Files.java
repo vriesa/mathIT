@@ -37,9 +37,9 @@ import javax.swing.JFileChooser;
 
 /**
  * This class offers static methods for saving and loading files, for instance 
- * of objects or of texts.
+ * of texts or CSV-formatted tables.
  * @author Andreas de Vries
- * @version 0.9
+ * @version 1.0
  */
 public class Files {
    /** The name of this class, needed to find the current directory via the user preferences.*/
@@ -204,9 +204,9 @@ public class Files {
    /**
     * Returns the text from the specified file as an object of 
     * {@link StringBuilder StringBuilder}.
-    * @param file
+    * @param file File to be loaded
     * @return the text read from the file
-    * @throws FileNotFoundException 
+    * @throws FileNotFoundException if the specified file is not found
     */
    public static StringBuilder loadText(File file) throws FileNotFoundException {
       final int BUFFER_SIZE = 1024; // in bytes

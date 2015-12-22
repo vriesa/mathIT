@@ -603,7 +603,7 @@ public class Register {
        </td><td> 
          <table summary="" border="0"> 
            <tr><td align="center">1</td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td>&#8730;<i>q</i></td></tr> 
          </table>
        </td><td> 
@@ -692,7 +692,7 @@ public class Register {
        </td><td> 
          <table summary="" border="0"> 
            <tr><td align="center">1</td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td>&#8730;<i>q</i></td></tr> 
          </table>
        </td><td> 
@@ -1103,7 +1103,7 @@ public class Register {
    
    /**
     * Applies the inverse of the Grover operator.
-    * @param needle
+    * @param needle the value to be searched for
     * @see #grover(int)
     */
    public void inverseGrover(int needle) {
@@ -1161,7 +1161,7 @@ public class Register {
     *            <td align="center">&pi;</td>
     *          </tr>
     *          <tr>
-    *            <td><hr/></td>
+    *            <td><hr></td>
     *          </tr>
     *          <tr>
     *            <td>4 arcsin(2<sup>-<i>n</i>/2</sup>)</td>
@@ -1175,7 +1175,7 @@ public class Register {
     *            <td align="center">2<sup><i>n</i>/2</sup> &pi;</td>
     *          </tr>
     *          <tr>
-    *            <td><hr/></td>
+    *            <td><hr></td>
     *          </tr>
     *          <tr>
     *            <td style="text-align:center">4</td>

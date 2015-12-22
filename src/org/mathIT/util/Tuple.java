@@ -94,14 +94,16 @@ public final class Tuple<T> implements Collection<T>, Serializable {
    }
 
    /**
-    * Returns the first element.
+    * Returns the first element of this tuple.
+    * @return the first element of this tuple.
     */
    public T getFirst() {
       return elements.get(0);
    }
 
    /**
-    * Returns the second element.
+    * Returns the second element of this tuple.
+    * @return the second element of this tuple.
     */
    public T getSecond() {
       return elements.get(1);

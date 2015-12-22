@@ -431,7 +431,7 @@ public class Circuit extends ArrayList<QuantumGate> implements java.io.Serializa
     * if the flag <code>yRegister</code> is set, it is added to the
     * <i>y</i>-register, otherwise to the <i>x</i>-register.
     * @param yRegister flag whether the gate is in the <i>y</i>-register
-    * @throws org.mathIT.quantum.NoWireException
+    * @throws org.mathIT.quantum.NoWireException if the register is not existing
     */
    public void addInvQFT( boolean yRegister ) throws NoWireException {
       if ( numberOfWires == 0 ) {
@@ -457,7 +457,7 @@ public class Circuit extends ArrayList<QuantumGate> implements java.io.Serializa
     * if the flag <code>yRegister</code> is set, it is added to the
     * <i>y</i>-register, otherwise to the <i>x</i>-register.
     * @param yRegister flag whether the gate is in the <i>y</i>-register
-    * @throws org.mathIT.quantum.NoWireException
+    * @throws org.mathIT.quantum.NoWireException if the register is not existing
     */
    public void addQFT( boolean yRegister ) throws NoWireException {
       if ( numberOfWires == 0 ) {
@@ -505,7 +505,7 @@ public class Circuit extends ArrayList<QuantumGate> implements java.io.Serializa
     * @param yRegisterChosen flag whether the gate is added to the <i>y</i>-register
     * @param axis the rotation axis
     * @param phiAsPartOfPi the integer part of <i>&#x03C0;</i> representing the rotation angle 
-    * @throws org.mathIT.quantum.NoWireException
+    * @throws org.mathIT.quantum.NoWireException if the register is not existing
     */
    public void addRotation( 
       int[] qubits, boolean yRegisterChosen, String axis, int phiAsPartOfPi
@@ -519,7 +519,7 @@ public class Circuit extends ArrayList<QuantumGate> implements java.io.Serializa
    /**
     * Adds the Grover gate searching for the specified needle to the circuit.
     * @param needle the searched for value of the Grover gate
-    * @throws org.mathIT.quantum.NoWireException
+    * @throws org.mathIT.quantum.NoWireException if the register is not existing
     */
    public void addGrover(int needle) throws NoWireException {
       if ( numberOfWires == 0 ) {

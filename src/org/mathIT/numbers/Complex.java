@@ -386,7 +386,7 @@ public class Complex {
        </td><td>
          <table summary="" border="0">
            <tr><td align="center">1</td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center"><i>z</i> e<sup><i>&#947;z</i></sup></td></tr> 
          </table>
        </td><td>
@@ -402,7 +402,7 @@ public class Complex {
        </td><td>
          <table summary="" border="0">
            <tr><td align="center"><i>z</i></td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center"><i>n</i></td></tr> 
          </table>
        </td><td align="center" style="font-size:xx-large;">)<sup><span style="font-size:small;">-1</span></sup>
@@ -487,7 +487,7 @@ public class Complex {
        </td><td>
          <table summary="" border="0">
            <tr><td align="center">1</td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center"><i>z</i> e<sup><i>&#947;z</i></sup></td></tr> 
          </table>
        </td><td>
@@ -503,7 +503,7 @@ public class Complex {
        </td><td>
          <table summary="" border="0">
            <tr><td align="center"><i>z</i></td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center"><i>n</i></td></tr> 
          </table>
        </td><td align="center" style="font-size:xx-large;">)<sup><span style="font-size:small;">-1</span></sup>
@@ -606,7 +606,7 @@ public class Complex {
        </td><td>
          <table summary="" border="0">
            <tr><td align="center"><i>z</i></td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center"><i>n</i></td></tr> 
          </table>
        </td><td>
@@ -617,7 +617,7 @@ public class Complex {
        </td><td>
          <table summary="" border="0">
            <tr><td align="center"><i>z</i></td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center"><i>n</i></td></tr> 
          </table>
        </td><td align="center" style="font-size:xx-large;">)
@@ -708,7 +708,7 @@ public class Complex {
        </td><td>
          <table summary="" border="0">
            <tr><td align="center"><i>z</i></td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center"><i>n</i></td></tr> 
          </table>
        </td><td>
@@ -719,7 +719,7 @@ public class Complex {
        </td><td>
          <table summary="" border="0">
            <tr><td align="center"><i>z</i></td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center"><i>n</i></td></tr> 
          </table>
        </td><td align="center" style="font-size:xx-large;">)

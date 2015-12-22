@@ -60,6 +60,7 @@ public class EnumSet<E extends Enum<E>> {
     *    EnumSet&lt;Type&gt; set = new EnumSet&lt;Type&gt;(Type.class);
     *  </pre>
     *  where <code>Type</code> is a given enum.
+    *  @param elementType type of the elements of this set
     */
    public EnumSet(Class<E> elementType) {
       enumSet = java.util.EnumSet.noneOf(elementType);
@@ -85,6 +86,7 @@ public class EnumSet<E extends Enum<E>> {
     *  behaves identically to {@link #copy()}. 
     *  Otherwise, the specified collection must contain at least one element 
     *  (in order to determine the underlying enum set's element type).
+    *  @param c the collection from which this enum set is constructed
     */
    public EnumSet(java.util.Collection<E> c) {
       enumSet = java.util.EnumSet.copyOf(c);
@@ -296,6 +298,7 @@ public class EnumSet<E extends Enum<E>> {
     *  Especially, the array contains only the empty set if <i>k</i>=0, and
     *  only the entire set <i>s</i> if <i>k</i> = <i>n</i> where <i>n</i> is the 
     *  size of <i>s</i>. If <i>k</i> &gt; <i>n</i>, the array list is empty.
+    *  @param <E> type of the elements of this subset
     *  @param set a set
     *  @param k an integer
     *  @return a list of all <i>k</i>-element subsets of the set <i>s</i>

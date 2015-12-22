@@ -89,7 +89,7 @@ public class PlotPane extends JPanel implements Printable {
    private int lastX, lastY;
    private boolean mouseDragged = false;
    
-   /** Creates an emty plot pane. 
+   /** Creates an empty plot pane. 
     *  @param width the width of this plot pane
     *  @param height the width of this plot pane
     */

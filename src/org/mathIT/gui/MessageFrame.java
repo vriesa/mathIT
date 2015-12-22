@@ -103,7 +103,6 @@ public class MessageFrame extends javax.swing.JFrame {
     
     /**
      * This method serves for test purposes...
-     * @param args the command line arguments
      */
     /*
     public static void main(String args[]) {

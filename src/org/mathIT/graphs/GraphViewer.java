@@ -10,13 +10,18 @@
  */
 package org.mathIT.graphs;
 
+import edu.uci.ics.jung.algorithms.layout.BalloonLayout;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
+import edu.uci.ics.jung.algorithms.layout.DAGLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
+import edu.uci.ics.jung.algorithms.layout.FRLayout2;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
-import edu.uci.ics.jung.algorithms.layout.SpringLayout2;
+//import edu.uci.ics.jung.algorithms.layout.SpringLayout2;
+import edu.uci.ics.jung.algorithms.layout.RadialTreeLayout;
+import edu.uci.ics.jung.algorithms.layout.TreeLayout;
 import edu.uci.ics.jung.visualization.DefaultVisualizationModel;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.VisualizationModel;
@@ -40,10 +45,10 @@ import java.awt.GridLayout;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Point2D;
+//import java.awt.geom.Point2D;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Collection;
+//import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,7 +68,7 @@ import org.mathIT.algebra.OrderedSet;
 /**
  * This class provides a visualization frame to show a specified graph.
  * It bases on the JUNG Java Universal Network/Graph Framework
- * (<a href="http://jung.sourceforge.net">http://jung.sourceforge.net</a>),
+ * (<a href="http://jung.sourceforge.net" target="_new">http://jung.sourceforge.net</a>),
  * version 2.0.1 from 2010.
  * <p>
  * In particular, this class is an adaption of the class
@@ -72,7 +77,7 @@ import org.mathIT.algebra.OrderedSet;
  * </p>
  *
  * @author Tom Nelson, Andreas de Vries
- * @version 1.0
+ * @version 1.1
  * @param <V> the type of the vertices
  * @param <E> the type of the edges
  */
@@ -92,15 +97,22 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
            + "<p>Use the 'Picking'/'Transforming' combo-box to switch"
            + "<p>between picking and transforming mode.</html>";
    /**
-    * the graph
+    * The graph of the mathIT class {@link Graph} that is invoked
+    * to be copied to the format compatible with this viewer.
     */
-   //protected org.mathIT.graphs.Graph<V> invokerGraph;
    protected Graph<V> invokerGraph;
+   /**
+    * The graph of the mathIT class {@link Graph} that is invoked
+    * to be copied to the format compatible with this viewer.
+    */
    protected edu.uci.ics.jung.graph.Graph<V,E> graph;
    /**
-    * the visual component and renderers for the graph
+    * The visual component and renderers for the graph
     */
    protected Canvas<V,E> canvas;
+   /**
+    * The layout in which the graph is drawn.
+    */
    protected Layout<V,E> layout;
    protected ScalingControl scaler;
 
@@ -668,18 +680,48 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       @Override
       @SuppressWarnings("unchecked")
       public void actionPerformed(ActionEvent arg0) {
-          Object[] constructorArgs = {graph};
+         Object[] constructorArgs = {graph};
 
-         Class<? extends Layout<V,E>> layoutC =
-                 (Class<? extends Layout<V,E>>) jcb.getSelectedItem();
+         Class<? extends Layout<V,E>> layoutC = (Class<? extends Layout<V,E>>) jcb.getSelectedItem();
 
          try {
-            Constructor<? extends Layout<V,E>> constructor = layoutC
-                    .getConstructor(new Class[]{edu.uci.ics.jung.graph.Graph.class});
-            Object o = constructor.newInstance(constructorArgs);
-            Layout<V,E> l = (Layout<V,E>) o;
-            l.setInitializer(canvas.getGraphLayout());
-            l.setSize(canvas.getSize());
+            Constructor<? extends Layout<V,E>> constructor;
+            Object o;
+            Layout<V,E> l = null;
+            
+            if (
+               layoutC.getName().equals("edu.uci.ics.jung.algorithms.layout.TreeLayout") ||
+               layoutC.getName().equals("edu.uci.ics.jung.algorithms.layout.RadialTreeLayout") ||
+               layoutC.getName().equals("edu.uci.ics.jung.algorithms.layout.BalloonLayout")
+            ) {
+               if (!(graph instanceof edu.uci.ics.jung.graph.DirectedSparseGraph)) {
+                  javax.swing.JOptionPane.showMessageDialog(null, "Graph must be a directed tree-like graph!");
+                  return;
+               }
+               constructor = layoutC.getConstructor(new Class[]{edu.uci.ics.jung.graph.Forest.class});
+               o = constructor.newInstance(new Object[] {
+                  new edu.uci.ics.jung.graph.DelegateForest((edu.uci.ics.jung.graph.DirectedGraph) graph)
+               });
+               l = (Layout<V,E>) o;
+               l.setInitializer(canvas.getGraphLayout());
+            } else if (layoutC.getName().equals("edu.uci.ics.jung.algorithms.layout.DAGLayout")){
+               if (!(graph instanceof edu.uci.ics.jung.graph.DirectedSparseGraph)) {
+                  javax.swing.JOptionPane.showMessageDialog(null, "Graph must be a tree or a forest!");
+                  return;
+               }
+               constructor = layoutC.getConstructor(new Class[]{edu.uci.ics.jung.graph.Graph.class});
+               o = constructor.newInstance(constructorArgs);
+               l = (Layout<V,E>) o;
+               l.setInitializer(canvas.getGraphLayout());
+               l.setSize(canvas.getSize());
+            } else {
+               constructor = layoutC.getConstructor(new Class[]{edu.uci.ics.jung.graph.Graph.class});
+               o = constructor.newInstance(constructorArgs);
+               l = (Layout<V,E>) o;
+               l.setInitializer(canvas.getGraphLayout());
+               l.setSize(canvas.getSize());
+            }
+            
             layout = l;
             LayoutTransition<V,E> lt =
                     new LayoutTransition<>(canvas, canvas.getGraphLayout(), l);
@@ -687,7 +729,6 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
             animator.start();
             canvas.getRenderContext().getMultiLayerTransformer().setToIdentity();
             canvas.repaint();
-
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -695,17 +736,28 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
    }
 
    /**
-    * @return an array of {@link Layout Layouts}
+    * This method yields a list of possible graph layouts, provided by the
+    * JUNG project 
+    * (<a href="http://jung.sourceforge.net" target="_new">http://jung.sourceforge.net</a>
+    * in version 2.0.1 from 2010).
+    * The graph layouts implement the interface
+    * {@link edu.uci.ics.jung.algorithms.layout.Layout}.
+    * @return an array of graph layouts
     */
    @SuppressWarnings("unchecked")
-   private Class<? extends Layout>[] getCombos() {
+   protected Class<? extends Layout>[] getCombos() {
       List<Class<? extends Layout>> layouts = new ArrayList<>();
       layouts.add(KKLayout.class);
       layouts.add(FRLayout.class);
+      layouts.add(FRLayout2.class);
       layouts.add(CircleLayout.class);
       layouts.add(SpringLayout.class);
-      layouts.add(SpringLayout2.class);
       layouts.add(ISOMLayout.class);
+      layouts.add(BalloonLayout.class);
+      layouts.add(DAGLayout.class);
+      layouts.add(TreeLayout.class);
+      layouts.add(RadialTreeLayout.class);
+
       return layouts.toArray(new Class[0]);
    }
 

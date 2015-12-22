@@ -73,7 +73,7 @@ import java.util.TreeMap;
  *  and the length of the array is &gt;= the degree of the polynomial.
  *  If the degree of the involved polynomials is not too large, these
  *  method are fast.
- *  <br/>
+ *  <br>
  *  This class requires JDK 5 or higher.
  *  @see PolynomialZ
  *  @author Andreas de Vries
@@ -94,9 +94,10 @@ public class Polynomial extends TreeMap<Integer,Double> {
    }
    
    /** Creates an empty polynomial with the given {@link ExponentComparator}.
+    *  @param ec the exponent comparator
     */
-   public Polynomial( ExponentComparator ec ){
-      super( ec );
+   public Polynomial(ExponentComparator ec){
+      super(ec);
       this.ec = ec;
    }
    

@@ -1203,7 +1203,7 @@ public class Numbers {
        </td><td>
          <table summary="" border="0">
            <tr><td align="center">1</td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center"><i>n</i>+1</td></tr> 
          </table>
        </td><td>

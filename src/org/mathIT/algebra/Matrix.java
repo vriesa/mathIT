@@ -32,7 +32,7 @@ public class Matrix {
     *  is considered as to be zero. Equality of the number <code>x</code> to zero 
     *  should therefore be checked by
     *  <pre>
-    *     if (Math.abs(x) < Matrix.EPSILON) 
+    *     if (Math.abs(x) &lt; Matrix.EPSILON) 
     *  </pre>
     *  instead of <code>if (x==0)</code> because of possible rounding errors.
     *  For instance, this is important to decide whether a matrix is invertible.

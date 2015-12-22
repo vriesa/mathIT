@@ -70,7 +70,7 @@ public class Riemann {
        <td> 
          <table summary="" border="0"> 
            <tr><td align="center">&#915;((1 - <i>s</i>)/2)</td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center">&#915;(<i>s</i>/2)</td></tr> 
          </table>
        </td>
@@ -153,7 +153,7 @@ public class Riemann {
        </td><td> 
          <table summary="" border="0"> 
            <tr><td align="center">1</td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td>1 - 2<sup>1 - <i>s</i></sup></td></tr> 
          </table>
        </td><td> 
@@ -165,7 +165,7 @@ public class Riemann {
        </td><td>
          <table summary="" border="0"> 
            <tr><td align="center">(-1)<sup><i>n</i> - 1</sup></td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center"><i>n<sup>s</sup></i><sub>&nbsp;</sub></td></tr> 
          </table>
        </td><td colspan="2">
@@ -184,7 +184,7 @@ public class Riemann {
        </td><td> 
          <table summary="" border="0"> 
            <tr><td align="center">1</td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td>1 - 2<sup>1 - <i>s</i></sup></td></tr> 
          </table>
        </td><td> 
@@ -196,7 +196,7 @@ public class Riemann {
        </td><td> 
          <table summary="" border="0"> 
            <tr><td align="center">1</td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td>2<sup><i>n</i> + 1</sup></td></tr> 
          </table>
        </td><td> 
@@ -428,7 +428,7 @@ public class Riemann {
        </td><td>
          <table summary="" border="0"> 
            <tr><td align="center">cos[&#952;(<i>t</i>) - <i>t</i> ln <i>n</i>]</td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center">&#8730;<i>n</i></td></tr> 
          </table>
        </td><td colspan="2">
@@ -451,7 +451,7 @@ public class Riemann {
        </td><td>
          <table summary="" border="0"> 
            <tr><td align="center">|<i>t</i>|</td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center">2 &#960;</td></tr> 
          </table>
        </td><td>
@@ -511,7 +511,7 @@ public class Riemann {
        </td><td> 
          <table summary="" border="0"> 
            <tr><td align="center"><i>t</i></td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center">2</td></tr> 
          </table>
        </td><td>
@@ -519,7 +519,7 @@ public class Riemann {
        </td><td> 
          <table summary="" border="0"> 
            <tr><td align="center"><i>t</i></td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center">2 &#960;</td></tr> 
          </table>
        </td><td align="center"> 
@@ -527,7 +527,7 @@ public class Riemann {
        </td><td> 
          <table summary="" border="0"> 
            <tr><td align="center"><i>t</i></td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center">2</td></tr> 
          </table>
        </td><td align="center"> 
@@ -535,7 +535,7 @@ public class Riemann {
        </td><td> 
          <table summary="" border="0"> 
            <tr><td align="center">&#960;</td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center">8</td></tr> 
          </table>
        </td><td align="center"> 
@@ -543,7 +543,7 @@ public class Riemann {
        </td><td>
          <table summary="" border="0"> 
            <tr><td align="center">1</td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center">48<i>t</i></td></tr> 
          </table>
        </td><td>
@@ -551,7 +551,7 @@ public class Riemann {
        </td><td>
          <table summary="" border="0"> 
            <tr><td align="center">7</td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center">5760 <i>t</i><sup>3</sup></td></tr> 
          </table>
        </td><td>
@@ -560,7 +560,7 @@ public class Riemann {
        </td><td>
          <table summary="" border="0"> 
            <tr><td align="center">31</td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center">80640 <i>t</i><sup>5</sup></td></tr> 
          </table>
        </td><td>
@@ -568,7 +568,7 @@ public class Riemann {
        </td><td>
          <table summary="" border="0"> 
            <tr><td align="center">127</td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center">430080 <i>t</i><sup>7</sup></td></tr> 
          </table>
        </td><td>
@@ -578,7 +578,7 @@ public class Riemann {
        </td><td>
          <table summary="" border="0"> 
            <tr><td align="center">1</td></tr> 
-           <tr><td height="1"><hr/></td></tr> 
+           <tr><td height="1"><hr></td></tr> 
            <tr><td align="center"><i>t</i><sup>9</sup></td></tr> 
          </table>
        </td>
