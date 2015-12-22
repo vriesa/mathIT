@@ -17,7 +17,6 @@ import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout2;
-import edu.uci.ics.jung.graph.util.Pair;
 import edu.uci.ics.jung.visualization.DefaultVisualizationModel;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.VisualizationModel;
@@ -30,7 +29,6 @@ import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.layout.LayoutTransition;
 import edu.uci.ics.jung.visualization.renderers.BasicVertexLabelRenderer;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
-import edu.uci.ics.jung.visualization.subLayout.GraphCollapser;
 import edu.uci.ics.jung.visualization.util.Animator;
 import edu.uci.ics.jung.visualization.util.PredicatedParallelEdgeIndexFunction;
 import java.awt.BorderLayout;
@@ -84,11 +82,6 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
            "<html>Use the mouse to select multiple vertices"
            + "<p>either by dragging a region, or by shift-clicking"
            + "<p>on multiple vertices."
-           + "<p>After you select vertices, use the Collapse button"
-           + "<p>to combine them into a single vertex."
-           + "<p>Select a 'collapsed' vertex and use the Expand button"
-           + "<p>to restore the collapsed vertices."
-           + "<p>The Restore button will restore the original graph."
            + "<p>If you select 2 (and only 2) vertices, then press"
            + "<p>the Compress Edges button, parallel edges between"
            + "<p>those two vertices will no longer be expanded."
@@ -104,13 +97,11 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
    //protected org.mathIT.graphs.Graph<V> invokerGraph;
    protected Graph<V> invokerGraph;
    protected edu.uci.ics.jung.graph.Graph<V,E> graph;
-   protected edu.uci.ics.jung.graph.Graph<V,E> collapsedGraph;
    /**
     * the visual component and renderers for the graph
     */
    protected Canvas<V,E> canvas;
-   protected Layout layout;
-   protected GraphCollapser collapser;
+   protected Layout<V,E> layout;
    protected ScalingControl scaler;
 
    // --- GUI components: ---
@@ -125,7 +116,6 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
    private GraphZoomScrollPane gzsp;
    private JPanel modePanel;
    private JComboBox modeBox;
-   private JPanel collapseControls;
    private JPanel clusterControls;
    private JPanel buttonPanel;
    private JButton print;
@@ -148,7 +138,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
          this.graph = new edu.uci.ics.jung.graph.DirectedSparseGraph<>();
       }
       for (int i = 0; i < graph.vertices.length; i++) {
-         this.graph.addVertex(graph.vertices[i]);
+          this.graph.addVertex(graph.vertices[i]);
       }
 
       // Collect edges of this graph and add them to the JUNG graph:
@@ -175,21 +165,18 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
     */
    @SuppressWarnings("unchecked")
    private void initComponents() {
-      collapsedGraph = this.graph;
-      collapser = new GraphCollapser(this.graph);
-
-      layout = new KKLayout<V,E>(this.graph);
+      layout = new KKLayout<>(this.graph);
       //layout = new FRLayout<>(this.graph);
       //layout = new CircleLayout<>(this.graph);
       
       // Dimension preferredSize = new Dimension(840, 585); // old!
       Dimension preferredSize = new Dimension(900, 585);
       final VisualizationModel<V,E> visualizationModel =
-              new DefaultVisualizationModel<V,E>(layout, preferredSize);
-      canvas = new Canvas<V,E>(this, visualizationModel, preferredSize);
+              new DefaultVisualizationModel<>(layout, preferredSize);
+      canvas = new Canvas<>(this, visualizationModel, preferredSize);
 
       final PredicatedParallelEdgeIndexFunction<V,E> eif = PredicatedParallelEdgeIndexFunction.getInstance();
-      final Set<E> exclusions = new HashSet<E>();
+      final Set<E> exclusions = new HashSet<>();
       eif.setPredicate(new Predicate<E>() {
          @Override
          public boolean evaluate(E e) {
@@ -225,7 +212,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       canvas.getRenderContext().setVertexShapeTransformer(new GraphViewer.ClusterVertexShapeFunction());
       // ---- Vertex color: ----
       canvas.getRenderer().setVertexRenderer(
-         new edu.uci.ics.jung.visualization.renderers.GradientVertexRenderer<V,E>(
+         new edu.uci.ics.jung.visualization.renderers.GradientVertexRenderer<>(
             Color.yellow, Color.yellow,  // colors in normal state
         	   Color.white, Color.red,   // colors in picked state
         		canvas.getPickedVertexState(),
@@ -236,7 +223,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       pickActivated();
 
       // --- Vertex labels: -----
-      canvas.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<V>());
+      canvas.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<>());
       canvas.getRenderer().getVertexLabelRenderer().setPositioner(new BasicVertexLabelRenderer.InsidePositioner());
       canvas.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.CNTR);
 
@@ -247,8 +234,8 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
           */
          @Override
          public String transform(V v) {
-            if (v instanceof Graph) {  // collapsed vertices
-               return ((Graph) v).getVertices().toString();
+            if (v instanceof Graph) {
+               return ((Graph<V>) v).getVertices().toString();
             }
             //return super.transform((V) v);
             return v.toString();
@@ -262,10 +249,6 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
           */
          @Override
          public String transform(E e) {
-            //if (e instanceof Graph) {  // collapsed vertices
-            //   return ((Graph) v).getVertices().toString();
-            //}
-            //return super.transform((V) v);
             return e.toString();
          }
       });
@@ -277,7 +260,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       /**
        * the regular graph mouse for the normal view
        */
-      final DefaultModalGraphMouse<V,E> graphMouse = new DefaultModalGraphMouse<V,E>();
+      final DefaultModalGraphMouse<V,E> graphMouse = new DefaultModalGraphMouse<>();
 
       canvas.setGraphMouse(graphMouse);
 
@@ -297,19 +280,13 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
 
       if (invokerGraph instanceof NetworkOfActivatables) {
          JButton next = new JButton("Next Activation Step");
-         next.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               nextActivationStep();
-            }
+         next.addActionListener((ActionEvent e) -> {
+            nextActivationStep();
          });
          modePanel.add(next);
          JButton runAll = new JButton("Run Entire Activation");
-         runAll.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               runActivation();
-            }
+         runAll.addActionListener((ActionEvent e) -> {
+            runActivation();
          });
          modePanel.add(runAll);
       }
@@ -317,187 +294,71 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       scaler = new CrossoverScalingControl();
 
       JButton plus = new JButton("+");
-      plus.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            scaler.scale(canvas, 1.1f, canvas.getCenter());
-         }
+      plus.addActionListener((ActionEvent e) -> {
+         scaler.scale(canvas, 1.1f, canvas.getCenter());
       });
       JButton minus = new JButton("-");
-      minus.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            scaler.scale(canvas, 1 / 1.1f, canvas.getCenter());
-         }
-      });
-
-      JButton collapse = new JButton("Collapse");
-      collapse.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            Collection picked = new HashSet(canvas.getPickedVertexState().getPicked());
-            if (picked.size() > 1) {
-               edu.uci.ics.jung.graph.Graph inGraph = layout.getGraph();
-               edu.uci.ics.jung.graph.Graph clusterGraph = collapser.getClusterGraph(inGraph, picked);
-
-               Object vertex = null;
-               for (Object v: clusterGraph.getVertices()) {
-                  vertex = v;
-                  break;
-               }
-
-               edu.uci.ics.jung.graph.Graph<V,E> g = collapser.collapse(layout.getGraph(), clusterGraph);
-               collapsedGraph = g;
-               double sumx = 0;
-               double sumy = 0;
-               for (Object v : picked) {
-                  Point2D p = (Point2D) layout.transform(v);
-                  sumx += p.getX();
-                  sumy += p.getY();
-               }
-               Point2D cp = new Point2D.Double(sumx / picked.size(), sumy / picked.size());
-               canvas.getRenderContext().getParallelEdgeIndexFunction().reset();
-               layout.setGraph(g);
-               layout.setLocation(vertex, cp);
-               canvas.getPickedVertexState().clear();
-               canvas.repaint();
-            }
-         }
-      });
-
-      JButton compressEdges = new JButton("Compress Edges");
-      compressEdges.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            Collection<V> picked = canvas.getPickedVertexState().getPicked();
-            if (picked.size() == 2) {
-               Pair<V> pair = new Pair<V>(picked);
-               edu.uci.ics.jung.graph.Graph<V,E> graph = layout.getGraph();
-               Collection<E> edges = new HashSet<E>(graph.getIncidentEdges(pair.getFirst()));
-               edges.retainAll(graph.getIncidentEdges(pair.getSecond()));
-               exclusions.addAll(edges);
-               canvas.repaint();
-            }
-
-         }
-      });
-
-      JButton expandEdges = new JButton("Expand Edges");
-      expandEdges.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            Collection<V> picked = canvas.getPickedVertexState().getPicked();
-            if (picked.size() == 2) {
-               Pair<V> pair = new Pair<V>(picked);
-               edu.uci.ics.jung.graph.Graph<V,E> graph = layout.getGraph();
-               Collection<E> edges = new HashSet<E>(graph.getIncidentEdges(pair.getFirst()));
-               edges.retainAll(graph.getIncidentEdges(pair.getSecond()));
-               exclusions.removeAll(edges);
-               canvas.repaint();
-            }
-         }
-      });
-
-      JButton expand = new JButton("Expand");
-      expand.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            Collection picked = new HashSet(canvas.getPickedVertexState().getPicked());
-            for (Object v : picked) {
-               if (v instanceof Graph) {
-
-                  edu.uci.ics.jung.graph.Graph<V,E> g = collapser.expand(
-                     layout.getGraph(), (edu.uci.ics.jung.graph.Graph) v
-                  );
-                  canvas.getRenderContext().getParallelEdgeIndexFunction().reset();
-                  layout.setGraph(g);
-                  collapsedGraph = g;
-               }
-               canvas.getPickedVertexState().clear();
-               canvas.repaint();
-            }
-         }
-      });
-
-      JButton reset = new JButton("Reset");
-      reset.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            layout.setGraph(graph);
-            exclusions.clear();
-            canvas.repaint();
-         }
+      minus.addActionListener((ActionEvent e) -> {
+         scaler.scale(canvas, 1 / 1.1f, canvas.getCenter());
       });
       
       buttonPanel = new JPanel();
       buttonPanel.setLayout(new java.awt.GridLayout(4, 1));
       print = new JButton("Print");
-      print.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            canvas.startPrinterJob();
-         }
+      print.addActionListener((ActionEvent e) -> {
+         canvas.startPrinterJob();
       });
       buttonPanel.add(print);
       
       help = new JButton("Help");
-      help.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog((JComponent) e.getSource(), instructions, "Help", JOptionPane.PLAIN_MESSAGE);
-         }
+      help.addActionListener((ActionEvent e) -> {
+         JOptionPane.showMessageDialog((JComponent) e.getSource(), instructions, "Help", JOptionPane.PLAIN_MESSAGE);
       });
       buttonPanel.add(help);
       
       load = new JButton("Load CSV File");
-      load.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            //content.setCursor(new Cursor(Cursor.WAIT_CURSOR)); // funktioniert nicht...
-            if (invokerGraph instanceof SocialNetwork) {
-               SocialNetwork g = SocialNetwork.createNetworkFromCSVFile();
-               if (g != null) {
-                  invokerGraph.shutDisplay();
-                  g.visualize();
-               }
-            } else if (invokerGraph instanceof WeightedGraph) {
-               WeightedGraph g = WeightedGraph.createWeightedGraphFromCSVFile();
-               if (g != null) {
-                  invokerGraph.shutDisplay();
-                  g.visualize();
-               }
-            } else {
-               org.mathIT.graphs.Graph g = org.mathIT.graphs.Graph.createGraphFromCSVFile();
-               if (g != null) {
-                  invokerGraph.shutDisplay();
-                  g.visualize();
-               }
+      load.addActionListener((ActionEvent e) -> {
+         //content.setCursor(new Cursor(Cursor.WAIT_CURSOR)); // funktioniert nicht...
+         if (invokerGraph instanceof SocialNetwork) {
+            SocialNetwork g = SocialNetwork.createNetworkFromCSVFile();
+            if (g != null) {
+               invokerGraph.shutDisplay();
+               g.visualize();
             }
-            // content.setCursor(new Cursor(Cursor.DEFAULT_CURSOR)); // funktioniert nicht...
+         } else if (invokerGraph instanceof WeightedGraph) {
+            WeightedGraph g = WeightedGraph.createWeightedGraphFromCSVFile();
+            if (g != null) {
+               invokerGraph.shutDisplay();
+               g.visualize();
+            }
+         } else {
+            org.mathIT.graphs.Graph g = org.mathIT.graphs.Graph.createGraphFromCSVFile();
+            if (g != null) {
+               invokerGraph.shutDisplay();
+               g.visualize();
+            }
          }
+         // content.setCursor(new Cursor(Cursor.DEFAULT_CURSOR)); // funktioniert nicht...
       });
       buttonPanel.add(load);
      
       save = new JButton("Save as CSV");
-      save.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            if (invokerGraph instanceof SocialNetwork) {
-               for (V v : graph.getVertices()) {
-                  Activatable a = (Activatable) v;
-                  if (canvas.getPickedVertexState().isPicked(v)) {
-                     ((NetworkOfActivatables) invokerGraph).setActive(true);
-                     a.setActive(true);
+      save.addActionListener((ActionEvent e) -> {
+         if (invokerGraph instanceof SocialNetwork) {
+            for (V v : graph.getVertices()) {
+               Activatable a = (Activatable) v;
+               if (canvas.getPickedVertexState().isPicked(v)) {
+                  ((NetworkOfActivatables) invokerGraph).setActive(true);
+                  a.setActive(true);
                   //} else {
                   //   a.setActive(false);
-                  }
                }
-               ((SocialNetwork) invokerGraph).saveAsCSV();
-            } else if (invokerGraph instanceof WeightedGraph) {
-               ((WeightedGraph) invokerGraph).saveAsCSV();
-            } else {
-               invokerGraph.saveAsCSV();
             }
+            ((SocialNetwork) invokerGraph).saveAsCSV();
+         } else if (invokerGraph instanceof WeightedGraph) {
+            ((WeightedGraph) invokerGraph).saveAsCSV();
+         } else {
+            invokerGraph.saveAsCSV();
          }
       });
       buttonPanel.add(save);
@@ -530,55 +391,32 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       edgePanel = new JPanel();
       edgeLabels = new javax.swing.JCheckBox("Edge Labels");
       edgePanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEADING));
-      edgeLabels.addActionListener(new java.awt.event.ActionListener() {
-         @Override
-         public void actionPerformed(java.awt.event.ActionEvent evt) {
-            writeEdgeLabels();
-         }
+      edgeLabels.addActionListener((java.awt.event.ActionEvent evt) -> {
+         writeEdgeLabels();
       });
       edgePanel.add(edgeLabels);
       edgePanel.add(edgeLabels);
       layoutChoice.add(edgePanel);
 
-      collapseControls = new JPanel(new GridLayout(3, 2));
-      collapseControls.setBorder(BorderFactory.createTitledBorder("Picked Vertices"));
-      collapseControls.add(collapse);
-      collapseControls.add(expand);
-      collapseControls.add(compressEdges);
-      collapseControls.add(expandEdges);
-      collapseControls.add(reset);
-
       clusterControls = new JPanel(new GridLayout(3, 1));
       if (invokerGraph instanceof org.mathIT.graphs.Graph) {
          clusterControls.setBorder(BorderFactory.createTitledBorder("Clusters"));
          JButton detect = new JButton("Detect (Greedy)");
-         detect.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               detectClusters();
-            }
+         detect.addActionListener((ActionEvent e) -> {
+            detectClusters();
          });
          clusterControls.add(detect);
          
          JButton detectExactly = new JButton("Detect (Brute force)");
-         detectExactly.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               detectClustersExactly();
-            }
+         detectExactly.addActionListener((ActionEvent e) -> {
+            detectClustersExactly();
          });
          clusterControls.add(detectExactly);
          
          JButton computeHashimoto = new JButton("Hashimoto matrix");
-         computeHashimoto.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               org.mathIT.algebra.Matrix B = new org.mathIT.algebra.Matrix(invokerGraph.computeHashimoto());
-               int size = 27 * B.getRows();
-               if (size < 200) size = 200;
-               if (size > 600) size = 600;
-               new org.mathIT.util.OutputFrame("<html>" + B.toHTML(), "Hashimoto matrix", size, size);
-            }
+         computeHashimoto.addActionListener((ActionEvent e) -> {
+            org.mathIT.algebra.Matrix B = new org.mathIT.algebra.Matrix(invokerGraph.computeHashimoto());
+            new org.mathIT.gui.MatrixAlgebra("Hashimoto matrix", B);
          });
          clusterControls.add(computeHashimoto);
       }
@@ -594,8 +432,6 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       controls.add(zoomControls);
       controls.add(layoutChoice);
       controls.add(modePanel);
-      //controls.add(comboGroup);
-      controls.add(collapseControls);
       if (invokerGraph instanceof org.mathIT.graphs.Graph) {
          controls.add(clusterControls);
       }
@@ -638,7 +474,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
    @SuppressWarnings("unchecked")
    private void nextActivationStep() {
       if (!(invokerGraph.getVertex(0) instanceof Activatable)) return;
-      HashSet<Activatable> activeGeneration = new HashSet<Activatable>();
+      HashSet<Activatable> activeGeneration = new HashSet<>();
       for (V v : graph.getVertices()) {
          Activatable a = (Activatable) v;
          if (canvas.getPickedVertexState().isPicked(v)) {
@@ -666,16 +502,13 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
     * The current active generation for this step is determined from the picked 
     * vertices in this visualized graph.
     */
-   @SuppressWarnings("unchecked")
    private void runActivation() {
       if (!(invokerGraph.getVertex(0) instanceof Activatable)) return;
-      HashSet<Activatable> activeGeneration = new HashSet<Activatable>();
       for (V v : graph.getVertices()) {
          Activatable a = (Activatable) v;
          if (canvas.getPickedVertexState().isPicked(v)) {
             //((NetworkOfActivatables) invokerGraph).setActive(true);
             a.setActive(true);
-            activeGeneration.add(a);
          } else {
             a.setActive(false);
          }
@@ -686,7 +519,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       //System.out.println("+++ activated after: " + actives);
       for (V v : graph.getVertices()) {
          if (((Activatable) v).isActive()) {
-               canvas.getPickedVertexState().pick(v, true);
+            canvas.getPickedVertexState().pick(v, true);
          }
       }
    }
@@ -741,24 +574,16 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
    private void writeEdgeLabels() {
       Transformer<E, String> stringer;
       if (edgeLabels.isSelected()) {
-         stringer = new Transformer<E, String>() {
-            @Override
-            public String transform(E e) {
-               if (e instanceof Edge) {
-                  return e.toString();
-               } else {
-                  return graph.getEndpoints(e).toString();
-               }
-               //return e.toString();
+         stringer = (E e) -> {
+            if (e instanceof Edge) {
+               return e.toString();
+            } else {
+               return graph.getEndpoints(e).toString();
             }
+            //return e.toString();
          };
       } else {
-         stringer = new Transformer<E, String>() {
-            @Override
-            public String transform(E e) {
-               return "";
-            }
-         };
+         stringer = (E e) -> "";
       }
       canvas.getRenderContext().setEdgeLabelTransformer(stringer);
       canvas.repaint();
@@ -843,7 +668,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       @Override
       @SuppressWarnings("unchecked")
       public void actionPerformed(ActionEvent arg0) {
-         Object[] constructorArgs = {collapsedGraph};
+          Object[] constructorArgs = {graph};
 
          Class<? extends Layout<V,E>> layoutC =
                  (Class<? extends Layout<V,E>>) jcb.getSelectedItem();
@@ -857,7 +682,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
             l.setSize(canvas.getSize());
             layout = l;
             LayoutTransition<V,E> lt =
-                    new LayoutTransition<V,E>(canvas, canvas.getGraphLayout(), l);
+                    new LayoutTransition<>(canvas, canvas.getGraphLayout(), l);
             Animator animator = new Animator(lt);
             animator.start();
             canvas.getRenderContext().getMultiLayerTransformer().setToIdentity();
@@ -874,7 +699,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
     */
    @SuppressWarnings("unchecked")
    private Class<? extends Layout>[] getCombos() {
-      List<Class<? extends Layout>> layouts = new ArrayList<Class<? extends Layout>>();
+      List<Class<? extends Layout>> layouts = new ArrayList<>();
       layouts.add(KKLayout.class);
       layouts.add(FRLayout.class);
       layouts.add(CircleLayout.class);
@@ -892,7 +717,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
    // inner class:
    private final class VertexFillColor extends edu.uci.ics.jung.visualization.renderers.GradientVertexRenderer<V, E> {
 
-      private ArrayList<OrderedSet<Integer>> vertexSetList;
+      private final ArrayList<OrderedSet<Integer>> vertexSetList;
 
       VertexFillColor(ArrayList<OrderedSet<Integer>> vertexSetList) {
          super(palette[0], palette[1], true);
@@ -919,12 +744,11 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
                  (float) r.getMinX(), y2,
                  palette[i],
                  false
-                 );
-         if (fillPaint != null) {
-            g.setPaint(fillPaint);
-            g.fill(shape);
-            g.setPaint(oldPaint);
-         }
+         );
+         g.setPaint(fillPaint);
+         g.fill(shape);
+         g.setPaint(oldPaint);
+         
          java.awt.Paint drawPaint = rc.getVertexDrawPaintTransformer().transform(v);
          if (drawPaint != null) {
             g.setPaint(drawPaint);
@@ -939,17 +763,4 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
          g.setStroke(oldStroke);
       }
    }
-   
-   /**
-    * Starts a demo that shows how collections of vertices can be collapsed into a single
-    * vertex. In this demo, the vertices that are collapsed are those mouse-picked
-    * by the user. Any criteria could be used to form the vertex collections to be
-    * collapsed, perhaps some common characteristic of those vertex objects.
-    */
-   /*
-   public static void main(String[] args) {
-      //new GraphViewer<>(TestGraphs.getDemoGraph());
-      new GraphViewer(TestGraphs.getOneComponentGraph());  // <- type of V is unapprorpiate!
-   }
-   */
 }

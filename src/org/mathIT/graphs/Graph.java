@@ -848,7 +848,7 @@ public class Graph<V extends Vertible<V>> {
     *  @param goal the searched vertex
     *  @return index of the searched vertex, or -1 if it does not exist
     */
-   private int breadthFirstSearch(V start, V goal) {
+   protected int breadthFirstSearch(V start, V goal) {
       Queue<V> queue = new LinkedList<>();
       V node;
       int index = -1;
@@ -1173,11 +1173,24 @@ public class Graph<V extends Vertible<V>> {
          }
       }
       // /* --- Print result: -----
+      int width = 200;
+      int pts = 7; // font size
+      String out = "<html>";
       if (vertices.length <= 100) {
-         System.out.println("C_"+kMax+" = "+clustering[kMax].toString(vertices));
+          out += "C<sub>"+kMax+"</sub> = "+clustering[kMax].toString(vertices) + "<br>";
+          System.out.println("C_"+kMax+" = "+clustering[kMax].toString(vertices));
+          if (pts * clustering[kMax].toString(vertices).length() > width) {
+             width = pts * clustering[kMax].toString(vertices).length();
+          }
       }
       long[] Q = Numbers.bestRationalApproximation(modularity[kMax], 20);
+      out += "Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1];
       System.out.println("Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1]);
+      if (pts * ("Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1]).length() > width) {
+          width = pts * ("Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1]).length();
+      }
+      if (width > 600) width = 600;
+      new org.mathIT.gui.MessageFrame(out, "Result", width, 60);
       // ------ Print result ------ */
       return clustering[kMax];
    }   

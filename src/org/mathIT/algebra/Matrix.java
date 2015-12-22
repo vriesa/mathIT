@@ -25,14 +25,28 @@ import org.mathIT.numbers.Numbers;
  * This class enables to construct a matrix which can be manipulated by various
  * matrix operations.
  * @author  Andreas de Vries
- * @version 1.2
+ * @version 1.3
  */
 public class Matrix {
+   /** Constant which defines the corridor around 0.0 where a number of type double
+    *  is considered as to be zero. Equality of the number <code>x</code> to zero 
+    *  should therefore be checked by
+    *  <pre>
+    *     if (Math.abs(x) < Matrix.EPSILON) 
+    *  </pre>
+    *  instead of <code>if (x==0)</code> because of possible rounding errors.
+    *  For instance, this is important to decide whether a matrix is invertible.
+    */
+   public static final double EPSILON = 1e-10;
+   /** Internally fixed number format.*/
    private static final java.text.DecimalFormat numberFormat = 
            org.mathIT.util.Formats.O_DOT_A3;
-   private int rows;
-   private int columns;
-   private double matrix[][];
+   /** Number of rows of this matrix.*/
+   private final int rows;
+   /** Number of columns of this matrix.*/
+   private final int columns;
+   /** Entries of this matrix.*/
+   private final double matrix[][];
    
    /** Constructs a zero matrix with the given rows and columns.
     *  @param rows the number of rows of this matrix
@@ -165,11 +179,6 @@ public class Matrix {
    public Matrix copy() {
       Matrix A = new Matrix(rows, columns);
       for (int i = 0; i < rows; i++) {
-         /*
-         for (j = 0; j < columns; j++) {
-            A.matrix[i][j] = this.matrix[i][j];
-         }
-         */
          System.arraycopy(matrix[i], 0, A.matrix[i], 0, columns);
       }
       return A;
@@ -240,7 +249,7 @@ public class Matrix {
    /** Computes the determinant of this matrix. 
     *  An exception is thrown if this matrix is not square, since then
     *  the determinant is not defined mathematically.
-    *  @return the determinant of this matrix+
+    *  @return the determinant of this matrix
     *  @throws IllegalArgumentException if this matrix is not square
     */
    public double det() {
@@ -252,9 +261,51 @@ public class Matrix {
          System.arraycopy(matrix[i], 0, a[i], 0, columns);
       }
       int indx [] = new int[rows];
-      double d_ = luDecompose(a, indx);
-      for (int j = 0; j < rows; j++)  d_ *= a[j][j];
+      double d_ = 0;
+      try {
+         d_ = luDecompose(a, indx);
+         for (int j = 0; j < rows; j++)  d_ *= a[j][j];
+      } catch (IllegalArgumentException iae) {}
       return d_;
+   }
+
+   /** Computes the <i>n</i>-th power of this matrix. 
+    *  An exception is thrown if this matrix is not square, since then
+    *  the multiplication of a matrix with itself is not defined mathematically.
+    *  @param n the exponent
+    *  @return the <i>n</i>-th power of this matrix
+    *  @throws IllegalArgumentException if this matrix is not square, or 
+    *  if <i>n</i> is negative and not invertible.
+    */
+   public Matrix pow(int n) {
+      if (rows != columns) {
+         throw new IllegalArgumentException("Not a square matrix: ("+rows+"x"+columns+")");
+      }
+      
+      if (n < 0 && Math.abs(det()) < EPSILON) {
+         throw new IllegalArgumentException("Negative power of a non-invertible matrix: "+n);
+      }
+
+      Matrix base;
+      Matrix power = new Matrix(rows,columns);
+      
+      if (n<0) {
+         base = this.inverse();
+         n = -n;
+      } else {
+         base = this;
+      }      
+      
+      // Start with the identity matrix:
+      for (int i = 0; i < rows; i++) {
+         power.matrix[i][i] = 1;
+      }
+      
+      for (int i = 1; i <= n; i++) {
+         power = power.times(base);
+      }
+      
+      return power;
    }
 
    /**
@@ -353,10 +404,9 @@ public class Matrix {
    }
     
    /** Returns the inverse of this matrix.
-    *  An exception is thrown if this matrix is not square, since then
-    *  the inverse is not defined mathematically.
+    *  An exception is thrown if this matrix is not invertible.
     *  @return the inverse of this matrix
-    *  @throws IllegalArgumentException if the matrix is not square
+    *  @throws IllegalArgumentException if the matrix is not invertible
     */
    public Matrix inverse() {
       if (rows != columns) {
@@ -373,9 +423,9 @@ public class Matrix {
       }
       */
       double[][] a = new double[rows][columns];
-      for (int i = 0; i < rows; i++) // copy by value
-         //for (int j = 0; j < columns; j++)  a[i][j] = matrix[i][j];
+      for (int i = 0; i < rows; i++) { // copy by value
          System.arraycopy(matrix[i], 0, a[i], 0, columns);
+      }
       int indx [] = new int[rows];
       double [] col = new double[rows];
       
@@ -964,21 +1014,22 @@ public class Matrix {
       }
       int i, j;
       double value;
-      String output = "<table border=\"0\">";
+      StringBuilder output = new StringBuilder();
+      output.append("<table border=\"0\">");
       for (i = 0; i < matrix.length; i++) {
-         output += "<tr>";
+         output.append("<tr>");
          for (j = 0; j < matrix[0].length; j++) {
             value = (Math.abs(matrix[i][j]) < 1e-12) ? 0 : matrix[i][j];
-            output += "<td align=\""+align+"\">";
+            output.append("<td align=\"").append(align).append("\">");
             if (showZeros || value != 0) {
-               output += numberFormat.format(value);
+               output.append(numberFormat.format(value));
             } 
-            output += "</td>";
+            output.append("</td>");
          }
-         output += "</tr>";
+         output.append("</tr>");
       }
-      output += "</table>";
-      return output;
+      output.append("</table>");
+      return output.toString();
    }
   
    /** Returns a String representation of this matrix as an HTML table where each
@@ -1000,24 +1051,26 @@ public class Matrix {
    }
 
    /** Returns a String representation of this matrix.
+    * @return a string representation of this matrix
     */
    @Override
    public String toString() {
       int i, j;
-      String output = "[";
+      StringBuilder output = new StringBuilder();
+      output.append("[");
       for (i = 0; i < matrix.length - 1; i++) {
-         output += "[";
+         output.append("[");
          for (j = 0; j < matrix[0].length - 1; j++) {
-            output += numberFormat.format(matrix[i][j]) + ", ";
+            output.append(numberFormat.format(matrix[i][j])).append(", ");
          }
-         output += numberFormat.format(matrix[i][j]) + "]\n ";
+         output.append(numberFormat.format(matrix[i][j])).append("]\n ");
       }
-      output += "[";
+      output.append("[");
       for (j = 0; j < matrix[0].length - 1; j++) {
-         output += numberFormat.format(matrix[i][j]) + ", ";
+         output.append(numberFormat.format(matrix[i][j])).append(", ");
       }
-      output += numberFormat.format(matrix[i][j]) + "]]";
-      return output;
+      output.append(numberFormat.format(matrix[i][j])).append("]]");
+      return output.toString();
    }
 
    /* ------------------------
@@ -1031,7 +1084,7 @@ public class Matrix {
     *. The input array <code>indx</code> is a vector recording 
     *  the row permutations effected by partial pivoting. 
     *  This method is used in combination with <code>luBacksubst()</code> to solve 
-    *  linear equations or invert a matrix.
+    *  linear equations or to invert a matrix.
     *  <br/>
     *  <b>Complexity:</b> The method performs <i>n</i><sup>3</sup>/3 executions 
     *  where <i>n</i> is the number of rows of this matrix.
@@ -1042,7 +1095,7 @@ public class Matrix {
     */
    private static byte luDecompose(double[][] a, int[] indx) {
       byte d = 1;                   // no row interchanges yet
-      int imax = 0, n = a.length;   //rows;
+      int imax = 0, n = a.length;   // rows;
       double big, dum, sum, temp;
       double vv[] = new double[n];  // stores the implicit scaling of each row
       
@@ -1051,13 +1104,15 @@ public class Matrix {
          for (int j = 0; j < n; j++) {
             if ((temp = Math.abs(a[i][j])) > big) big = temp;
          }
-         if (big == 0.0) throw new IllegalArgumentException("Singular matrix!");
+         if (Math.abs(big) < EPSILON) throw new IllegalArgumentException("Singular matrix!");
          vv[i] = 1 / big;   // save the scaling
       }
       for (int j = 0; j < n; j++) {  // this is the loop over columns of Crout's method
          for (int i = 0; i < j; i++) {
             sum = a[i][j];
-            for (int k = 0; k < i; k++) sum -= a[i][k] * a[k][j];
+            for (int k = 0; k < i; k++) {
+               sum -= a[i][k] * a[k][j];
+            }
             a[i][j] = sum;
          }
          big = 0.0;      // initialize for the search for largest pivot element
@@ -1066,8 +1121,8 @@ public class Matrix {
             for (int k = 0; k < j; k++)
                sum -= a[i][k] * a[k][j];
             a[i][j] = sum;
-            if ((dum = vv[i] * Math.abs(sum)) >= big) { // is the figure of merit for the
-               big = dum;                                     // pivot better than the best so far?
+            if ((dum = vv[i] * Math.abs(sum)) > big) { // is the figure of merit for the
+               big = dum;                              // pivot better than the best so far?
                imax = i;
             }
          }
@@ -1082,6 +1137,7 @@ public class Matrix {
          }
          indx[j] = imax;
          if (j != n) { // Finally, divide the pivot element
+            if (Math.abs(a[j][j]) < EPSILON) throw new IllegalArgumentException("Singular matrix!");
             dum = 1 / a[j][j];
             for (int i = j+1; i < n; i++)  a[i][j] *= dum;
          }

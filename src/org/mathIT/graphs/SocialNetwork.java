@@ -394,7 +394,7 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
       boolean undirected = true;
       //int s;
       
-      // /* Easley-Kleinberg example: ---
+      /* Haus-vom-Nikolaus example: ---
       undirected = false;
       double[][] w = {
          //1  2  3  4  5
@@ -406,7 +406,8 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
       };
       // */
 
-      /* Easley-Kleinberg example: ---
+      // /* Easley-Kleinberg example: ---
+      undirected = true;
       double[][] w = {
          //0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16
          { 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //  0
