@@ -1194,7 +1194,7 @@ public class Numbers {
    
    /** Returns the Bernoulli number <i>B<sub>n</sub></i> of the nonnegative integer 
     *  <i>n</i>. <i>B<sub>n</sub></i> is recursively defined as
-   <table summary="" align="center" border="0">
+   <table style="margin:auto;" summary="">
      <tr>
        <td> 
          <i>B<sub>n</sub></i>
@@ -1203,7 +1203,7 @@ public class Numbers {
        </td><td>
          <table summary="" border="0">
            <tr><td align="center">1</td></tr> 
-           <tr><td height="1"><hr></td></tr> 
+           <tr><td style="height:1px;"><hr></td></tr> 
            <tr><td align="center"><i>n</i>+1</td></tr> 
          </table>
        </td><td>

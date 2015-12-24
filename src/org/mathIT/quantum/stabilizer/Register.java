@@ -594,7 +594,7 @@ public class Register {
    /**
     * Applies the quantum Fourier transform (QFT) to this register.
     * For each computational basis state |<i>j</i>&gt; it is defined as:
-   <table summary="" align="center" border="0">
+   <table style="margin:auto;" summary="">
      <tr>
        <td> 
          QFT( |<i>j</i>&gt; )    
@@ -603,7 +603,7 @@ public class Register {
        </td><td> 
          <table summary="" border="0"> 
            <tr><td align="center">1</td></tr> 
-           <tr><td height="1"><hr></td></tr> 
+           <tr><td style="height:1px;"><hr></td></tr> 
            <tr><td>&#8730;<i>q</i></td></tr> 
          </table>
        </td><td> 
@@ -683,7 +683,7 @@ public class Register {
    /**
     * Applies the inverse quantum Fourier transform (QFT<sup>-1</sup>) to this register.
     * For each computational basis state |<i>j</i>&gt; it is defined as:
-   <table summary="" align="center" border="0">
+   <table style="margin:auto;" summary="">
      <tr>
        <td> 
          QFT<sup>-1</sup>( |<i>j</i>&gt; )    
@@ -692,7 +692,7 @@ public class Register {
        </td><td> 
          <table summary="" border="0"> 
            <tr><td align="center">1</td></tr> 
-           <tr><td height="1"><hr></td></tr> 
+           <tr><td style="height:1px;"><hr></td></tr> 
            <tr><td>&#8730;<i>q</i></td></tr> 
          </table>
        </td><td> 
@@ -1152,7 +1152,7 @@ public class Register {
    /**
     * The optimal number <i>r</i> of Grover iterations to successfully apply 
     * Grover's search algorithm. It is given by
-    *   <table summary="" align="center" border="0">
+    *   <table style="margin:auto;" summary="">
     *     <tr>
     *       <td><i>r</i> &nbsp; &asymp; &nbsp; </td>
     *       <td>

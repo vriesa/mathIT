@@ -21,6 +21,7 @@
 package org.mathIT.graphs;
 
 import java.util.HashSet;
+import org.mathIT.gui.GraphViewer;
 
 /**
  * This interface guarantees networks of activatable vertices, for instance

@@ -41,7 +41,7 @@ import java.util.HashSet;
  * <i>w<sub>ji</sub></i> of its active neighbors
  * is at least its threshold &theta;<sub><i>i</i></sub>:
  * </p>
- * <table summary="" border="0" align="center" style="width:100pt">
+ * <table summary="" style="margin:auto; width:100pt">
  *   <tr>
  *     <td>
  *     <table summary="" border="0" style="width:40pt">

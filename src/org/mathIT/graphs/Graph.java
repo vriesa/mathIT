@@ -30,6 +30,7 @@ import java.util.Queue;
 import java.util.Stack;
 import javax.swing.JTable;
 import org.mathIT.algebra.OrderedSet;
+import org.mathIT.gui.GraphViewer;
 import org.mathIT.algebra.Matrix;
 import org.mathIT.numbers.Numbers;
 
@@ -1173,30 +1174,58 @@ public class Graph<V extends Vertible<V>> {
          }
       }
       // /* --- Print result: -----
-      int width = 200;
-      int pts = 7; // font size
-      String out = "<html>";
+      //int width = 200;
+      //int pts = 7; // font size
+      //String out = "<html>";
       if (vertices.length <= 100) {
-          out += "C<sub>"+kMax+"</sub> = "+clustering[kMax].toString(vertices) + "<br>";
+      //    out += "C<sub>"+kMax+"</sub> = "+clustering[kMax].toString(vertices) + "<br>";
           System.out.println("C_"+kMax+" = "+clustering[kMax].toString(vertices));
-          if (pts * clustering[kMax].toString(vertices).length() > width) {
-             width = pts * clustering[kMax].toString(vertices).length();
-          }
+      //    if (pts * clustering[kMax].toString(vertices).length() > width) {
+      //       width = pts * clustering[kMax].toString(vertices).length();
+      //    }
       }
       long[] Q = Numbers.bestRationalApproximation(modularity[kMax], 20);
-      out += "Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1];
+      //out += "Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1];
       System.out.println("Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1]);
-      if (pts * ("Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1]).length() > width) {
-          width = pts * ("Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1]).length();
-      }
-      if (width > 600) width = 600;
-      new org.mathIT.gui.MessageFrame(out, "Result", width, 60);
+      // --- Show message frame: ---
+      //if (pts * ("Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1]).length() > width) {
+      //    width = pts * ("Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1]).length();
+      //}
+      //if (width > 600) width = 600;
+      //new org.mathIT.gui.MessageFrame(out, "Result", width, 60);
       // ------ Print result ------ */
       return clustering[kMax];
    }   
 
-   /** Finds an optimum clustering by exhaustion. Advisable only for vertices.length < 13.*/
-   Clustering detectClustersExactly() {
+   /** Finds an optimum clustering by exhaustion. Advisable only for vertices.length &lt; 13.
+    * @return an optimum clustering with respect to modularity
+    */
+   public Clustering detectClustersExactly() {
+      // the following running times may change with advanced technology:
+      if (vertices.length > 12) {
+         String time;
+         switch (vertices.length) {
+            case 13: time = " about a minute"; break;
+            case 14: time = " about 10 minutes"; break;
+            case 15: time = " some hours"; break;
+            case 16: time = " about a day"; break;
+            case 17: time = " about a week"; break;
+            default: time = " more than several weeks"; break;
+         }
+         int click = javax.swing.JOptionPane.showConfirmDialog(
+            null, 
+            ""+vertices.length+" nodes will last" + time + "!\nContinue anyway?",
+            "Continuation Dialog", 
+            2
+         );
+         //System.out.println("### click="+click);
+         if (click == 2) return null;
+         if (vertices.length > 17) {
+            javax.swing.JOptionPane.showMessageDialog(null, "OK... But I stop nonetheless");
+            return null;
+         }
+      }
+      
       ArrayList<Clustering> clustering = new ArrayList<>();
       int m = getNumberOfEdges();
       int[] deg, indeg, outdeg;
@@ -1406,12 +1435,16 @@ public class Graph<V extends Vertible<V>> {
     *  framework Java Universal Network/Graph Framework (JUNG) available at
     *  <a href="http://jung.sourceforge.net">http://jung.sourceforge.net</a>.
     *  The graph is displayed in a frame of the class {@link GraphViewer}.
-    *  @see GraphViewer
+    *  @see org.mathIT.gui.GraphViewer
     */
    public void visualize() {
       gv = new GraphViewer<>(this);
    }
    
+   /** This method shuts down the graph viewer display.
+    *  @see org.mathIT.gui.GraphViewer
+    * 
+    */
    public void shutDisplay() {
       if (gv != null) {
          gv.setVisible(false);
@@ -1537,6 +1570,7 @@ public class Graph<V extends Vertible<V>> {
     *  {@link Vertex}.
     *  @param jTable the adjacency matrix determing the adjacencys of each edge of this graph
     *  @return the created graph
+    *  @throws NumberFormatException if the input table does not represent an adjacency matrix
     */
    //@SuppressWarnings("unchecked")
    public static Graph<SimpleVertex> create(JTable jTable) throws NumberFormatException {
@@ -1575,9 +1609,12 @@ public class Graph<V extends Vertible<V>> {
       return graph;
    }
 
+   /** This method displays the specified table in a simple option pane.
+    * @param table a table
+    */
    // /*
-   public static void show(JTable tabelle) {
-      javax.swing.JScrollPane scrollpane = new javax.swing.JScrollPane(tabelle);
+   public static void show(JTable table) {
+      javax.swing.JScrollPane scrollpane = new javax.swing.JScrollPane(table);
       //javax.swing.JOptionPane.showMessageDialog(null, scrollpane, "Ergebnis", -1);
       javax.swing.JOptionPane pane = new javax.swing.JOptionPane(scrollpane,-1);
       javax.swing.JDialog dialog = pane.createDialog(null,"Graph");
@@ -1587,6 +1624,9 @@ public class Graph<V extends Vertible<V>> {
    }
    // */
 
+   /** For test purposes...
+    * @param args arguments
+    */
    public static void main(String[] args) {
 //      int[] dist; long zaehler; long time; int n_;
 //      for (n_ = 16; n_ <= 16; n_++) {

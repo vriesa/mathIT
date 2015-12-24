@@ -8,7 +8,7 @@
  * or http://jung.sourceforge.net/license.txt for a description.
  *
  */
-package org.mathIT.graphs;
+package org.mathIT.gui;
 
 import edu.uci.ics.jung.algorithms.layout.BalloonLayout;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
@@ -22,6 +22,8 @@ import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 //import edu.uci.ics.jung.algorithms.layout.SpringLayout2;
 import edu.uci.ics.jung.algorithms.layout.RadialTreeLayout;
 import edu.uci.ics.jung.algorithms.layout.TreeLayout;
+import edu.uci.ics.jung.graph.DirectedGraph;
+import edu.uci.ics.jung.graph.DelegateForest;
 import edu.uci.ics.jung.visualization.DefaultVisualizationModel;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.VisualizationModel;
@@ -29,7 +31,6 @@ import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
-import edu.uci.ics.jung.visualization.decorators.EllipseVertexShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.layout.LayoutTransition;
 import edu.uci.ics.jung.visualization.renderers.BasicVertexLabelRenderer;
@@ -42,10 +43,8 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-//import java.awt.geom.Point2D;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 //import java.util.Collection;
@@ -64,6 +63,14 @@ import javax.swing.JPanel;
 import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
 import org.mathIT.algebra.OrderedSet;
+import org.mathIT.graphs.Activatable;
+import org.mathIT.graphs.Edge;
+import org.mathIT.graphs.Graph;
+import org.mathIT.graphs.NetworkOfActivatables;
+import org.mathIT.graphs.SimpleVertex;
+import org.mathIT.graphs.SocialNetwork;
+import org.mathIT.graphs.Vertible;
+import org.mathIT.graphs.WeightedGraph;
 
 /**
  * This class provides a visualization frame to show a specified graph.
@@ -78,8 +85,8 @@ import org.mathIT.algebra.OrderedSet;
  *
  * @author Tom Nelson, Andreas de Vries
  * @version 1.1
- * @param <V> the type of the vertices
- * @param <E> the type of the edges
+ * @param <V> the type of the vertices of the graph to be displayed
+ * @param <E> the type of the edges of the graph to be displayed
  */
 @SuppressWarnings("serial")
 public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
@@ -109,7 +116,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
    /**
     * The visual component and renderers for the graph
     */
-   protected Canvas<V,E> canvas;
+   protected GraphCanvas<V,E> canvas;
    /**
     * The layout in which the graph is drawn.
     */
@@ -121,13 +128,13 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
    private JPanel controls;
    private JPanel zoomControls;
    private JPanel layoutChoice = new JPanel();
-   private JComboBox jcb;
-   //private JComboBox<Layout<V,E>> jcb;
+   //private JComboBox jcb;
+   private JComboBox<Class<? extends Layout<?,?>>> jcb;
    private javax.swing.JCheckBox edgeLabels;
    private JPanel edgePanel;
    private GraphZoomScrollPane gzsp;
    private JPanel modePanel;
-   private JComboBox modeBox;
+   private JComboBox<?> modeBox;
    private JPanel clusterControls;
    private JPanel buttonPanel;
    private JButton print;
@@ -142,15 +149,13 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
    @SuppressWarnings("unchecked")
    public GraphViewer(Graph<V> graph) {
       this.invokerGraph = graph;
-      if (graph.undirected) {
-         //this.graph = new edu.uci.ics.jung.graph.UndirectedSparseGraph<V,E>();
+      if (graph.isUndirected()) {
          this.graph = new edu.uci.ics.jung.graph.UndirectedSparseGraph<>();
       } else {
-         //this.graph = new edu.uci.ics.jung.graph.DirectedSparseGraph<V,E>();
          this.graph = new edu.uci.ics.jung.graph.DirectedSparseGraph<>();
       }
-      for (int i = 0; i < graph.vertices.length; i++) {
-          this.graph.addVertex(graph.vertices[i]);
+      for (int i = 0; i < graph.getVertices().length; i++) {
+          this.graph.addVertex(graph.getVertices()[i]);
       }
 
       // Collect edges of this graph and add them to the JUNG graph:
@@ -185,7 +190,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       Dimension preferredSize = new Dimension(900, 585);
       final VisualizationModel<V,E> visualizationModel =
               new DefaultVisualizationModel<>(layout, preferredSize);
-      canvas = new Canvas<>(this, visualizationModel, preferredSize);
+      canvas = new GraphCanvas<>(this, visualizationModel, preferredSize);
 
       final PredicatedParallelEdgeIndexFunction<V,E> eif = PredicatedParallelEdgeIndexFunction.getInstance();
       final Set<E> exclusions = new HashSet<>();
@@ -221,7 +226,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       canvas.setBackground(Color.white);
 
       // --- Vertex configuration: ---
-      canvas.getRenderContext().setVertexShapeTransformer(new GraphViewer.ClusterVertexShapeFunction());
+      //canvas.getRenderContext().setVertexShapeTransformer(new GraphViewer.ClusterVertexShapeFunction());
       // ---- Vertex color: ----
       canvas.getRenderer().setVertexRenderer(
          new edu.uci.ics.jung.visualization.renderers.GradientVertexRenderer<>(
@@ -338,13 +343,13 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
                g.visualize();
             }
          } else if (invokerGraph instanceof WeightedGraph) {
-            WeightedGraph g = WeightedGraph.createWeightedGraphFromCSVFile();
+            WeightedGraph<SimpleVertex> g = WeightedGraph.createWeightedGraphFromCSVFile();
             if (g != null) {
                invokerGraph.shutDisplay();
                g.visualize();
             }
          } else {
-            org.mathIT.graphs.Graph g = org.mathIT.graphs.Graph.createGraphFromCSVFile();
+            org.mathIT.graphs.Graph<SimpleVertex> g = org.mathIT.graphs.Graph.createGraphFromCSVFile();
             if (g != null) {
                invokerGraph.shutDisplay();
                g.visualize();
@@ -360,7 +365,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
             for (V v : graph.getVertices()) {
                Activatable a = (Activatable) v;
                if (canvas.getPickedVertexState().isPicked(v)) {
-                  ((NetworkOfActivatables) invokerGraph).setActive(true);
+                  ((NetworkOfActivatables<Activatable>) invokerGraph).setActive(true);
                   a.setActive(true);
                   //} else {
                   //   a.setActive(false);
@@ -368,19 +373,19 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
             }
             ((SocialNetwork) invokerGraph).saveAsCSV();
          } else if (invokerGraph instanceof WeightedGraph) {
-            ((WeightedGraph) invokerGraph).saveAsCSV();
+            ((WeightedGraph<V>) invokerGraph).saveAsCSV();
          } else {
             invokerGraph.saveAsCSV();
          }
       });
       buttonPanel.add(save);
       
-      Class<? extends Layout>[] combos = getCombos();
-      jcb = new JComboBox(combos);
+      Class<? extends Layout<?,?>>[] combos = getCombos();
+      jcb = new JComboBox<>(combos);
       // use a renderer to shorten the layout name presentation
       jcb.setRenderer(new DefaultListCellRenderer() {
          @Override
-         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             String valueString = value.toString();
             valueString = valueString.substring(valueString.lastIndexOf('.') + 1);
             return super.getListCellRendererComponent(list, valueString, index, isSelected,
@@ -392,7 +397,6 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       //jcb.setSelectedItem(FRLayout.class);
       //jcb.setSelectedItem(CircleLayout.class);
       jcb.setSelectedItem(layout.getClass());
-
       
       layoutChoice = new JPanel();
       layoutChoice.setBorder(BorderFactory.createTitledBorder("Graph Layout"));
@@ -498,7 +502,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       }
       //System.out.println("+++ activated before: " + activeGeneration);
       HashSet<Activatable> actives = 
-         ((NetworkOfActivatables) invokerGraph).nextActivationStep(activeGeneration);
+         ((NetworkOfActivatables<Activatable>) invokerGraph).nextActivationStep(activeGeneration);
       //System.out.println("+++ activated after: " + actives);
       for (Activatable v : actives) {
          canvas.getPickedVertexState().pick((V) v, true);
@@ -550,36 +554,13 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
     * Computes clusters for this graph. 
     */
    private void detectClustersExactly() {
-      if (invokerGraph.getVertices().length > 12) {
-         String time;
-         switch (invokerGraph.getVertices().length) {
-            case 13: time = " about a minute"; break;
-            case 14: time = " about 10 minutes"; break;
-            case 15: time = " some hours"; break;
-            case 16: time = " about a day"; break;
-            case 17: time = " about a week"; break;
-            default: time = " more than several weeks"; break;
-         }
-         int click = JOptionPane.showConfirmDialog(
-            this, 
-            ""+invokerGraph.getVertices().length+" nodes will last" + time + "!\nContinue anyway?",
-            "Continuation Dialog", 
-            2
-         );
-         //System.out.println("### click="+click);
-         if (click == 2) return;
-         if (invokerGraph.getVertices().length > 17) {
-            JOptionPane.showMessageDialog(this, "OK... But I stop nonetheless");
-            return;
-         }
+      try {
+         ArrayList<OrderedSet<Integer>> list = invokerGraph.detectClustersExactly().getClusters();
+         // ---- Vertex color: ----
+         canvas.getRenderer().setVertexRenderer(new VertexFillColor(list));
+         canvas.repaint();
+      } catch (NullPointerException mpe) {
       }
-      long time = System.currentTimeMillis();
-      ArrayList<OrderedSet<Integer>> list = invokerGraph.detectClustersExactly().getClusters();
-      time = System.currentTimeMillis() - time;
-      System.out.println("- Running time for brute force clustering: "+time/1000.+" sec");
-      // ---- Vertex color: ----
-      canvas.getRenderer().setVertexRenderer(new VertexFillColor(list));
-      canvas.repaint();
    }
    
    /** Writes the edge lables.*/
@@ -601,77 +582,12 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       canvas.repaint();
    }
    
-   /*
-   private void shutCanvas() {
-      if (canvas != null) {
-         canvas.setVisible(false);
-         canvas = null;
-      }
-   }
-   */
-
-   /**
-    * a demo class that will create a vertex shape that is either a polygon or
-    * star. The number of sides corresponds to the number of vertices that were
-    * collapsed into the vertex represented by this shape.
-    *
-    * @author Tom Nelson
-    *
-    * @param <V> the type of the vertices
-    */
-   class ClusterVertexShapeFunction<V> extends EllipseVertexShapeTransformer<V> {
-
-      @SuppressWarnings("unchecked")
-      ClusterVertexShapeFunction() {
-         setSizeTransformer(new GraphViewer.ClusterVertexSizeFunction(20));
-      }
-
-      @Override
-      public Shape transform(V v) {
-         if (v instanceof Graph) {
-            int size = ((edu.uci.ics.jung.graph.Graph) v).getVertexCount();
-            if (size < 8) {
-               int sides = Math.max(size, 3);
-               return factory.getRegularPolygon(v, sides);
-            } else {
-               return factory.getRegularStar(v, size);
-            }
-         }
-         return super.transform(v);
-      }
-   }
-
-   /**
-    * A demo class that will make vertices larger if they represent a collapsed
-    * collection of original vertices
-    *
-    * @author Tom Nelson
-    *
-    * @param <V>
-    */
-   class ClusterVertexSizeFunction<V> implements Transformer<V, Integer> {
-
-      int size;
-
-      public ClusterVertexSizeFunction(Integer size) {
-         this.size = size;
-      }
-
-      @Override
-      public Integer transform(V v) {
-         if (v instanceof Graph) {
-            return 30;
-         }
-         return size;
-      }
-   }
-
    private class LayoutChooser implements ActionListener {
 
-      private final JComboBox jcb;
-      private final Canvas<V,E> canvas;
+      private final JComboBox<Class<? extends Layout<?,?>>> jcb;
+      private final GraphCanvas<V,E> canvas;
 
-      private LayoutChooser(JComboBox jcb, Canvas<V,E> canvas) {
+      private LayoutChooser(JComboBox<Class<? extends Layout<?,?>>> jcb, GraphCanvas<V,E> canvas) {
          super();
          this.jcb = jcb;
          this.canvas = canvas;
@@ -700,7 +616,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
                }
                constructor = layoutC.getConstructor(new Class[]{edu.uci.ics.jung.graph.Forest.class});
                o = constructor.newInstance(new Object[] {
-                  new edu.uci.ics.jung.graph.DelegateForest((edu.uci.ics.jung.graph.DirectedGraph) graph)
+                  new DelegateForest<V,E>((DirectedGraph<V,E>) graph)
                });
                l = (Layout<V,E>) o;
                l.setInitializer(canvas.getGraphLayout());
@@ -745,7 +661,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
     * @return an array of graph layouts
     */
    @SuppressWarnings("unchecked")
-   protected Class<? extends Layout>[] getCombos() {
+   protected Class<? extends Layout<?,?>>[] getCombos() {
       List<Class<? extends Layout>> layouts = new ArrayList<>();
       layouts.add(KKLayout.class);
       layouts.add(FRLayout.class);

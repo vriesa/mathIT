@@ -377,7 +377,7 @@ public class Complex {
     *  For Re <i>z</i> &gt; 0, it is computed according to the method of Lanczos.
     *  Otherwise, the following formula of Weierstrass is applied, 
     *  which holds for any <i>z</i> but converges more slowly.
-   <table summary="" align="center" border="0">
+   <table style="margin:auto;" summary="">
      <tr>
        <td> 
          &#915;(<i>z</i>)
@@ -386,7 +386,7 @@ public class Complex {
        </td><td>
          <table summary="" border="0">
            <tr><td align="center">1</td></tr> 
-           <tr><td height="1"><hr></td></tr> 
+           <tr><td style="height:1px;"><hr></td></tr> 
            <tr><td align="center"><i>z</i> e<sup><i>&#947;z</i></sup></td></tr> 
          </table>
        </td><td>
@@ -402,7 +402,7 @@ public class Complex {
        </td><td>
          <table summary="" border="0">
            <tr><td align="center"><i>z</i></td></tr> 
-           <tr><td height="1"><hr></td></tr> 
+           <tr><td style="height:1px;"><hr></td></tr> 
            <tr><td align="center"><i>n</i></td></tr> 
          </table>
        </td><td align="center" style="font-size:xx-large;">)<sup><span style="font-size:small;">-1</span></sup>
@@ -478,7 +478,7 @@ public class Complex {
     *  For Re <i>z</i> &gt; 0, it is computed according to the method of Lanczos.
     *  Otherwise, the following formula of Weierstrass is applied, 
     *  which holds for any <i>z</i> but converges more slowly.
-   <table summary="" align="center" border="0">
+   <table style="margin:auto;" summary="">
      <tr>
        <td> 
          &#915;(<i>z</i>)
@@ -487,7 +487,7 @@ public class Complex {
        </td><td>
          <table summary="" border="0">
            <tr><td align="center">1</td></tr> 
-           <tr><td height="1"><hr></td></tr> 
+           <tr><td style="height:1px;"><hr></td></tr> 
            <tr><td align="center"><i>z</i> e<sup><i>&#947;z</i></sup></td></tr> 
          </table>
        </td><td>
@@ -503,7 +503,7 @@ public class Complex {
        </td><td>
          <table summary="" border="0">
            <tr><td align="center"><i>z</i></td></tr> 
-           <tr><td height="1"><hr></td></tr> 
+           <tr><td style="height:1px;"><hr></td></tr> 
            <tr><td align="center"><i>n</i></td></tr> 
          </table>
        </td><td align="center" style="font-size:xx-large;">)<sup><span style="font-size:small;">-1</span></sup>
@@ -586,7 +586,7 @@ public class Complex {
     *  For Re <i>z</i> &gt; 0, it is computed according to the method of Lanczos.
     *  Otherwise, the following formula is applied, which holds for any <i>z</i>
     *  but converges more slowly.
-   <table summary="" align="center" border="0">
+   <table style="margin:auto;" summary="">
      <tr>
        <td> 
          ln &#915;(<i>z</i>)
@@ -606,7 +606,7 @@ public class Complex {
        </td><td>
          <table summary="" border="0">
            <tr><td align="center"><i>z</i></td></tr> 
-           <tr><td height="1"><hr></td></tr> 
+           <tr><td style="height:1px;"><hr></td></tr> 
            <tr><td align="center"><i>n</i></td></tr> 
          </table>
        </td><td>
@@ -617,7 +617,7 @@ public class Complex {
        </td><td>
          <table summary="" border="0">
            <tr><td align="center"><i>z</i></td></tr> 
-           <tr><td height="1"><hr></td></tr> 
+           <tr><td style="height:1px;"><hr></td></tr> 
            <tr><td align="center"><i>n</i></td></tr> 
          </table>
        </td><td align="center" style="font-size:xx-large;">)
@@ -688,7 +688,7 @@ public class Complex {
     *  For Re <i>z</i> &gt; 0, it is computed according to the method of Lanczos.
     *  Otherwise, the following formula is applied, which holds for any <i>z</i>
     *  but converges more slowly.
-   <table summary="" align="center" border="0">
+   <table style="margin:auto;" summary="">
      <tr>
        <td> 
          ln &#915;(<i>z</i>)
@@ -708,7 +708,7 @@ public class Complex {
        </td><td>
          <table summary="" border="0">
            <tr><td align="center"><i>z</i></td></tr> 
-           <tr><td height="1"><hr></td></tr> 
+           <tr><td style="height:1px;"><hr></td></tr> 
            <tr><td align="center"><i>n</i></td></tr> 
          </table>
        </td><td>
@@ -719,7 +719,7 @@ public class Complex {
        </td><td>
          <table summary="" border="0">
            <tr><td align="center"><i>z</i></td></tr> 
-           <tr><td height="1"><hr></td></tr> 
+           <tr><td style="height:1px;"><hr></td></tr> 
            <tr><td align="center"><i>n</i></td></tr> 
          </table>
        </td><td align="center" style="font-size:xx-large;">)

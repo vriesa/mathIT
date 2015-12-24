@@ -18,7 +18,7 @@
  * or write to the Free Software Foundation,Inc., 51 Franklin Street,
  * Fifth Floor, Boston, MA 02110-1301  USA
  */
-package org.mathIT.graphs;
+package org.mathIT.gui;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.VisualizationModel;
@@ -32,18 +32,20 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 
+import org.mathIT.graphs.Vertible;
+
 /**
- * This class enables to let plot a network.
- * It uses vizualisation classes from the open source project JUNG
+ * This class enables to let plot and print a graph.
+ * It uses visualization classes from the open source project JUNG
  * It bases on the JUNG Java Universal Network/Graph Framework
  * (<a href="http://jung.sourceforge.net">http://jung.sourceforge.net</a>),
  * version 2.0.1 from 2010.
  * @param <V> class implementing {@link Vertible} and representing vertices
  * @param <E> class representing edges
  * @author Andreas de Vries
- * @version 0.1
+ * @version 1.0
  */
-public class Canvas<V extends Vertible<V>, E> extends VisualizationViewer<V, E>  implements Printable {
+public class GraphCanvas<V extends Vertible<V>, E> extends VisualizationViewer<V, E>  implements Printable {
    private static final long serialVersionUID = 2011128184L;  // = "Canvas".hashCode()
    /** The graphviewer object to be plotted. */
    private GraphViewer<V,E> gv;
@@ -54,7 +56,7 @@ public class Canvas<V extends Vertible<V>, E> extends VisualizationViewer<V, E> 
     * @param gv the graphviewer object to be plotted
     * @param layout	The Layout to apply, with its associated Graph
     */
-   public Canvas(GraphViewer<V,E> gv, Layout<V, E> layout) {
+   public GraphCanvas(GraphViewer<V,E> gv, Layout<V, E> layout) {
       super(layout);
       this.gv = gv;
       initComponents();
@@ -67,7 +69,7 @@ public class Canvas<V extends Vertible<V>, E> extends VisualizationViewer<V, E> 
     * @param layout	The Layout to apply, with its associated Graph
     * @param preferredSize the preferred size of this View
     */
-   public Canvas(GraphViewer<V,E> gv, Layout<V, E> layout, Dimension preferredSize) {
+   public GraphCanvas(GraphViewer<V,E> gv, Layout<V, E> layout, Dimension preferredSize) {
       super(layout, preferredSize);
       this.gv = gv;
       initComponents();
@@ -79,7 +81,7 @@ public class Canvas<V extends Vertible<V>, E> extends VisualizationViewer<V, E> 
     * @param gv the graphviewer object to be plotted
     * @param model visualization model
     */
-   public Canvas(GraphViewer<V,E> gv, VisualizationModel<V, E> model) {
+   public GraphCanvas(GraphViewer<V,E> gv, VisualizationModel<V, E> model) {
       super(model);
       this.gv = gv;
       initComponents();
@@ -92,7 +94,7 @@ public class Canvas<V extends Vertible<V>, E> extends VisualizationViewer<V, E> 
     * @param model visualization model
     * @param preferredSize initial preferred size of the view
     */
-   public Canvas(GraphViewer<V,E> gv, VisualizationModel<V, E> model, Dimension preferredSize) {
+   public GraphCanvas(GraphViewer<V,E> gv, VisualizationModel<V, E> model, Dimension preferredSize) {
       super(model, preferredSize);
       this.gv = gv;
       initComponents();
@@ -143,23 +145,6 @@ public class Canvas<V extends Vertible<V>, E> extends VisualizationViewer<V, E> 
       this.setSize(new Dimension(width, height));
       this.gv.scaler.scale(this, 1f, getCenter());
       
-/*
-System.out.println("### Page height: " + paper.getHeight() +
-", width: " + paper.getWidth() +
-"\nimageable height: " + paper.getImageableHeight() +
-", width: " + paper.getImageableWidth() +
-"\nimageable x: " + paper.getImageableX() +
-", y: " + paper.getImageableY() +
-", orginal: " + origWidth + " x " + origHeight
-);
-// */
-
-      /*
-      System.out.println("Printing canvas ("
-              + paper.getImageableHeight() + "px x " + paper.getImageableWidth() + "px)"
-      );
-      // */
-
       printJob.setPrintable(this, pageFormat);
       if (printJob.printDialog()) {
          try {
