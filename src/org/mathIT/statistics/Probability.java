@@ -228,17 +228,17 @@ public class Probability {
     *  @param x random variable value
     *  @param p probability
     */
-   //private static double szstnr(double x, double p) {
-   //   return p - standardNormalDistribution(x);
-   //}
+   private static double szstnr(double x, double p) {
+      return p - standardNormalDistribution(x);
+   }
 
    /** returns <i>p</i> minus cumulative Student distribution of <i>x</i>.
     *  This is an auxiliary function which is invoked via callback ("reflection")
     *  and must therefore be declared "public".
     */
-   //private static double szstud(double x, double p, int n) {
-   //   return p - studentDistribution(x, n);
-   //}
+   private static double szstud(double x, double p, int n) {
+      return p - studentDistribution(x, n);
+   }
 
    /** yields two numbers which enclose a zero of the inputted function.
     *  The function has to be either implemented in the actual class, 
