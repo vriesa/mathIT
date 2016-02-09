@@ -25,7 +25,7 @@ import static org.mathIT.numbers.Numbers.*;
  * This class provides probabilistic functions such as probability distributions
  * or quantiles. They are implemented as static methods.
  * @author  Andreas de Vries
- * @version 1.1
+ * @version 1.2
  */
 public class Probability {
     // Suppresses default constructor, ensuring non-instantiability.
@@ -221,14 +221,13 @@ public class Probability {
       return xzero;
    }
 
-   //--- auxiliary functions: --------------------------------------------------
    /** Returns <i>p</i> minus cumulative standardized normal of <i>x</i>. 
     *  This is an auxiliary function which is invoked via callback ("reflection")
     *  and must therefore be declared "public".
     *  @param x random variable value
     *  @param p probability
     */
-   private static double szstnr(double x, double p) {
+   public static double szstnr(double x, double p) {
       return p - standardNormalDistribution(x);
    }
 
@@ -236,7 +235,7 @@ public class Probability {
     *  This is an auxiliary function which is invoked via callback ("reflection")
     *  and must therefore be declared "public".
     */
-   private static double szstud(double x, double p, int n) {
+   public static double szstud(double x, double p, int n) {
       return p - studentDistribution(x, n);
    }
 
@@ -252,7 +251,7 @@ public class Probability {
     *  @param npar2 parameter of the function
     *  @return an array x[] consisting of two enclosing x-values {x0, x1}
     */
-   private static double[] auxzbr(double x0, double x1,
+   public static double[] auxzbr(double x0, double x1,
              String function, Class[] argTypes,
              double par, int npar1, int npar2
    ) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -303,13 +302,14 @@ public class Probability {
    /** determines numerically a zero of the inputted function, enclosed by x0 and x1.
     *  @param x0 first x-value in whose neighborhoood the zero is supposed
     *  @param x1 second x-value in whose neighborhoood the zero is supposed
-    *  @param function name of function to be considered; it has to be either implemented in the actual class, or referred to with its full path name
+    *  @param function name of function to be considered; it has to be either 
+    *  implemented in the actual class, or referred to with its full path name
     *  @param par parameter of the function
     *  @param npar1 parameter of the function
     *  @param npar2 parameter of the function
     *  @return an array x[] consisting of two enclosing x-values {x0, x1}
     */
-   private static double auxzfn(double x0, double x1,
+   public static double auxzfn(double x0, double x1,
              String function, Class[] argTypes,
              double par, int npar1, int npar2, double epsiln)
    throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
