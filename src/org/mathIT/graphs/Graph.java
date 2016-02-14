@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
+import java.util.function.Function;
 import javax.swing.JTable;
 import org.mathIT.algebra.OrderedSet;
 import org.mathIT.gui.GraphViewer;
@@ -114,6 +115,22 @@ public class Graph<V extends Vertible<V>> {
     *  different from the end vertex (i.e., backtracks are excluded).
     */
    //protected int[][] hashimoto;
+   /** The modiable Hashimoto matrix <i>M</i>(<i>i</i>)
+    *  consisting of function entries <i>n</i>(<i>i</i>).
+    *  The Hashimoto matrix is also called non-backtracking matrix or edge adjacency matrix,
+    *  encodes those pairs of adjacent edges for which the start vertex is 
+    *  different from the end vertex (i.e., backtracks are excluded).
+    *  The modifiable Hashimoto matrix <i>M</i>(<i>i</i>) allows to simulate the removal of node <i>i</i>
+    *  by its entries <i>n</i>(<i>i</i>). 
+    *  Here the function <i>n</i>(<i>i</i>) in entry (<i>k,l</i>) 
+    *  <p style="text-align:center;">
+    *   (<i>m</i>)<sub><i>kl</i></sub>(<i>i</i>) = <i>n</i>(<i>i</i>)
+    *  </p>
+    *  is defined as the function yielding 1 if and only if edges <i>k</i> and <i>l</i>
+    *  are adjacent, but are not linked via node <i>i</i>; in all other cases <i>n</i>(<i>i</i>) = 0.
+    *  By consequence, <<i>M</i>(-1) exactly yields the Hashimoto matrix.
+    */
+   private ArrayList<ArrayList<Function<Integer,Integer>>> modifiableHashimoto = null;
    /** Stores the GraphViewer object if this graph is visualized. */
    private GraphViewer<V,?> gv;
    
@@ -136,7 +153,7 @@ public class Graph<V extends Vertible<V>> {
       //this.hashimoto = computeHashimoto();
    }
 
-   /** Creates an directed graph with the specified vertices. The adjacency matrix is created as the
+   /** Creates a directed graph with the specified vertices. The adjacency matrix is created as the
     *  <i>n</i>&times;<i>n</i> null matrix, i.e., the graph consists of isolated vertices.
     *  @param vertices an array of the vertices of this graph
     */
@@ -158,7 +175,7 @@ public class Graph<V extends Vertible<V>> {
       //this.hashimoto = computeHashimoto();
    }
 
-   /** Creates a graph from the specified adjacency matrix.
+   /** Creates a directed graph from the specified adjacency matrix.
     *  In particular, the adjacency list of each vertex is constructed from the adjacency matrix.
     *  If two vertices <code>vertices[i]</code> and <code>vertices[j]</code>
     *  do not have an edge connecting them, the respective adjacency matrix entry
@@ -225,7 +242,7 @@ public class Graph<V extends Vertible<V>> {
       //this.hashimoto = computeHashimoto();
    }
 
-   /** Creates a graph from the specified array of vertices and the adjacency matrix.
+   /** Creates a directed graph from the specified array of vertices and the adjacency matrix.
     *  In particular, the adjacency list of each vertex is constructed from the adjacency matrix.
     *  If two vertices <code>vertices[i]</code> and <code>vertices[j]</code>
     *  do not have an edge connecting them, the respective adjacency matrix entry
@@ -292,7 +309,7 @@ public class Graph<V extends Vertible<V>> {
      //this.hashimoto = computeHashimoto();
    }
    
-   /** Creates a graph from the specified array list of vertices and the adjacency matrix.
+   /** Creates a directed graph from the specified array list of vertices and the adjacency matrix.
     *  In particular, the adjacency list of each vertex is constructed from the adjacency matrix.
     *  If two vertices <code>vertices[i]</code> and <code>vertices[j]</code>
     *  do not have an edge connecting them, the respective adjacency matrix entry
@@ -364,6 +381,14 @@ public class Graph<V extends Vertible<V>> {
     *  @return the Hashimoto matrix
     */
    public int[][] computeHashimoto() {
+      /* This method could be equivalently executed by invoking computeModifiableHashimoto(-1)
+       * with its functional approach..
+       * However, this method seems to be about a factor 200 faster than the 
+       * functional version if it has to initialize the matrix modifiableHashimoto,
+       * and still a factor 5 faster if this matrix has been computed before.
+       * For this reason, this method is implemented redundantly to
+       * the functional version.
+       */
       int i, j, k, l, m = 0;
       
       // Determine the number of oriented edges, ignoring self-loops:
@@ -376,7 +401,7 @@ public class Graph<V extends Vertible<V>> {
       int[][] b = new int[m][m];
       
       // Indexing the edges, where e[k] has two components, 
-      // where e[k][s] the start vertex and e[k][f] the end vertex:
+      // where e[k][0] the start vertex and e[k][1] the end vertex:
       int[][] e = new int[m][2];
       
       k = 0;
@@ -420,6 +445,149 @@ public class Graph<V extends Vertible<V>> {
          }
       }
       return b;
+   }
+   
+   /** Returns the modifiable Hashimoto matrix <i>M</i>(<i>i</i>)
+    *  consisting of function entries <i>n</i>(<i>i</i>).
+    *  The Hashimoto matrix is also called non-backtracking matrix or edge adjacency matrix,
+    *  encodes those pairs of adjacent edges for which the start vertex is 
+    *  different from the end vertex (i.e., backtracks are excluded).
+    *  For symmetric adjacency matrices, the labeling of edges follows the
+    *  scheme in 
+    *  A. Terras: <i>Zeta Functions of Graphs.</i> Cambridge University Press, 
+    *  Cambridge New York 2011.
+    *  The modifiable Hashimoto matrix <i>M</i>(<i>i</i>) allows to simulate the removal of node <i>i</i>
+    *  by its entries <i>n</i>(<i>i</i>). 
+    *  Here the function <i>n</i>(<i>i</i>) in entry (<i>k,l</i>) 
+    *  <p style="text-align:center;">
+    *   (<i>m</i>)<sub><i>kl</i></sub>(<i>i</i>) = <i>n</i>(<i>i</i>)
+    *  </p>
+    *  is defined as the function yielding 1 if and only if edges <i>k</i> and <i>l</i>
+    *  are adjacent, but are not linked via node <i>i</i>; in all other cases <i>n</i>(<i>i</i>) = 0.
+    *  In other words, the modified Hashimoto matrix <i>M</i> is related to the Hashimoto matrix <i>B</i>
+    *  by the equation
+    *  <p style="text-alig:center;">
+    *    <i>M<sub>kl</sub></i> = <i>n</i>(i</i>) B<sub>kl</sub></i>
+    *  </p>
+    *  where <i>n<sub>i</sub> = 0 if node <i>i</i> is removed from the graph,
+    *  and = 1 otherwise.
+    *  By consequence, <<i>M</i>(-1) exactly yields the Hashimoto matrix. 
+    *  @return the modifiable Hashimoto matrix
+    */
+   private ArrayList<ArrayList<Function<Integer,Integer>>> computeModifiableHashimoto() {
+   //   if (modifiableHashimoto != null) return modifiableHashimoto;
+      
+      int i, j, k, l, m = 0;
+      
+      // Determine the number of oriented edges, ignoring self-loops:
+      for (i = 0; i < adjacency.length; i++) {
+         for (j = 0; j < i; j++) {
+            m += adjacency[i][j] + adjacency[j][i];
+         }
+      }
+
+      //ArrayList<ArrayList<Function<Integer,Integer>>> 
+      modifiableHashimoto = new ArrayList<>(m);
+      ArrayList<Function<Integer,Integer>> row;
+      
+      // Indexing the edges, where e[k] has two components, 
+      // where e[k][0] the start vertex and e[k][1] the end vertex:
+      int[][] e = new int[m][2];
+      
+      k = 0;
+      
+      if (isSymmetric(adjacency)) {
+         // Label the edges as Eq. (2.1) in A. Terras: Zeta Functions of Graphs. Cambridge 2011:
+         m /= 2;
+         for (i = 0; i < adjacency.length; i++) {
+            for (j = 0; j < i; j++) {
+               if (adjacency[i][j] == 1) {
+                  e[k][0] = j;
+                  e[k][1] = i;
+                  e[k+m][0] = i;
+                  e[k+m][1] = j;
+                  k++;
+               }
+            }
+         }
+      } else {
+         for (i = 0; i < adjacency.length; i++) {
+            for (j = 0; j < i; j++) {
+               if (adjacency[j][i] == 1) {
+                  e[k][0] = j;
+                  e[k][1] = i;
+                  k++;
+               }
+               if (adjacency[i][j] == 1) {
+                  e[k][0] = i;
+                  e[k][1] = j;
+                  k++;
+               }
+            }
+         }
+      }
+      
+      for (k = 0; k < m; k++) {
+         row = new ArrayList<>(m);
+         for (l = 0; l < m; l++) {
+            if (e[k][1] == e[l][0] && e[k][0] != e[l][1]) {
+               // B[k][l] = 1;
+               row.add(n_(k));
+               //System.out.println("(k,l)=("+k+","+l+": "+_1(k).apply(-1));
+            } else {
+               row.add(x -> 0);
+            }
+         }
+         modifiableHashimoto.add(row);
+      }
+      return modifiableHashimoto;
+   }
+   
+   private Function<Integer,Integer> n_(int i) {
+      return x -> x==i ? 0 : 1;
+   }
+   
+   /** The modified Hashimoto matrix <i>M</i>(<i>i</i>) of this graph with node 
+    *  <i>i</i> removed;
+    *  <i>M</i>(<i>i</i>) is also called modified non-backtracking matrix 
+    *  or modified edge adjacency matrix.
+    *  It encodes those pairs of adjacent edges for which the start vertex is 
+    *  different from the end vertex (i.e., backtracks are excluded).
+    *  For symmetric adjacency matrices, the labeling of edges follows the
+    *  scheme in 
+    *  A. Terras: <i>Zeta Functions of Graphs.</i> Cambridge University Press, 
+    *  Cambridge New York 2011.
+    *  For <i>i</i> = -1 the Hashimoto matrix of the (full) graph is returned.
+    *  The modified Hashimoto matrix <i>M</i> is related to the Hashimoto matrix <i>B</i>
+    *  by the equation
+    *  <p style="text-align:center;">
+    *    <i>M<sub>kl</sub></i> = <i>n<sub>i</sub> B<sub>kl</sub></i>
+    *  </p>
+    *  where <i>n<sub>i</sub></i> = 0 if node <i>i</i> is removed from the graph,
+    *  and = 1 otherwise.
+    *  For more details see 
+    *  F. Morone, H.A. Makse (2015): 
+    *  ‘Influence maximization in complex networks through optimal percolation’,
+    *  <i>Nature</i> <b>524</b> (7563), pp. 65–68,
+    *  <a href="http://dx.doi.org/10.1038/nature14604">doi 10.1038/nature14604</a>
+    *  (or preprint 
+    *  <a href="http://arxiv.org/abs/1506.08326">arxiv 1506.08326</a>).
+    *  
+    *  @param i the node of the graph to be removed virtually
+    *  @return the modified Hashimoto matrix
+    */
+   public int[][] getModifiedHashimoto(int i) {
+      if (modifiableHashimoto == null) modifiableHashimoto = computeModifiableHashimoto();
+      int k,l,m = modifiableHashimoto.size();
+      
+      int[][] M = new int[m][m];
+      
+      for (k = 0; k < m; k++) {
+         for (l = 0; l < m; l++) {
+            M[k][l] = modifiableHashimoto.get(k).get(l).apply(i);
+         }
+      }
+      return M;
    }
    
    /** Sets the flag whether this graph is undirected.
@@ -1174,18 +1342,18 @@ public class Graph<V extends Vertible<V>> {
          }
       }
       // /* --- Print result: -----
-      //int width = 200;
-      //int pts = 7; // font size
-      //String out = "<html>";
+      int width = 200;
+      int pts = 7; // font size
+      String out = "<html>";
       if (vertices.length <= 100) {
-      //    out += "C<sub>"+kMax+"</sub> = "+clustering[kMax].toString(vertices) + "<br>";
+          out += "C<sub>"+kMax+"</sub> = "+clustering[kMax].toString(vertices) + "<br>";
           System.out.println("C_"+kMax+" = "+clustering[kMax].toString(vertices));
-      //    if (pts * clustering[kMax].toString(vertices).length() > width) {
-      //       width = pts * clustering[kMax].toString(vertices).length();
-      //    }
+          if (pts * clustering[kMax].toString(vertices).length() > width) {
+             width = pts * clustering[kMax].toString(vertices).length();
+          }
       }
       long[] Q = Numbers.bestRationalApproximation(modularity[kMax], 20);
-      //out += "Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1];
+      out += "Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1];
       System.out.println("Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1]);
       // --- Show message frame: ---
       //if (pts * ("Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1]).length() > width) {

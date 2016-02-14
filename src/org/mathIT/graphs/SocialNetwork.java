@@ -92,7 +92,7 @@ import java.util.HashSet;
  * 2003.
  * </a>
  * </p>
- * @version 0.2beta
+ * @version 1.0
  * @author Andreas de Vries
  */
 public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActivatables<Actor> {
@@ -110,12 +110,31 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
     *  unique and must in total occupy the entire
     *  range {0, 1, ..., <i>n</i>–1}, where <i>n</i> denotes the number of actors
     *  in the network.
+    *  The adjacency list of each actor is constructed from the weight matrix,
+    *  any previously specified adjacency lists are overwritten.
     *  @param actors an array of the actors forming this social network
     *  @param weights the weight matrix determining the relations between the actors
     */
    public SocialNetwork(Actor[] actors, double[][] weights) {
       super(actors, weights);
       this.active = false;
+   }
+
+   /** Creates a social network of the specified actors and their directed 
+    *  relations determined by the specified adjacency matrix.
+    *  The indices of the actors must be
+    *  unique and must in total occupy the entire
+    *  range {0, 1, ..., <i>n</i>–1}, where <i>n</i> denotes the number of actors
+    *  in the network.
+    *  The adjacency list of each actor is constructed from the adjacency matrix,
+    *  any previously specified adjacency lists are overwritten.
+    *  Also the weight matrix is derived from the adjacency matrix, where each
+    *  relation (edge) between two actors has the uniform weight 1.
+    *  @param actors an array of the actors forming this social network
+    *  @param adjacenvy the adjacency matrix determining the relations between the actors
+    */
+   public SocialNetwork(Actor[] actors, int[][] adjacency) {
+      this(false, actors, adjacency);
    }
 
    /** Creates a social network of the specified actors and their
@@ -125,6 +144,8 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
     *  unique and must in total occupy the entire
     *  range {0, 1, ..., <i>n</i>–1}, where <i>n</i> denotes the number of actors
     *  in the network.
+    *  The adjacency list of each actor is constructed from the weight matrix,
+    *  any previously specified adjacency lists are overwritten.
     *  @param undirected flag whether this social network is undirected
     *  @param actors an array of the actors forming this social network
     *  @param weights the weight matrix determining the relations between the actors
@@ -136,11 +157,32 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
 
    /** Creates a social network of the specified actors and their
     *  relations determined by the specified flag whether they are symmetric
+    *  and by the specified adjacency matrix.
+    *  The indices of the actors must be
+    *  unique and must in total occupy the entire
+    *  range {0, 1, ..., <i>n</i>–1}, where <i>n</i> denotes the number of actors
+    *  in the network.
+    *  The weight of the relations (edges) between any two actors is 1.
+    *  The adjacency list of each actor is constructed from the adjacency matrix,
+    *  any previously specified adjacency lists are overwritten.
+    *  @param undirected flag whether this social network is undirected
+    *  @param actors an array of the actors forming this social network
+    *  @param adjacency the adjacency matrix determining the relations between the actors
+    */
+   public SocialNetwork(boolean undirected, Actor[] actors, int[][] adjacency) {
+      super(undirected, actors, adjacency);
+      this.active = false;      
+   }
+
+   /** Creates a social network of the specified actors and their
+    *  relations determined by the specified flag whether they are symmetric
     *  and by the specified weight matrix.
     *  The indices of the actors must be
     *  unique and must in total occupy the entire
     *  range {0, 1, ..., <i>n</i>–1}, where <i>n</i> denotes the number of actors
     *  in the network.
+    *  The adjacency list of each actor is constructed from the weight matrix,
+    *  any previously specified adjacency lists are overwritten.
     *  @param undirected flag whether this social network is undirected
     *  @param actors an array of the actors forming this social network
     *  @param weights the weight matrix determining the relations between the actors
@@ -394,7 +436,7 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
       boolean undirected = true;
       //int s;
       
-      /* Haus-vom-Nikolaus example: ---
+      // /* Haus-vom-Nikolaus example: ---
       undirected = false;
       double[][] w = {
          //1  2  3  4  5
@@ -406,7 +448,7 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
       };
       // */
 
-      // /* Easley-Kleinberg example: ---
+      /* Easley-Kleinberg example: ---
       undirected = true;
       double[][] w = {
          //0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16
@@ -624,18 +666,6 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
       
       //graph.activate(x[6], x[9]);
       
-      graph.visualize();
-      
-      /*
-      s = 1;
-      int ai = 1;
-      System.out.println("x["+s+"]="+x[s]);
-      System.out.println("x["+s+"].getAdjacency()["+ai+"]="+x[s].getAdjacency()[ai]);
-      */
-      //System.out.println(ausgabe);
-      //graph.saveAsCSV();
-      
-      //graph = SocialNetwork.createNetworkFromCSVFile();
-      //graph.visualize();      
+      graph.visualize();      
    }
 }

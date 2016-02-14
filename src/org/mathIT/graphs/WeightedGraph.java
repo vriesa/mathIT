@@ -80,7 +80,6 @@ import javax.swing.JTable;
  * @version 1.1
  * @param <V> the type of the vertices of this graph
  */
-//public class WeightedGraph<V extends Vertex<V>> extends Graph<V> {
 public class WeightedGraph<V extends Vertible<V>> extends Graph<V> {
    /** Constant representing the infinite weight.*/
    public final static double INFINITY = Double.POSITIVE_INFINITY; 
@@ -93,7 +92,7 @@ public class WeightedGraph<V extends Vertible<V>> extends Graph<V> {
     *  In particular, the adjacency list of each vertex is derived from the matrix.
     *  If two vertices <code>vertices[i]</code> and <code>vertices[j]</code> 
     *  do not have an edge connecting them, the respective weight matrix entry 
-    *  <code>weight[i][j]</code> is expected to have the value {@link Double#POSITIVE_INFINITY}.
+    *  <code>weight[i][j]</code> is expected to have the value zero or {@link Double#POSITIVE_INFINITY}.
     *  In each vertex, previously stored values for its index or its adjacency 
     *  list are always overwritten with the ones derived by the weight matrix!
     *  @param vertices array of the vertices forming this graph
@@ -107,7 +106,7 @@ public class WeightedGraph<V extends Vertible<V>> extends Graph<V> {
     *  In particular, the adjacency list of each vertex is derived from the matrix.
     *  If two vertices <code>vertices[i]</code> and <code>vertices[j]</code> 
     *  do not have an edge connecting them, the respective weight matrix entry 
-    *  <code>weight[i][j]</code> is expected to have the value {@link Double#POSITIVE_INFINITY}.
+    *  <code>weight[i][j]</code> is expected to have the value zero or {@link Double#POSITIVE_INFINITY}.
     *  In each vertex, previously stored values for its index or its adjacency 
     *  list are always overwritten with the ones derived by the weight matrix!
     *  @param undirected indicator whether this graph is undirected
@@ -156,7 +155,7 @@ public class WeightedGraph<V extends Vertible<V>> extends Graph<V> {
     *  the adjacency list of each vertex is derived from the weight matrix.
     *  If two vertices <code>v<sub>i</sub></code> and <code>vertices<sub>j</sub></code> 
     *  do not have an edge connecting them, the respective weight matrix entry 
-    *  <code>weight[i][j]</code> is expected to have the value {@link Double#POSITIVE_INFINITY}.
+    *  <code>weight[i][j]</code> is expected to have the value zero or {@link Double#POSITIVE_INFINITY}.
     *  In each vertex, previously stored values for its index or its adjacency 
     *  list are always overwritten with the ones derived by the weight matrix!
     *  @param vertices array of the vertices forming this graph
@@ -207,6 +206,53 @@ public class WeightedGraph<V extends Vertible<V>> extends Graph<V> {
       this.numberOfEdges = this.computeNumberOfEdges();
    }
    
+   /** Creates a directed weighted graph from the specified array of vertices and the adjacency matrix,
+    *  deriving a weight matrix where each edge has weight 1.
+    *  In particular, the adjacency list of each vertex is constructed from the adjacency matrix.
+    *  If two vertices <code>vertices[i]</code> and <code>vertices[j]</code>
+    *  do not have an edge connecting them, the respective adjacency matrix entry
+    *  <code>adjacency[i][j]</code> is expected to have the value 0.
+    *  In each vertex, previously stored values for its index or its adjacency
+    *  list are always overwritten with the ones derived by the adjacency matrix!
+    *  @param vertices array of the vertices forming this graph
+    *  @param adjacency the adjacency matrix determining the adjacencies of each vertex of this graph
+    *  @throws IllegalArgumentException if adjacency is not a square matrix or if
+    *  the number of vertices does not equal the length of the adjacency matrix
+    */
+   public WeightedGraph(V[] vertices, int[][] adjacency) {
+      this(false,vertices,adjacency);
+   }
+
+   /** Creates a weighted graph from the specified array of vertices and the adjacency matrix,
+    *  deriving a weight matrix where each edge has weight 1.
+    *  In particular, the adjacency list of each vertex is constructed from the adjacency matrix.
+    *  If two vertices <code>vertices[i]</code> and <code>vertices[j]</code>
+    *  do not have an edge connecting them, the respective adjacency matrix entry
+    *  <code>adjacency[i][j]</code> is expected to have the value 0.
+    *  In each vertex, previously stored values for its index or its adjacency
+    *  list are always overwritten with the ones derived by the adjacency matrix!
+    *  @param undirected flag indicating whether this graph is undirected
+    *  @param vertices array of the vertices forming this graph
+    *  @param adjacency the adjacency matrix determining the adjacencies of each vertex of this graph
+    *  @throws IllegalArgumentException if adjacency is not a square matrix, or if
+    *  the number of vertices does not equal the length of the adjacency matrix,
+    *  or if the graph is undirected and the adjacency matrix is not symmetric
+    */
+   public WeightedGraph(boolean undirected, V[] vertices, int[][] adjacency) {
+      super(undirected,vertices,adjacency);
+   
+      int i, j;
+
+      this.weight = new double[adjacency.length][adjacency.length];
+      for (i = 0; i < adjacency.length; i++) {
+         for(j = 0; j < adjacency[0].length; j++) {            
+               this.weight[i][j] = adjacency[i][j];
+         }
+      }
+      
+      this.weighted = true;
+   }
+   
    /** Checks whether the weight matrix is symmetric. */
    private boolean isSymmetric(double[][] weight) {
       boolean symmetric = true;
@@ -217,6 +263,19 @@ public class WeightedGraph<V extends Vertible<V>> extends Graph<V> {
       }
       return symmetric;
    }
+
+   /** Checks whether the adjacency matrix is symmetric. */
+   /*
+   private boolean isSymmetric(int[][] adjacency) {
+      boolean symmetric = true;
+      for (int i = 1; symmetric && i < adjacency.length; i++) {
+         for (int j = 0; symmetric && j < i; j++) {
+            symmetric &= (adjacency[i][j] == adjacency[j][i]);
+         }
+      }
+      return symmetric;
+   }
+   // */
 
    /**
     * The weight matrix of this graph.
