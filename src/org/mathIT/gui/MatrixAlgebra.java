@@ -24,10 +24,11 @@ import org.mathIT.algebra.Matrix;
 import static org.mathIT.graphs.Graph.SEPARATOR;
 import static org.mathIT.util.Formats.*;
 
-/** This class offers a GUI frame to display unary and binary matrix operations.
- *
+/** This class offers a simple GUI frame to display unary and binary matrix operations.
+ *  Having been created by one of its constructors, it immediately shows the
+ *  appropriate message frame.
  *  @author Andreas de Vries
- *  @version 0.1
+ *  @version 1.0
  */
 public class MatrixAlgebra extends javax.swing.JFrame {
    /** First matrix to be operated upon.*/
@@ -221,7 +222,6 @@ public class MatrixAlgebra extends javax.swing.JFrame {
       jScrollPaneB.setViewportView(matrixBTable);
       //pack();
       
-      // /*
       addComponentListener(new java.awt.event.ComponentAdapter() {
          @Override
          public void componentResized(java.awt.event.ComponentEvent e) {
@@ -236,8 +236,6 @@ public class MatrixAlgebra extends javax.swing.JFrame {
             resultPanel.revalidate();
          }
       });
-      // */
-
       setVisible(true);
    }
    
@@ -579,7 +577,11 @@ public class MatrixAlgebra extends javax.swing.JFrame {
    }//GEN-LAST:event_loadBButtonActionPerformed
 
    private void saveResultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveResultButtonActionPerformed
-      saveAsCSV(resultMatrix);
+      if (resultMatrix != null) {
+         saveAsCSV(resultMatrix);
+      } else {
+         saveAsCSV(A);
+      }
    }//GEN-LAST:event_saveResultButtonActionPerformed
 
    private void timesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timesButtonActionPerformed
@@ -740,14 +742,10 @@ public class MatrixAlgebra extends javax.swing.JFrame {
    }
    
    /**
-    * @param args the command line arguments
+    * for test purposes ...
     */
+   /*
    public static void main(String args[]) {
-      /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-       * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-       */
       try {
          for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
             if ("Nimbus".equals(info.getName())) {
@@ -766,19 +764,10 @@ public class MatrixAlgebra extends javax.swing.JFrame {
       }
         //</editor-fold>
 
-      /* Create and display the form */
+      // Create and display the form
       java.awt.EventQueue.invokeLater(() -> {
-         // /* Haus-vom-Nikolaus example: ---
+         // Haus-vom-Nikolaus example: ---
          Matrix A = new Matrix(new double[][] {
-            //1  2  3  4  5
-            { 0, 1, 1, 0, 0}, //  1
-            { 0, 0, 1, 1, 0}, //  2
-            { 0, 0, 0, 1, 0}, //  3
-            { 1, 0, 0, 0, 1}, //  4
-            { 0, 1, 0, 0, 0}, //  5
-         });
-         // */
-         Matrix B = new Matrix(new double[][] {
             //1  2  3  4  5
             { 0, 1, 1, 0, 0}, //  1
             { 0, 0, 1, 1, 0}, //  2
@@ -789,6 +778,7 @@ public class MatrixAlgebra extends javax.swing.JFrame {
          new MatrixAlgebra(A);
       });
    }
+   // */
 
    // Variables declaration - do not modify//GEN-BEGIN:variables
    private javax.swing.JButton cancelButton;

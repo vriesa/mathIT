@@ -41,7 +41,8 @@ import java.util.ArrayList;
  * </p>
  *
  * @author Andreas de Vries
- * √ersion 1.2
+ * @version 1.2
+ * @param <E> the type of the elements of this enum set
  */
 public class EnumSet<E extends Enum<E>> {
    protected java.util.EnumSet<E> enumSet;

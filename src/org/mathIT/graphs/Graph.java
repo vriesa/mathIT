@@ -31,7 +31,6 @@ import java.util.Stack;
 import java.util.function.Function;
 import javax.swing.JTable;
 import org.mathIT.algebra.OrderedSet;
-import org.mathIT.gui.GraphViewer;
 import org.mathIT.algebra.Matrix;
 import org.mathIT.numbers.Numbers;
 
@@ -88,7 +87,7 @@ import org.mathIT.numbers.Numbers;
  *   }
  * </pre>
  * @author Andreas de Vries
- * @version 1.1
+ * @version 2.0
  * @param <V> the type of the vertices
  * @see WeightedGraph
  */
@@ -117,7 +116,7 @@ public class Graph<V extends Vertible<V>> {
    //protected int[][] hashimoto;
    /** The modiable Hashimoto matrix <i>M</i>(<i>i</i>)
     *  consisting of function entries <i>n</i>(<i>i</i>).
-    *  The Hashimoto matrix is also called non-backtracking matrix or edge adjacency matrix,
+    *  The Hashimoto matrix, also called non-backtracking matrix or edge adjacency matrix,
     *  encodes those pairs of adjacent edges for which the start vertex is 
     *  different from the end vertex (i.e., backtracks are excluded).
     *  The modifiable Hashimoto matrix <i>M</i>(<i>i</i>) allows to simulate the removal of node <i>i</i>
@@ -128,12 +127,20 @@ public class Graph<V extends Vertible<V>> {
     *  </p>
     *  is defined as the function yielding 1 if and only if edges <i>k</i> and <i>l</i>
     *  are adjacent, but are not linked via node <i>i</i>; in all other cases <i>n</i>(<i>i</i>) = 0.
-    *  By consequence, <<i>M</i>(-1) exactly yields the Hashimoto matrix.
+    *  By consequence, <i>M</i>(-1) exactly yields the Hashimoto matrix.
     */
-   private ArrayList<ArrayList<Function<Integer,Integer>>> modifiableHashimoto = null;
-   /** Stores the GraphViewer object if this graph is visualized. */
-   private GraphViewer<V,?> gv;
-   
+   protected ArrayList<ArrayList<Function<Integer,Integer>>> modifiableHashimoto = null;
+   /**
+    * This array stores the network relevance of all vertices with respect to the entire
+    * graph. The network relevance, or influence, of a node is defined by
+    * the impact of its removal to the
+    * {@link org.mathIT.graphs.Graph#computeHashimoto() Hashimoto matrix} of the
+    * remaining network. Network relevance is an important notion to study
+    * system relevance, network stability, or network reliability.
+    * @see #getRelevance(int) 
+    */
+   protected double[] relevance;
+
    /**
     * Creates an empty graph.
     */
@@ -437,8 +444,8 @@ public class Graph<V extends Vertible<V>> {
          }
       }
       
-      for (k = 0; k < b.length; k++) {
-         for (l = 0; l < b.length; l++) {
+      for (k = 0; k < e.length; k++) {
+         for (l = 0; l < e.length; l++) {
             if (e[k][1] == e[l][0] && e[k][0] != e[l][1]) {
                b[k][l] = 1;
             }
@@ -474,9 +481,7 @@ public class Graph<V extends Vertible<V>> {
     *  By consequence, <<i>M</i>(-1) exactly yields the Hashimoto matrix. 
     *  @return the modifiable Hashimoto matrix
     */
-   private ArrayList<ArrayList<Function<Integer,Integer>>> computeModifiableHashimoto() {
-   //   if (modifiableHashimoto != null) return modifiableHashimoto;
-      
+   private ArrayList<ArrayList<Function<Integer,Integer>>> computeModifiableHashimoto() {      
       int i, j, k, l, m = 0;
       
       // Determine the number of oriented edges, ignoring self-loops:
@@ -527,13 +532,12 @@ public class Graph<V extends Vertible<V>> {
          }
       }
       
-      for (k = 0; k < m; k++) {
-         row = new ArrayList<>(m);
-         for (l = 0; l < m; l++) {
+      for (k = 0; k < e.length; k++) {
+         row = new ArrayList<>(e.length);
+         for (l = 0; l < e.length; l++) {
             if (e[k][1] == e[l][0] && e[k][0] != e[l][1]) {
                // B[k][l] = 1;
-               row.add(n_(k));
-               //System.out.println("(k,l)=("+k+","+l+": "+_1(k).apply(-1));
+               row.add(n_(e[k][1]));
             } else {
                row.add(x -> 0);
             }
@@ -544,7 +548,7 @@ public class Graph<V extends Vertible<V>> {
    }
    
    private Function<Integer,Integer> n_(int i) {
-      return x -> x==i ? 0 : 1;
+      return x -> x == i ? 0 : 1;
    }
    
    /** The modified Hashimoto matrix <i>M</i>(<i>i</i>) of this graph with node 
@@ -563,18 +567,26 @@ public class Graph<V extends Vertible<V>> {
     *  <p style="text-align:center;">
     *    <i>M<sub>kl</sub></i> = <i>n<sub>i</sub> B<sub>kl</sub></i>
     *  </p>
+    *  <p>
     *  where <i>n<sub>i</sub></i> = 0 if node <i>i</i> is removed from the graph,
     *  and = 1 otherwise.
     *  For more details see 
     *  F. Morone, H.A. Makse (2015): 
     *  ‘Influence maximization in complex networks through optimal percolation’,
     *  <i>Nature</i> <b>524</b> (7563), pp. 65–68,
-    *  <a href="http://dx.doi.org/10.1038/nature14604">doi 10.1038/nature14604</a>
+    *  <a href="http://dx.doi.org/10.1038/nature14604" target="_new">doi 10.1038/nature14604</a>
     *  (or preprint 
-    *  <a href="http://arxiv.org/abs/1506.08326">arxiv 1506.08326</a>).
+    *  <a href="http://arxiv.org/abs/1506.08326" target="_new">arxiv 1506.08326</a>).
+    *  </p>
+    *  <p>
+    *  The implementation of this method relies on the field {@link #modifiableHashimoto}
+    *  of this graph which is computed once and consists of functional lambda expressions,
+    *  which are simply applied by the argument i.
+    *  </p>
     *  
     *  @param i the node of the graph to be removed virtually
     *  @return the modified Hashimoto matrix
+    *  @see #modifiableHashimoto
     */
    public int[][] getModifiedHashimoto(int i) {
       if (modifiableHashimoto == null) modifiableHashimoto = computeModifiableHashimoto();
@@ -853,6 +865,32 @@ public class Graph<V extends Vertible<V>> {
       return outdeg;
    }
 
+   /**
+    * Returns the network relevance of vertex <i>i</i> with respect to the entire
+    * graph. The network relevance, or influence, of a node is defined by
+    * the impact of its removal to the
+    * {@link org.mathIT.graphs.Graph#computeHashimoto() Hashimoto matrix} of the
+    * remaining network. Network relevance is an important notion to study
+    * system relevance, network stability, or network reliability.
+    * <p>
+    * Cf.
+    * A. Terras: <i>Zeta Functions of Graphs.</i> Cambridge University Press, 
+    * Cambridge New York 2011,
+    * or
+    * F. Morone, H.A. Makse (2015): 
+    * ‘Influence maximization in complex networks through optimal percolation’,
+    * <i>Nature</i> <b>524</b> (7563), pp. 65–68,
+    * <a href="http://dx.doi.org/10.1038/nature14604" target="_new">doi 10.1038/nature14604</a>
+    * (or preprint 
+    * <a href="http://arxiv.org/abs/1506.08326" target="_new">arxiv 1506.08326</a>).
+    * </p>
+    * @param i index of a node
+    * @return network relevance of vertex i
+    */
+   public double getRelevance(int i) {
+      return relevance[i];
+   }
+
    /** Returns the Laplacian of this graph.
     *  @return the Laplacian of this graph
     */
@@ -898,15 +936,13 @@ public class Graph<V extends Vertible<V>> {
     *  @throws IllegalArgumentException if a vertex of the vertex array is not found in this graph
     */
    public Graph<V> subgraph(V[] vertices) {
-      for (int i=0; i<vertices.length; i++) {
+      for (V vertex : vertices) {
          boolean found = true;
-         for (int j=0; found && j<this.vertices.length; j++) {
-            found = (vertices[i].equals(this.vertices[j]));
+         for (int j = 0; found && j<this.vertices.length; j++) {
+            found = (vertex.equals(this.vertices[j]));
          }
          if (!found) {
-            throw new IllegalArgumentException(
-               "Vertex not found in graph: " + vertices[i].getName()
-            );
+            throw new IllegalArgumentException("Vertex not found in graph: " + vertex.getName());
          }
       }
 
@@ -954,8 +990,8 @@ public class Graph<V extends Vertible<V>> {
             return i;
          } else {
             //Enqueue new neighbors
-            for (int j = 0; j < vertices[i].getAdjacency().length; j++) {
-               k = vertices[i].getAdjacency()[j].getIndex();
+            for (V v : vertices[i].getAdjacency()) {
+               k = v.getIndex();
                if (!vertices[k].isMarked() && !next.contains(k)) {
                   next.push(k);
                }
@@ -975,9 +1011,15 @@ public class Graph<V extends Vertible<V>> {
     */
    public int depthFirstSearch(V start, V goal) {
       // initialize mark flags:
+      /*
       for(int i=0; i<vertices.length; i++) {
          vertices[i].setMarked(false);
          vertices[i].setInProcess(false);
+      }
+      */
+      for (V vertex : vertices) {
+         vertex.setMarked(false);
+         vertex.setInProcess(false);
       }
 
       traverseDepthFirst(start, goal);
@@ -1024,7 +1066,9 @@ public class Graph<V extends Vertible<V>> {
       boolean found = false;
 
       // initialize mark flags:
-      for(int i=0; i<vertices.length; i++) {vertices[i].setMarked(false);}
+      for (V vertex : vertices) {
+         vertex.setMarked(false);
+      }
 
       //Enqueue root
       start.mark();
@@ -1063,16 +1107,50 @@ public class Graph<V extends Vertible<V>> {
     *  in the opposite direction.
     *  @param x the start vertex
     *  @return a list of all cycles starting in <i>x</i>
+    *  @see #hasCycles() 
     */
    public LinkedList<LinkedList<V>> getCycles(V x) {
+      /*
       for (int i = 0; i < vertices.length; i++) {
          vertices[i].setMarked(false);
          vertices[i].setInProcess(false);
+      }
+      */
+      for (V v : vertices) {
+         v.setMarked(false);
+         v.setInProcess(false);
       }
       LinkedList<V> path = new LinkedList<>();
       cycles = new LinkedList<>();
       cycleFinder(x, path);
       return cycles;
+   }
+   
+   /** Checks whether this graph contains a cycle.
+    *  A cycle is a closed path, i.e.,
+    *  a path where start vertex and end vertex are identical. Note that in a
+    *  cycle a vertex may be visited several times. For instance, in an
+    *  undirected graph any path is a cycle, since it can be simply returned
+    *  in the opposite direction.
+    *  @return true if this graph has a cycle
+    *  @see #getCycles(org.mathIT.graphs.Vertible) 
+    */
+   public boolean hasCycles() {
+      for (V v : vertices) {
+         v.setMarked(false);
+         v.setInProcess(false);
+      }
+      
+      LinkedList<V> path = new LinkedList<>();
+      cycles = new LinkedList<>();
+      
+      for (V v : vertices) {
+         if (!v.isMarked()) {
+            cycleFinder(v, path);
+            if (!cycles.isEmpty()) return true;
+         }
+      }
+      return false;
    }
 
    /** Recursive method to find the cycles starting in x.
@@ -1094,7 +1172,7 @@ public class Graph<V extends Vertible<V>> {
     *  [DOI <a href="http://dx.doi.org/10.1007/978-3-540-76394-9">10.1007/978-3-540-76394-9</a>]
     *  @param x the start vertex
     *  @param path the current path which is checked to possibly yield a cycle;
-    *    it must be called by value
+    *    it must be called by reference
     */
    private void cycleFinder(V x, LinkedList<V> path) {
       if (x.isInProcess()) {
@@ -1127,9 +1205,9 @@ public class Graph<V extends Vertible<V>> {
     *  @return a list of all strongly connected components reachable from <i>x</i>
     */
    public ArrayList<Graph<V>> getComponents(V x) {
-      for (int i = 0; i < vertices.length; i++) {
-         vertices[i].setMarked(false);
-         vertices[i].setInProcess(false);
+      for (V v : vertices) {
+         v.setMarked(false);
+         v.setInProcess(false);
       }
       level = 0;
       HashMap<V,Integer> componentNumber = new HashMap<>();
@@ -1145,6 +1223,12 @@ public class Graph<V extends Vertible<V>> {
       for (V v : componentNumber.keySet()) {
          numbers.add(componentNumber.get(v));
       }
+      /*
+      componentNumber.keySet().stream().forEach((v) -> {
+         numbers.add(componentNumber.get(v));
+      });
+      */
+      
       // 2) Determine the list of all components:
       for (Integer n : numbers) {
          HashSet<V> s = new HashSet<>();
@@ -1288,7 +1372,7 @@ public class Graph<V extends Vertible<V>> {
       OrderedSet<Integer> set; // cluster candidate
       java.util.ArrayList<OrderedSet<Integer>> c = new java.util.ArrayList<>();      
       for (i = 0; i < vertices.length; i++) {
-         set = new OrderedSet<>(new Integer(i));
+         set = new OrderedSet<>(i);
          c.add(set);
       }
       //System.out.println(c);
@@ -1341,7 +1425,10 @@ public class Graph<V extends Vertible<V>> {
             kMax = k;
          }
       }
-      // /* --- Print result: -----
+      
+      long[] Q = Numbers.bestRationalApproximation(modularity[kMax], 20);
+      System.out.println("Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1]);
+      /* --- Print result: -----
       int width = 200;
       int pts = 7; // font size
       String out = "<html>";
@@ -1352,15 +1439,13 @@ public class Graph<V extends Vertible<V>> {
              width = pts * clustering[kMax].toString(vertices).length();
           }
       }
-      long[] Q = Numbers.bestRationalApproximation(modularity[kMax], 20);
       out += "Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1];
-      System.out.println("Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1]);
       // --- Show message frame: ---
-      //if (pts * ("Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1]).length() > width) {
-      //    width = pts * ("Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1]).length();
-      //}
-      //if (width > 600) width = 600;
-      //new org.mathIT.gui.MessageFrame(out, "Result", width, 60);
+      if (pts * ("Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1]).length() > width) {
+          width = pts * ("Q = "+modularity[kMax]+" = "+Q[0]+"/"+Q[1]).length();
+      }
+      if (width > 600) width = 600;
+      new org.mathIT.gui.MessageFrame(out, "Result", width, 60);
       // ------ Print result ------ */
       return clustering[kMax];
    }   
@@ -1394,7 +1479,7 @@ public class Graph<V extends Vertible<V>> {
          }
       }
       
-      ArrayList<Clustering> clustering = new ArrayList<>();
+      ArrayList<Clustering> clustering;
       int m = getNumberOfEdges();
       int[] deg, indeg, outdeg;
       if (undirected) {
@@ -1426,8 +1511,41 @@ public class Graph<V extends Vertible<V>> {
       return clustering.get(0);
    }   
 
+   /** Finds a clustering according to the relevance of each nde of this graph.
+    *  Here the network relevance, or influence, of a node is defined by 
+    *  the impact of its removal 
+    *  to the {@link #computeHashimoto() Hashimoto matrix}
+    *  of the remaining network.
+    *  Network relevance is an important notion to study system relevance,
+    *  network stability, or network reliability.
+    *  The nodes are clustered into categories of network relevance.
+    *  @return a clustering of nodes with respect to network relevance
+    */
+   public Clustering getRelevanceClusters() {
+      final int N = 5; // number of categories: 0 - least relevant, ..., N - most relevant
+      int[] vertexDistribution = new int[vertices.length];
+      
+      computeRelevances();
+      
+      // Divide interval [min,max] into N categories:
+      double max = Arrays.stream(relevance).max().getAsDouble();
+      double min = Arrays.stream(relevance).min().getAsDouble();
+      double step = (max - min)/N;
+      
+      for (int i = 0; i < relevance.length; i++) {
+         min = max;
+         for(int n = N-1; n > 0; n--) {
+            min -= step;
+            if (relevance[i] >= min) {
+               vertexDistribution[i] = n;
+               break;
+            }
+         }
+      }      
+      return new Clustering(vertexDistribution);
+   }
+
    /** Returns a list of the clusterings of the specified set with maximum modularity. */
-   // /*
    private ArrayList<Clustering> clusterings(int[][] adjacency, int m, int[] indeg, int[] outdeg) {
       int counter = 1;
       ArrayList<Clustering> clusterings = new ArrayList<>();
@@ -1451,13 +1569,26 @@ public class Graph<V extends Vertible<V>> {
       return clusterings;
    }
    
+   private void computeRelevances() {
+      relevance = new double[vertices.length];
+
+      // min and max absolute value of dominant eigenvalues:
+      double min=Double.MAX_VALUE, max=-Double.MAX_VALUE;
+
+      for (int i = 0; i < relevance.length; i++) {
+         relevance[i] = (new Matrix(getModifiedHashimoto(i))).getDominantEigenvalue();
+         if (min > relevance[i]) min = relevance[i];
+         if (max < relevance[i]) max = relevance[i];
+      }
+      
+      for (int i=0; i<relevance.length; i++) {
+         relevance[i] = max - relevance[i];
+      }
+   }
+   
    /** Returns the maximum entry of the specified array. */
    private static int max(int[] x) {
-      int max = Integer.MIN_VALUE;
-      for (int i = 0; i < x.length; i++) {
-         if (max < x[i]) max = x[i];
-      }
-      return max;
+      return Arrays.stream(x).max().getAsInt();
    }
    
    /** Computes the next vertex distribution representing a cluster partition, 
@@ -1597,26 +1728,6 @@ public class Graph<V extends Vertible<V>> {
          csv.append('\n');  // new line      
       }
       return csv;
-   }
-   
-   /** This method visualizes this graph. It uses the open source graph visualization 
-    *  framework Java Universal Network/Graph Framework (JUNG) available at
-    *  <a href="http://jung.sourceforge.net">http://jung.sourceforge.net</a>.
-    *  The graph is displayed in a frame of the class {@link GraphViewer}.
-    *  @see org.mathIT.gui.GraphViewer
-    */
-   public void visualize() {
-      gv = new GraphViewer<>(this);
-   }
-   
-   /** This method shuts down the graph viewer display.
-    *  @see org.mathIT.gui.GraphViewer
-    * 
-    */
-   public void shutDisplay() {
-      if (gv != null) {
-         gv.setVisible(false);
-      }
    }
    
    /** This method asks the user to select a file name
@@ -1772,18 +1883,17 @@ public class Graph<V extends Vertible<V>> {
       } catch (NumberFormatException nfe) {
          throw new NumberFormatException("Not a number at (" + i + "," + j + ")");
       } catch (Exception e) {
-         e.printStackTrace();
+         //e.printStackTrace();
       }
       return graph;
    }
 
    /** This method displays the specified table in a simple option pane.
-    * @param table a table
+    *  @param table a table
     */
    // /*
    public static void show(JTable table) {
       javax.swing.JScrollPane scrollpane = new javax.swing.JScrollPane(table);
-      //javax.swing.JOptionPane.showMessageDialog(null, scrollpane, "Ergebnis", -1);
       javax.swing.JOptionPane pane = new javax.swing.JOptionPane(scrollpane,-1);
       javax.swing.JDialog dialog = pane.createDialog(null,"Graph");
       dialog.setResizable(true);
@@ -1893,7 +2003,7 @@ public class Graph<V extends Vertible<V>> {
       
       //network = Graph.createGraphFromCSVFile();
       
-      network.visualize();
+      org.mathIT.gui.GraphViewer.visualize(network);
       Matrix L = network.laplacian();
       Matrix eigenvectors = L.getEigenvectors();
       Matrix eigen = new Matrix(new double[][] {

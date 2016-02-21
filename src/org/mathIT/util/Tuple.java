@@ -27,13 +27,15 @@ import java.util.Iterator;
 
 /**
  * An implementation of <code>Collection</code> that stores
- * <i>n</i> non-null objects and is not mutable.  They respect <code>equals</code>
- * and may be used as indices or map keys.<p>
+ * <i>n</i> non-null objects and is not mutable.
+ * Tuples respect <code>equals</code> in the sense that two tuples are
+ * equal if they contain equal objects.
+ * Thus in partucular they may be used as indices or keys in maps.<p>
  * Note that they do not protect from malevolent behavior: if one or another
- * object in the tuple is mutable, then it can be changed with the usual bad
- * effects.
+ * object in the tuple is mutable, then it can be changed.
  * @author Andreas de Vries
- * @version 0.9
+ * @version 1.0
+ * @param <T> type of stored elements
  */
 //@SuppressWarnings("serial")
 public final class Tuple<T> implements Collection<T>, Serializable {
@@ -47,9 +49,11 @@ public final class Tuple<T> implements Collection<T>, Serializable {
     * <code>Tuple</code> from the specified elements.
     *
     * @param elements the elements in the <code>Tuple</code>
-    * @throws IllegalArgumentException if either argument is null
+    * @throws IllegalArgumentException if either argument is null or there are less than two elements
     */
    public Tuple(T[] elements) {
+      if (elements.length < 2) throw new IllegalArgumentException("Tuple must contain at least 2 elements");
+         
       boolean ok = true;
       for (int i=0; ok && i<elements.length; i++) {
          ok &= elements[i] != null;
@@ -64,12 +68,15 @@ public final class Tuple<T> implements Collection<T>, Serializable {
     * Creates a Tuple from the passed Collection.
     * @param elements the elements of the new <code>Tuple</code>
     * @throws IllegalArgumentException if the input collection is null, contains
-    * null values, or has != 2 elements.
+    * null values, or has &lt; 2 elements.
     */
    public Tuple(Collection<? extends T> elements) {
       if (elements == null) {
          throw new IllegalArgumentException("Input collection cannot be null");
       }
+      
+      if (elements.size() < 2) throw new IllegalArgumentException("Tuple must contain at least 2 elements");
+      
       if (elements.contains(null)) {
          throw new IllegalArgumentException("Tuple must not contain null values");
       }
@@ -109,7 +116,6 @@ public final class Tuple<T> implements Collection<T>, Serializable {
       return elements.get(1);
    }
 
-   //@SuppressWarnings("unchecked")
    @Override
    public boolean equals(Object o) {
       if (o == this) {
@@ -118,6 +124,7 @@ public final class Tuple<T> implements Collection<T>, Serializable {
 
       if (o instanceof Tuple) {
          Tuple otherTuple = (Tuple) o;
+         if (elements.size() != otherTuple.elements.size()) return false;
          boolean result = true;
          for (int i = 0; result && i < elements.size(); i++) {
             result &= this.elements.get(i).equals(otherTuple.elements.get(i));
@@ -131,8 +138,8 @@ public final class Tuple<T> implements Collection<T>, Serializable {
    @Override
    public int hashCode() {
       int hashCode = 1;
-      for (int i = 0; i < elements.size(); i++) {
-         hashCode = 31 * hashCode + elements.get(i).hashCode();
+      for (T element : elements) {
+         hashCode = 31 * hashCode + element.hashCode();
       }
       return hashCode;
    }
@@ -142,16 +149,32 @@ public final class Tuple<T> implements Collection<T>, Serializable {
       return elements.toString();
    }
 
+   /**
+    * Since a tuple is not mutable, this method should not be invoked.
+    * @param o an object
+    * @return true if and only if the operation was successful
+    * @throws UnsupportedOperationException if this method is invoked
+    */
    @Override
    public boolean add(T o) {
       throw new UnsupportedOperationException("Tuples cannot be mutated");
    }
 
+   /**
+    * Since a tuple is not mutable, this method should not be invoked.
+    * @param c an object
+    * @return true if and only if the operation was successful
+    * @throws UnsupportedOperationException if this method is invoked
+    */
    @Override
    public boolean addAll(Collection<? extends T> c) {
       throw new UnsupportedOperationException("Tuples cannot be mutated");
    }
 
+   /**
+    * Since a tuple is not mutable, this method should not be invoked.
+    * @throws UnsupportedOperationException if this method is invoked
+    */
    @Override
    public void clear() {
       throw new UnsupportedOperationException("Tuples cannot be mutated");

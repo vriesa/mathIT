@@ -48,7 +48,7 @@ import org.mathIT.graphs.Vertible;
 public class GraphCanvas<V extends Vertible<V>, E> extends VisualizationViewer<V, E>  implements Printable {
    private static final long serialVersionUID = 2011128184L;  // = "Canvas".hashCode()
    /** The graphviewer object to be plotted. */
-   private GraphViewer<V,E> gv;
+   final private GraphViewer<V,E> gv;
 
    /**
     * Create an instance with the specified parameters.

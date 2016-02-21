@@ -64,6 +64,7 @@ import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
 import org.mathIT.algebra.OrderedSet;
 import org.mathIT.graphs.Activatable;
+import org.mathIT.graphs.Actor;
 import org.mathIT.graphs.Edge;
 import org.mathIT.graphs.Graph;
 import org.mathIT.graphs.NetworkOfActivatables;
@@ -128,7 +129,6 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
    private JPanel controls;
    private JPanel zoomControls;
    private JPanel layoutChoice = new JPanel();
-   //private JComboBox jcb;
    private JComboBox<Class<? extends Layout<?,?>>> jcb;
    private javax.swing.JCheckBox edgeLabels;
    private JPanel edgePanel;
@@ -136,6 +136,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
    private JPanel modePanel;
    private JComboBox<?> modeBox;
    private JPanel clusterControls;
+   private JPanel matrixControls;
    private JPanel buttonPanel;
    private JButton print;
    private JButton help;
@@ -231,9 +232,9 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       canvas.getRenderer().setVertexRenderer(
          new edu.uci.ics.jung.visualization.renderers.GradientVertexRenderer<>(
             Color.yellow, Color.yellow,  // colors in normal state
-        	   Color.white, Color.red,   // colors in picked state
-        		canvas.getPickedVertexState(),
-        		false
+            Color.white, Color.red,   // colors in picked state
+            canvas.getPickedVertexState(),
+            false
         ));
       //canvas.getRenderContext().setVertexFillPaintTransformer(new PickableVertexPaintTransformer<V>(canvas.getPickedVertexState(), Color.red, Color.yellow));
 
@@ -339,20 +340,23 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
          if (invokerGraph instanceof SocialNetwork) {
             SocialNetwork g = SocialNetwork.createNetworkFromCSVFile();
             if (g != null) {
-               invokerGraph.shutDisplay();
-               g.visualize();
+               this.setVisible(false);
+               //invokerGraph.shutDisplay();
+               visualize(g);
             }
          } else if (invokerGraph instanceof WeightedGraph) {
             WeightedGraph<SimpleVertex> g = WeightedGraph.createWeightedGraphFromCSVFile();
             if (g != null) {
-               invokerGraph.shutDisplay();
-               g.visualize();
+               this.setVisible(false);
+               //invokerGraph.shutDisplay();
+               visualize(g);
             }
          } else {
             org.mathIT.graphs.Graph<SimpleVertex> g = org.mathIT.graphs.Graph.createGraphFromCSVFile();
             if (g != null) {
-               invokerGraph.shutDisplay();
-               g.visualize();
+               this.setVisible(false);
+               //invokerGraph.shutDisplay();
+               visualize(g);
             }
          }
          // content.setCursor(new Cursor(Cursor.DEFAULT_CURSOR)); // funktioniert nicht...
@@ -385,7 +389,9 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       // use a renderer to shorten the layout name presentation
       jcb.setRenderer(new DefaultListCellRenderer() {
          @Override
-         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+         public Component getListCellRendererComponent(
+            JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus
+         ) {
             String valueString = value.toString();
             valueString = valueString.substring(valueString.lastIndexOf('.') + 1);
             return super.getListCellRendererComponent(list, valueString, index, isSelected,
@@ -429,15 +435,31 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
          });
          clusterControls.add(detectExactly);
          
-         JButton computeHashimoto = new JButton("Hashimoto matrix");
+         JButton influencers = new JButton("Network Relevance");
+         influencers.addActionListener((ActionEvent e) -> {
+            displayRelevanceClusters();
+         });
+         clusterControls.add(influencers);
+      }
+      
+      matrixControls = new JPanel(new GridLayout(3, 1));
+      if (invokerGraph instanceof org.mathIT.graphs.Graph) {
+         matrixControls.setBorder(BorderFactory.createTitledBorder("Matrices"));
+         JButton adjacency = new JButton("Adjacency");
+         adjacency.addActionListener((ActionEvent e) -> {
+            org.mathIT.algebra.Matrix A = new org.mathIT.algebra.Matrix(invokerGraph.getAdjacency());
+            new org.mathIT.gui.MatrixAlgebra("Adjacency matrix", A);
+         });
+         matrixControls.add(adjacency);
+         
+         JButton computeHashimoto = new JButton("Hashimoto");
          computeHashimoto.addActionListener((ActionEvent e) -> {
             org.mathIT.algebra.Matrix B = new org.mathIT.algebra.Matrix(invokerGraph.computeHashimoto());
             new org.mathIT.gui.MatrixAlgebra("Hashimoto matrix", B);
          });
-         clusterControls.add(computeHashimoto);
+         matrixControls.add(computeHashimoto);
       }
-      
-      
+            
       // --- Build up Control Panel: ----
       controls = new JPanel();
       //controls.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER));
@@ -450,6 +472,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       controls.add(modePanel);
       if (invokerGraph instanceof org.mathIT.graphs.Graph) {
          controls.add(clusterControls);
+         controls.add(matrixControls);
       }
       controls.add(buttonPanel);
       content.add(controls, BorderLayout.SOUTH);
@@ -541,7 +564,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
    }
    
    /**
-    * Computes clusters for this graph. 
+    * Computes clusters for this graph and marks them in the canvas. 
     */
    private void detectClusters() {
       ArrayList<OrderedSet<Integer>> list = invokerGraph.detectClusters().getClusters();
@@ -551,7 +574,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
    }
    
    /**
-    * Computes clusters for this graph. 
+    * Computes clusters for this graph and marks them in the canvas. 
     */
    private void detectClustersExactly() {
       try {
@@ -561,6 +584,46 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
          canvas.repaint();
       } catch (NullPointerException mpe) {
       }
+   }
+   
+   /**
+    * Gets relevance clusters for this graph and marks them in the canvas. 
+    */
+   private void displayRelevanceClusters() {
+      ArrayList<OrderedSet<Integer>> list = invokerGraph.getRelevanceClusters().getClusters();
+      
+      // Change the vertex color palette to mark the most relevant vertices red:
+      palette = new java.awt.Color[] {
+         java.awt.Color.YELLOW,  // category 0
+         java.awt.Color.BLUE,    // category 1
+         java.awt.Color.GREEN,   // category 2
+         java.awt.Color.MAGENTA,  // category 3 
+         java.awt.Color.RED,     // category 4
+         java.awt.Color.ORANGE,
+         java.awt.Color.CYAN, 
+         java.awt.Color.LIGHT_GRAY, 
+         java.awt.Color.PINK, 
+         java.awt.Color.BLACK
+      };
+
+      // add a listener for ToolTips
+      canvas.setVertexToolTipTransformer(new ToStringLabeller<V>() {
+         /* (non-Javadoc)
+          * @see edu.uci.ics.jung.visualization.decorators.DefaultToolTipFunction#getToolTipText(java.lang.Object)
+          */
+         @Override
+         @SuppressWarnings("unchecked")
+         public String transform(V v) {
+            if (v instanceof Graph) {
+               return ((Graph<V>) v).getVertices().toString();
+            }
+            //return super.transform((V) v);
+            return "Network relevance: " + org.mathIT.util.Formats.O_DOT_A3.format(invokerGraph.getRelevance(v.getIndex()));
+         }
+      });
+      // ---- Vertex color: ----
+      canvas.getRenderer().setVertexRenderer(new VertexFillColor(list));
+      canvas.repaint();
    }
    
    /** Writes the edge lables.*/
@@ -621,7 +684,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
                l = (Layout<V,E>) o;
                l.setInitializer(canvas.getGraphLayout());
             } else if (layoutC.getName().equals("edu.uci.ics.jung.algorithms.layout.DAGLayout")){
-               if (!(graph instanceof edu.uci.ics.jung.graph.DirectedSparseGraph)) {
+               if (!(graph instanceof edu.uci.ics.jung.graph.DirectedSparseGraph) || invokerGraph.hasCycles()) {
                   javax.swing.JOptionPane.showMessageDialog(null, "Graph must be a directed tree-like graph!");
                   return;
                }
@@ -646,7 +709,18 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
             canvas.getRenderContext().getMultiLayerTransformer().setToIdentity();
             canvas.repaint();
          } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            /*
+            JOptionPane.showMessageDialog(
+               canvas, 
+               "Sorry, this layout is not possible, since the graph contains cycles!"
+            );
+            */
+            new org.mathIT.gui.MessageFrame(
+               "Sorry, this layout is not possible, since the graph contains cycles!", 
+               "Error Message", 
+               600, 10
+            );
          }
       }
    }
@@ -677,7 +751,8 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
       return layouts.toArray(new Class[0]);
    }
 
-   private static final Color[] palette = {
+   /** Color palette which is used to dye vertices according to different categories.*/
+   private static Color[] palette = {
       Color.YELLOW, Color.RED, Color.BLUE, Color.GREEN, Color.CYAN, Color.MAGENTA,
       Color.ORANGE, Color.LIGHT_GRAY, Color.PINK, Color.BLACK
    };
@@ -730,5 +805,260 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
          g.setPaint(oldPaint);
          g.setStroke(oldStroke);
       }
+   }
+
+   /** This method visualizes a graph. It uses the open source graph visualization 
+    *  framework Java Universal Network/Graph Framework (JUNG) available at
+    *  <a href="http://jung.sourceforge.net">http://jung.sourceforge.net</a>.
+    *  @param <T> type of vertices of the graph
+    *  @param <K> type of edges of the graph
+    *  @param graph a graph
+    */
+   public static <T extends Vertible<T>,K> void visualize(Graph<T> graph) {
+      new GraphViewer<T,K>(graph);
+   }
+   
+   /**
+    * 
+    * @param args command line input (is ignored in this method)
+    */
+   public static void main(String[] args) {
+      //double inf = WeightedGraph.INFINITY;
+      boolean binary = false;  // whether vertex number should be shown in binary format
+      boolean undirected = true;
+      //int s;
+      
+      /* Haus-vom-Nikolaus example: ---
+      undirected = false;
+      double[][] w = {
+         //1  2  3  4  5
+         { 0, 1, 1, 0, 0}, //  1
+         { 0, 0, 1, 1, 0}, //  2
+         { 0, 0, 0, 1, 0}, //  3
+         { 1, 0, 0, 0, 1}, //  4
+         { 0, 1, 0, 0, 0}, //  5
+      };
+      // */
+
+      /* Easley-Kleinberg example: ---
+      undirected = true;
+      double[][] w = {
+         //0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16
+         { 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //  0
+         { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //  1
+         { 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //  2
+         { 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0}, //  3
+         { 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0}, //  4
+         { 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0}, //  5
+         { 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0}, //  6
+         { 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0}, //  7
+         { 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0}, //  8
+         { 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0}, //  9
+         { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0}, // 10
+         { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0}, // 11
+         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1}, // 12
+         { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1}, // 13
+         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0}, // 14
+         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1}, // 15
+         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0}, // 16
+      };
+      // */
+
+      /* Permutation matrix: ---
+      undirected = false;
+      double[][] w = {
+         //0  1  2  3  4 
+         { 0, 0, 1, 0, 0}, //  0
+         { 0, 1, 0, 0, 0}, //  1
+         { 0, 0, 0, 0, 1}, //  2
+         { 1, 0, 0, 0, 0}, //  3
+         { 0, 0, 0, 1, 0}, //  4
+      };
+      // */
+      
+      /* Permutation matrix 2: ---
+      undirected = false;
+      double[][] w = {
+         //0  1  2  3  4 
+         { 0, 1, 0, 0, 0}, //  0
+         { 0, 0, 1, 0, 0}, //  1
+         { 0, 0, 0, 1, 0}, //  2
+         { 0, 0, 0, 0, 1}, //  3
+         { 1, 0, 0, 0, 0}, //  4
+      };
+      // */
+      
+      // /* Morone-Makse (2015), Fig. 1.A: ---
+      undirected = true;
+      double[][] w = {
+         //0  1  2  3  4  5
+         { 0, 1, 0, 0, 0, 0}, //  0
+         { 1, 0, 1, 0, 1, 0}, //  1
+         { 0, 1, 0, 1, 1, 0}, //  2
+         { 0, 0, 1, 0, 0, 0}, //  3
+         { 0, 1, 1, 0, 0, 1}, //  4
+         { 0, 0, 0, 0, 1, 0}, //  5
+      };
+      // */
+      
+      /* 3 cycles: ---
+      undirected = false;
+      double[][] w = {
+         //1  2  3  4  5  6  7  8  9 10 11 12
+         { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //  1
+         { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //  2
+         { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0}, //  3
+         { 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0}, //  4
+         { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //  5
+         { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}, //  6
+         { 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0}, //  7
+         { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0}, //  8
+         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0}, //  9
+         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0}, // 10
+         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, // 11
+         { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}, // 12
+      };
+      // */
+      
+      /* shear mapping: ---
+      undirected = false;
+      double[][] w = {
+         //1  2
+         { 1, 1}, //  1
+         { 0, 1}, //  2
+      };
+      // */
+      
+      /* Adder gate: ---
+      undirected = false;
+      double[][] w = {
+         //1  2  3  4  5  6  7  8
+         { 1, 0, 0, 0, 0, 0, 0, 0}, //  1
+         { 0, 1, 0, 0, 0, 0, 0, 0}, //  2
+         { 0, 0, 1, 0, 0, 0, 0, 0}, //  3
+         { 0, 0, 0, 1, 0, 0, 0, 0}, //  4
+         { 0, 0, 0, 0, 0, 0, 1, 0}, //  5
+         { 0, 0, 0, 0, 0, 0, 0, 1}, //  6
+         { 0, 0, 0, 0, 0, 1, 0, 0}, //  7
+         { 0, 0, 0, 0, 1, 0, 0, 0}, //  8
+      };
+      binary = true;
+      // */
+      
+      /* 2-bit adder gate: ---
+      undirected = false;
+      double[][] w = {
+         //1  2  3  4
+         { 1, 0, 0, 0}, //  1
+         { 0, 1, 0, 0}, //  2
+         { 0, 1, 0, 0}, //  3
+         { 0, 0, 1, 0}, //  4
+      };
+      binary = true;
+      // */
+      
+      /* Easley-Kleinberg toy web: ---
+      undirected = false;
+      double[][] w = {
+         //1  2  3  4
+         { 0, 1, 0, 1}, //  1
+         { 0, 0, 1, 1}, //  2
+         { 1, 0, 0, 0}, //  3
+         { 0, 0, 1, 0}, //  4
+      };
+      // */
+      
+      /* Easley-Kleinberg toy web variation: ---
+      undirected = false;
+      double[][] w = {
+         //1  2  3  4
+         { 0, 1, 0, 1}, //  1
+         { 0, 0, 1, 1}, //  2
+         { 1, 0, 0, 0}, //  3
+         { 0, 0, 0, 0}, //  4
+      };
+      // */
+      
+      /* Krumke-Noltemeier 3.4: ---
+      undirected = false;
+      double[][] w = {
+         //1  2  3  4  5  6  7
+         { 0, 1, 0, 0, 0, 0, 0}, //  1
+         { 0, 0, 1, 1, 0, 0, 0}, //  2
+         { 0, 0, 0, 0, 0, 0, 0}, //  3
+         { 0, 0, 0, 0, 1, 0, 0}, //  4
+         { 0, 1, 0, 1, 0, 0, 0}, //  5
+         { 0, 0, 0, 0, 0, 0, 0}, //  6
+         { 0, 0, 0, 0, 0, 1, 0}, //  7
+      };
+      // */
+      
+      /* OR gate: ---
+      double[][] w = {
+         //1  2  3  4  5  6  7  8
+         { 0, 1, 0, 0, 0, 0, 0, 0}, //  1
+         { 1, 0, 0, 0, 0, 0, 0, 0}, //  2
+         { 0, 0, 1, 0, 0, 0, 0, 0}, //  3
+         { 0, 0, 0, 1, 0, 0, 0, 0}, //  4
+         { 0, 0, 0, 0, 1, 0, 0, 0}, //  5
+         { 0, 0, 0, 0, 0, 1, 0, 0}, //  6
+         { 0, 0, 0, 0, 0, 0, 1, 0}, //  7
+         { 0, 0, 0, 0, 0, 0, 0, 1}, //  8
+      };
+      binary = true;
+      // */
+      
+      /* cOR gate: ---
+      undirected = false;
+      double[][] w = {
+         //1  2  3  4  5  6  7  8
+         { 0, 1, 0, 0, 0, 0, 0, 0}, //  1
+         { 0, 0, 0, 0, 0, 0, 1, 0}, //  2
+         { 0, 0, 0, 0, 1, 0, 0, 0}, //  3
+         { 0, 0, 0, 1, 0, 0, 0, 0}, //  4
+         { 0, 0, 1, 0, 0, 0, 0, 0}, //  5
+         { 0, 0, 0, 0, 0, 1, 0, 0}, //  6
+         { 1, 0, 0, 0, 0, 0, 0, 0}, //  7
+         { 0, 0, 0, 0, 0, 0, 0, 1}, //  8
+      };
+      binary = true;
+      // */
+      
+      /* Brandes et al 2008, Fig. 1a: ---
+      double[][] w = {
+         //1  2  3  4  5  6
+         { 0, 1, 1, 0, 0, 0}, //  1
+         { 1, 0, 1, 0, 1, 0}, //  2
+         { 1, 1, 0, 1, 0, 0}, //  3
+         { 0, 0, 1, 0, 0, 0}, //  4
+         { 0, 1, 0, 0, 0, 1}, //  5
+         { 0, 0, 0, 0, 1, 0}, //  6
+      };
+      // maximum modularity: C_0=[{0, 1, 2}, {3}, {4}, {5}], Q=0.013888888888888895
+      // */
+      Actor[] x = new Actor[w.length];
+      for (int i = 0; i < x.length; i++) {
+         String name = "";
+         if (binary) {
+            int jMax = Integer.numberOfLeadingZeros(i) - Integer.numberOfLeadingZeros(x.length) - 1;
+            //System.out.println("i=" + i + ", jMax=" + jMax);
+            for (int j = 0; j < jMax; j++) {
+               name += "0";
+            }
+            if (i != 0) name += Integer.toBinaryString(i);
+         } else {
+            //name += i;
+            name += (i+1);
+         }
+         //if (!binary && i < 10) name = " " + name;
+         x[i] = new Actor(i, name, .5);
+      }
+      
+      SocialNetwork graph = new SocialNetwork(undirected,x,w);
+      
+      //graph.activate(x[6], x[9]);
+      
+      visualize(graph);
+      //new GraphViewer(graph);
    }
 }

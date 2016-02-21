@@ -22,7 +22,9 @@ import java.util.Arrays;
  * For further technical details see {@link java.util.HashSet}.
  * @see OrderedSet
  * @see java.util.HashSet
+ * @author Andreas de Vries
  * @version 1.2
+ * @param <E> the type of the elements of this set
  */
 public class MathSet<E> extends java.util.HashSet<E> {
    private static final long serialVersionUID = 9223372035065452569L; // = "MathSet".hashCode() + Long.MAX_VALUE

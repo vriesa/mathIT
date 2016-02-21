@@ -1,7 +1,7 @@
 /*
- * Matrix.java - Class to compute matrix operations
+ * Matrix.java - Class representing a matrix and its operations
  *
- * Copyright (C) 2007-2013 Andreas de Vries
+ * Copyright (C) 2007-2016 Andreas de Vries
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,21 +20,22 @@
  */
 package org.mathIT.algebra;
 import java.util.ArrayList;
+import java.util.Arrays;
 import org.mathIT.numbers.Numbers;
 /** 
  * This class enables to construct a matrix which can be manipulated by various
  * matrix operations.
  * @author  Andreas de Vries
- * @version 1.3
+ * @version 2.0
  */
 public class Matrix {
    /** Constant which defines the corridor around 0.0 where a number of type double
     *  is considered as to be zero. Equality of the number <code>x</code> to zero 
     *  should therefore be checked by
     *  <pre>
-    *     if (Math.abs(x) &lt; Matrix.EPSILON) 
+    *     if (Math.abs(x) &lt; Matrix.EPSILON) ...
     *  </pre>
-    *  instead of <code>if (x==0)</code> because of possible rounding errors.
+    *  instead of <code>if (x==.0) ...</code> because of possible rounding errors.
     *  For instance, this is important to decide whether a matrix is invertible.
     */
    public static final double EPSILON = 1e-10;
@@ -42,11 +43,18 @@ public class Matrix {
    private static final java.text.DecimalFormat numberFormat = 
            org.mathIT.util.Formats.O_DOT_A3;
    /** Number of rows of this matrix.*/
-   private final int rows;
+   protected final int rows;
    /** Number of columns of this matrix.*/
-   private final int columns;
+   protected final int columns;
    /** Entries of this matrix.*/
-   private final double matrix[][];
+   protected final double matrix[][];
+   /** The dominant eigenvalue of this matrix. It is computed in the method {@link #getDominantEigenvalue()}. */
+   protected double dominantEigenvalue;
+   /** An eigenvector associated to the dominant eigenvalue of this matrix. 
+    * It is computed in the method {@link #getDominantEigenvalue()}.*/
+   protected double[] dominantEigenvector;
+   /** The eigenvalue decomposition of this matrix. It is null initially and will be computed if necessary.*/
+   protected EigenvalueDecomposition eigenvalueDecomposition;
    
    /** Constructs a zero matrix with the given rows and columns.
     *  @param rows the number of rows of this matrix
@@ -56,6 +64,9 @@ public class Matrix {
       this.rows    = rows;
       this.columns = columns;
       matrix = new double[rows][columns];
+      dominantEigenvalue = Double.NaN;
+      dominantEigenvector = null;
+      eigenvalueDecomposition = null;
    }
    
    /** Constructs a matrix from the given two-dimensional array.
@@ -65,6 +76,9 @@ public class Matrix {
       this.rows    = matrix.length;
       this.columns = matrix[0].length;
       this.matrix  = matrix;
+      dominantEigenvalue = Double.NaN;
+      dominantEigenvector = null;
+      eigenvalueDecomposition = null;
    }
    
    /** Constructs a matrix from the given two-dimensional array.
@@ -79,6 +93,9 @@ public class Matrix {
             this.matrix[i][j] = matrix[i][j];
          }
       }
+      dominantEigenvalue = Double.NaN;
+      dominantEigenvector = null;
+      eigenvalueDecomposition = null;
    }
    
    /** Constructs a matrix from the given two-dimensional array.
@@ -90,6 +107,9 @@ public class Matrix {
       this.rows    = rows;
       this.columns = columns;
       this.matrix  = matrix;
+      dominantEigenvalue = Double.NaN;
+      dominantEigenvector = null;
+      eigenvalueDecomposition = null;
    }
    
    /** Constructs a matrix (1 &times; <i>n</i>) matrix from the given one-dimensional array.
@@ -100,6 +120,77 @@ public class Matrix {
       this.columns = vector.length;
       this.matrix  = new double[rows][columns];
       System.arraycopy(vector, 0, this.matrix[0], 0, vector.length);
+      dominantEigenvalue = Double.NaN;
+      dominantEigenvector = null;
+      eigenvalueDecomposition = null;
+   }
+   
+   /**
+    * Returns true if and only if all entries of this matrix equal the entries of the specified matrix.
+    * @param a a matrix
+    * @return true if and only if this matrix equals the specified matrix a
+    */
+   public boolean equals(Matrix a) {
+      if (rows != a.rows || columns != a.columns) return false;
+      int i,j;
+      for(i = 0; i < matrix.length; i++) {
+         for(j = 0; j < matrix[0].length; j++) {
+            if (Math.abs(matrix[i][j] - a.matrix[i][j]) > EPSILON) return false;
+         }
+      }
+      return true;
+   }
+   
+   /**
+    * Returns true if and only if all entries of this matrix equal the entries of the specified matrix.
+    * @param a a two-dimensional array viewed as a matrix
+    * @return true if and only if this matrix equals the specified matrix a
+    */
+   public boolean equals(double[][] a) {
+      if (rows != a.length || columns != a[0].length) return false;
+      int i,j;
+      for(i = 0; i < matrix.length; i++) {
+         for(j = 0; j < matrix[0].length; j++) {
+            if (Math.abs(matrix[i][j] - a[i][j]) > EPSILON) return false;
+         }
+      }
+      return true;
+   }
+   
+   /**
+    * Returns true if and only if all entries of this matrix equal the entries of the specified column vector.
+    * @param a array viewed as a column vector
+    * @return true if and only if this matrix equals the specified matrix a
+    */
+   public boolean equals(double[] a) {
+      if (rows != 1 || columns != a.length) return false;
+      int i;
+      for(i = 0; i < matrix.length; i++) {
+         if (Math.abs(matrix[i][0] - a[i]) > EPSILON) return false;
+      }
+      return true;
+   }
+   
+   /** Returns the specified row of this matrix.
+    *  @param i row number
+    *  @return the i-th row of this matrix
+    *  @throws ArrayIndexOutOfBoundsException if the index is out of bounds
+    */
+   public double[] getRow(int i) {
+      return matrix[i];
+   }
+   
+   /** Returns the specified column of this matrix.
+    *  @param j column number
+    *  @return the j-th column of this matrix
+    *  @throws ArrayIndexOutOfBoundsException if the index is out of bounds
+    */
+   public double[] getColumn(int j) {
+      double[] column = new double[columns];
+      for(int i = 0; i < rows; i++) {
+         column[i] = matrix[i][j];
+      }
+      return column;
    }
    
    /** Returns the number of rows of this matrix.
@@ -307,21 +398,133 @@ public class Matrix {
       
       return power;
    }
+   
+   /**
+    * Returns the dominant eigenvalue of this matrix with an error {@link #EPSILON}.
+    * The method implements the 
+    * <a href="https://en.wikipedia.org/wiki/Power_iteration" target="_new">power iteration</a>
+    * and works if this matrix has a real-valued dominant eigenvalue.
+    * According to the 
+    * <a href="https://en.wikipedia.org/wiki/Perron%E2%80%93Frobenius_theorem" target="_new">Perron-Frobenius theorem</a>
+    * a sufficient condition for this is the matrix being irreducible, for instance
+    * being the adjacency matrix of a
+    * <a href="https://en.wikipedia.org/wiki/Strongly_connected_component" target="_new">strongly connected graph</a>
+    * where any node is reachable from every other node.
+    * If the power iteration does not converge, this method returns the maximum real part
+    * of all eigenvalues.
+    * @return the dominant eigenvalue of this matrix with an error {@link #EPSILON}
+    */
+   public double getDominantEigenvalue() {
+      return getDominantEigenvalue(EPSILON);
+   }
+   
+   /**
+    * Returns the dominant eigenvalue of this matrix with the specified error of approximation.
+    * The method implements the 
+    * <a href="https://en.wikipedia.org/wiki/Power_iteration" target="_new">power iteration</a>
+    * and works if this matrix has a real-valued dominant eigenvalue.
+    * According to the 
+    * <a href="https://en.wikipedia.org/wiki/Perron%E2%80%93Frobenius_theorem" target="_new">Perron-Frobenius theorem</a>
+    * a sufficient condition for this is the matrix being irreducible, for instance
+    * being the adjacency matrix of a
+    * <a href="https://en.wikipedia.org/wiki/Strongly_connected_component" target="_new">strongly connected graph</a>
+    * where any node is reachable from every other node.
+    * If the power iteration does not converge, this method returns the maximum real part
+    * of all eigenvalues.
+    * @param error maximum error of approximation
+    * @return the dominant eigenvalue of this matrix with the specified error of approximation
+    */
+   public double getDominantEigenvalue(double error) {
+      if (dominantEigenvector != null) return this.dominantEigenvalue;
+      
+      if (!isSquare()) throw new IllegalArgumentException("Matrix is not square!");
+      
+      int i, j; int loop = 0, maxloop = 20;
+      double lambda = 0, lambda_sq, lambda_old;
+      double[] tmp;
+
+      // Construct start eigenvector b_0 with A b_0 != 0:
+      dominantEigenvector = new double[rows];
+      Arrays.fill(dominantEigenvector, 1.);
+      
+      do {
+         lambda_old = lambda;
+         tmp = new double[rows];
+         // calculate the matrix-by-vector product Ab, where b = dominantEigenvector
+         for (i = 0; i < rows; i++) {
+            for (j = 0; j < rows; j++) {
+               // dot product of i-th row in A with b
+               tmp[i] += matrix[i][j] * dominantEigenvector[j]; 
+            }
+         }
+         // calculate the length of the resultant vector
+         lambda_sq=0;
+         for (i = 0; i < rows; i++) {  
+            lambda_sq += tmp[i]*tmp[i];
+         }
+         if (lambda_sq == 0.) {
+            dominantEigenvector = tmp; // this is the zero vector ...
+            return 0.;
+         }
+         lambda = Math.sqrt(lambda_sq);
+         // normalize b to unit vector for next iteration
+         for (i = 0; i < rows; i++) {
+            dominantEigenvector[i] = tmp[i] / lambda;
+         }
+      } while(Math.abs(lambda - lambda_old) > error && ++loop < maxloop);
+      
+      if (Math.abs(lambda - lambda_old) > error) { // if the power iteration did not converge ...
+         // find eigenvalue with maximum real part ...
+         double[] real = this.getRealEigenvalues();
+         double max = -Double.MAX_VALUE;
+         int pivot = -1; // index of maximum eigenvalue
+         for (i = 0; i < real.length; i++) {
+            if (max < real[i]) {
+               max = real[i];
+               pivot = i;
+            }
+         }
+         
+         lambda = real[pivot];
+         dominantEigenvector = getEigenvectors().getColumn(pivot);
+      }
+
+      dominantEigenvalue = lambda;
+      return lambda;
+   }
+
+   /**
+    * Returns an eigenvector associated to the dominant eigenvalue of this 
+    * matrix with the error {@link #EPSILON} of approximation.
+    * It invokes the method {@link #getDominantEigenvalue()}, for more details see there.
+    * @return an eigenvector associated to the dominant eigenvalue of this matrix with an error {@link #EPSILON}
+    */
+   public double[] getDominantEigenvector() {
+      if (dominantEigenvector != null) return dominantEigenvector;
+      
+      this.getDominantEigenvalue(EPSILON);
+      return dominantEigenvector;
+   }
+
+   /**
+    * Returns an eigenvector associated to the dominant eigenvalue of this 
+    * matrix with the specified error of approximation.
+    * It invokes the method {@link #getDominantEigenvalue(double)}, for more details see there.
+    * @param error maximum error of approximation
+    * @return an eigenvector associated to the dominant eigenvalue of this matrix with the specified error of approximation
+    */
+   public double[] getDominantEigenvector(double error) {
+      if (dominantEigenvector != null) return dominantEigenvector;
+      
+      this.getDominantEigenvalue(error);
+      return dominantEigenvector;
+   }
 
    /**
     * Returns an array consisting of the real parts of the eigenvalues of this
     * matrix.
     * This method obtains its result from the 
     * {@link EigenvalueDecomposition eigenvalue decomposition} of this matrix.
-    * This method is convenient to be invoked 
-    * if only the real parts of the eigenvalues of this matrix are desired. 
-    * Since, however, in particular for large matrices it requires
-    * substantial computational effort, you may be considering to apply more efficiently
-    * the class {@link EigenvalueDecomposition} and its methods.
-    * This is especially recommended if other related informations of this matrix
-    * such as the {@link EigenvalueDecomposition#getImagEigenvalues() imaginary parts}
-    * or the {@link EigenvalueDecomposition#getV() eigenvectors} are to be computed
-    * as well.
     * @return an array of the real parts of the eigenvalues of this matrix 
     * @see EigenvalueDecomposition#getRealEigenvalues()
     * @throws IllegalArgumentException if this matrix is not square
@@ -330,24 +533,18 @@ public class Matrix {
       if (!isSquare()) {
          throw new IllegalArgumentException("This matrix is not square.");
       }
-      return new EigenvalueDecomposition(this).getRealEigenvalues();
+      if (eigenvalueDecomposition == null) {
+         eigenvalueDecomposition = new EigenvalueDecomposition(this);
+      }
+      return eigenvalueDecomposition.getRealEigenvalues();
    }
    
    /**
-    * Returns an array consisting of the real parts of the eigenvalues of this
+    * Returns an array consisting of the imaginary parts of the eigenvalues of this
     * matrix.
     * This method obtains its result from the 
     * {@link EigenvalueDecomposition eigenvalue decomposition} of this matrix.
-    * This method is convenient to be invoked 
-    * if only the imaginary parts of the eigenvalues of this matrix are desired. 
-    * Since, however, in particular for large matrices it requires
-    * substantial computational effort, you may be considering to apply more efficiently
-    * the class {@link EigenvalueDecomposition} and its methods.
-    * This is especially recommended if other related informations of this matrix
-    * such as the {@link EigenvalueDecomposition#getRealEigenvalues() real parts}
-    * or the {@link EigenvalueDecomposition#getV() eigenvectors} are to be computed
-    * as well.
-    * @return an array of the real parts of the eigenvalues of this matrix 
+    * @return an array of the imaginary parts of the eigenvalues of this matrix 
     * @see EigenvalueDecomposition#getImagEigenvalues()
     * @throws IllegalArgumentException if this matrix is not square
     */
@@ -355,22 +552,16 @@ public class Matrix {
       if (!isSquare()) {
          throw new IllegalArgumentException("This matrix is not square.");
       }
-      return new EigenvalueDecomposition(this).getImagEigenvalues();
+      if (eigenvalueDecomposition == null) {
+         eigenvalueDecomposition = new EigenvalueDecomposition(this);
+      }
+      return eigenvalueDecomposition.getImagEigenvalues();
    }
    
    /**
     * Returns a matrix whose columns are the eigenvectors of this matrix.
     * This method obtains its result from the 
     * {@link EigenvalueDecomposition eigenvalue decomposition} of this matrix.
-    * This method is convenient to be invoked 
-    * if only the eigenvectors of the matrix are desired. Since, however, 
-    * in particular for large matrices it requires
-    * substantial computational effort, you may be considering to apply more efficiently
-    * the class {@link EigenvalueDecomposition} and its methods.
-    * This is especially recommended if other related informations of this matrix
-    * such as the {@link EigenvalueDecomposition#getRealEigenvalues() real parts}
-    * or the {@link EigenvalueDecomposition#getImagEigenvalues()  imaginary parts} are to be computed
-    * as well.
     * @return an array of the real parts of the eigenvalues of this matrix 
     * @see EigenvalueDecomposition#getV()
     * @throws IllegalArgumentException if this matrix is not square
@@ -379,7 +570,10 @@ public class Matrix {
       if (!isSquare()) {
          throw new IllegalArgumentException("This matrix is not square.");
       }
-      return new EigenvalueDecomposition(this).getV();
+      if (eigenvalueDecomposition == null) {
+         eigenvalueDecomposition = new EigenvalueDecomposition(this);
+      }
+      return eigenvalueDecomposition.getV();
    }
    
    /** Returns the adjugate of this matrix.
@@ -412,16 +606,7 @@ public class Matrix {
       if (rows != columns) {
          throw new IllegalArgumentException("Not a square matrix: ("+rows+"x"+columns+")");
       }
-      //double det = det();
       Matrix inv = new Matrix(rows, columns);
-      /*
-      Matrix adj = adjoint(); //new Matrix(rows, columns);
-      for (int i = 0; i < rows; i++) {
-         for (int j = 0; j < columns; j++) {
-            inv.matrix[i][j] = adj.matrix [i][j] / det;
-         }
-      }
-      */
       double[][] a = new double[rows][columns];
       for (int i = 0; i < rows; i++) { // copy by value
          System.arraycopy(matrix[i], 0, a[i], 0, columns);
@@ -515,6 +700,14 @@ public class Matrix {
     *  @return the sum of this matrix and the input matrix b
     */
    public Matrix add(Matrix b) {
+      return plus(b);
+   } 
+  
+   /** Returns the sum of this matrix with the given matrix b.
+    *  @param b the matrix to be added to this matrix
+    *  @return the sum of this matrix and the input matrix b
+    */
+   public Matrix plus(Matrix b) {
       int rowsMax    = (rows >= b.rows) ? rows : b.rows;
       int columnsMax = (columns >= b.columns) ? columns : b.columns;
       int i, j;
@@ -686,9 +879,9 @@ public class Matrix {
     *  a[n-1] &otimes; a[n-2] &otimes; ... &otimes; a[1] &otimes; a[0]
     *  @throws IllegalArgumentException if one of the matrices is empty
     */
-   public static double[][] tensor(double[][][] a) {
-      for (int i = 0; i < a.length; i++) {
-         if (a[i].length == 0 || a[i][0].length == 0) {
+   public static double[][] tensor(double[][][] a) {      
+      for (double[][] matrix : a) {
+         if (matrix.length == 0 || matrix[0].length == 0) {
             throw new IllegalArgumentException("Empty matrix");
          }
       }
@@ -696,10 +889,10 @@ public class Matrix {
       int[] ia = new int[a.length];  // auxiliary indices
       int[] ja = new int[a.length];  // auxiliary indices
       int rows = 1, cols = 1; // rows and columns of the resultig matrix
-      
-      for (int i = 0; i < a.length; i++) {
-         rows *= a[i].length;
-         cols *= a[i][0].length;
+
+      for (double[][] matrix : a) {
+         rows *= matrix.length;
+         cols *= matrix[0].length;
       }
       
       double[][] c = new double[rows][cols];
@@ -746,167 +939,11 @@ public class Matrix {
       double[] bv = new double[rows];
       double[] v;
       for (int i = 0; i < rows; i++)  bv[i] = b.matrix[i][0]; // copy by value
-//     x = inverse().times(b);
       luDecompose(a, indx); // return value ignored, used as a void method to change a and indx
       v = luBacksubst(a, indx, bv);
       for (int i = 0; i < rows; i++)  x.matrix[i][0] = v[i];
       return x;
    }
-  
-   /**
-    *  Returns the tridiagonal matrix of this matrix according to the Lanczos algorithm.
-    *  @return the tridiagonal matrix of this matrix according to the Lanczos algorithm
-    *  @throws IllegalArgumentException if this matrix is not symmetric.
-    */
-   /* --- is obsolete with class EigenvalueDecomposition ...
-   public Matrix lanczos() {
-      if (!isSymmetric()) {
-         throw new IllegalArgumentException("This matrix is not symmetric. (Lanczos algorithm only works for symmetric matrices)");
-      }
-      Matrix T = new Matrix(new double[matrix.length][matrix.length]); // tridiagonal matrix
-      Matrix Q = new Matrix(new double[matrix.length][matrix.length]); // orthogonal Q-matrix
-      // -> At the end we have T = QAQ^*, where A = this matrix
-      double[] r; // temporary vector
-      int i, j; // indices
-      double l; // temporary variable to compute the length of vectors
-      double[] q0 = new double[matrix.length]; // temporary vector
-      for (i = 0; i < matrix.length; i++) {
-         Q.matrix[0][i] = 1.; //Math.random();
-      }
-      //Q.matrix[0][0] = 1.;
-      l = getNorm(Q.matrix[0]);
-      for (i = 0; i < matrix.length; i++) {
-         Q.matrix[0][i] /= l;
-      }
-      
-      T.matrix[0][1] = l;
-      T.matrix[1][0] = l;
-            
-      // Lanczos loop:
-      l = 0;
-      for (i = 0; i < matrix.length; i++) {
-         r = minus(this.times(Q.matrix[i]), multiply(l, q0)); // A*q_i - l q_{i-1}
-         T.matrix[i][i] = multiply(r, Q.matrix[i]);
-         r = minus(r, multiply(T.matrix[i][i], Q.matrix[i]));
-         r = minus(r, Q.transpose().times(Q).times(r)); // reorthogonalization (expansive for large matrices!)
-         l = getNorm(r);
-         if (i < matrix.length - 1) {
-            T.matrix[i+1][i] = l;
-            T.matrix[i][i+1] = l;
-         }
-         System.arraycopy(Q.matrix[i], 0, q0, 0, q0.length); // v0 = V[i]
-         if (l != 0.0) {
-            r = multiply(1/l, r);
-         } else { // only the diagonal matters!
-            r = new double[matrix.length];
-            r[i] = 1;
-         }
-         if (i < matrix.length - 1) {
-            if (l != 0.0) {
-               System.arraycopy(r, 0, Q.matrix[i+1], 0, matrix.length);
-            } else { // only the diagonal matters!
-               Q.matrix[i+1][i+1] = 1; // ???
-            }
-         }
-      }
-      
-      Matrix[] QR = T.decomposeQR();
-      
-      // -- Eigenvector test: ---
-      //Matrix v = Q.transpose().times(w);
-      //System.out.println("Eigenvectors v:\n"+v);
-      //System.out.println("(AQ^* - Q^* T) w :\n"+this.times(v).minus(Q.transpose().times(T).times(w)));
-      System.out.println(T);
-      //System.out.println(QR[0]);
-      //System.out.println(QR[1]);
-      //System.out.println(QR[1].det() - T.det());
-      //return Q.times(this.times(Q.transpose())).minus(T);
-      //return QR[0].transpose().times(this);
-      //return QR[0].times(QR[0].transpose());
-      //return QR[0].times(QR[1]);
-      return QR[1]; //.times(QR[1]);
-   }
-   */
-   
-   /**
-    *  Returns the tridiagonal matrix of this matrix according to the Lanczos algorithm
-    *  for non-symmetric matrices.
-    *  @return the tridiagonal matrix of this matrix according to the Lanczos algorithm
-    *  @throws IllegalArgumentException if this matrix is not square.
-    */
-   /* --- is obsolete with class EigenvalueDecomposition ...
-   public Matrix lanczosNonSymmetric() {
-      if (!isSquare()) {
-         throw new IllegalArgumentException("This matrix is not square. (Lanczos algorithm only works for symmetric matrices)");
-      }
-      Matrix T = new Matrix(new double[rows][rows]); // tridiagonal matrix
-      Matrix V = new Matrix(new double[rows][rows]); // orthogonal V-matrix
-      Matrix W = new Matrix(new double[rows][rows]); // orthogonal W-matrix
-      // -> At the end we have A = V^*TW <=> T = WAV^*, where A = this matrix
-      int i, j; // indices
-      double l; // temporary variable to compute the length of vectors
-
-      V.matrix[0][0] = 1.;
-      W.matrix[0][0] = 1.;
-      l = getNorm(V.matrix[0]);
-      for (i = 0; i < rows; i++) {
-         V.matrix[0][i] /= l;
-      }
-      
-      l = getNorm(W.matrix[0]);
-      for (i = 0; i < rows; i++) {
-         W.matrix[0][i] /= l;
-      }
-      
-      Matrix A_star = this.transpose();
-      // Lanczos loop:
-      for (i = 0; i < rows; i++) {
-         T.matrix[i][i] = multiply(this.times(V.matrix[i]), W.matrix[i]); // alpha_i
-         if (i == rows - 1) break;
-         V.matrix[i+1] = this.times(V.matrix[i]);
-         V.matrix[i+1] = minus(V.matrix[i+1], multiply(T.matrix[i][i], V.matrix[i]));
-         if (i > 0) {
-            V.matrix[i+1] = minus(V.matrix[i+1], multiply(T.matrix[i-1][i], V.matrix[i-1]));
-         }
-         
-         W.matrix[i+1] = A_star.times(W.matrix[i]);
-         W.matrix[i+1] = minus(W.matrix[i+1], multiply(T.matrix[i][i], W.matrix[i]));
-         if (i > 0) {
-            W.matrix[i+1] = minus(W.matrix[i+1], multiply(T.matrix[i][i-1], W.matrix[i-1]));
-         }
-         
-         l = multiply(V.matrix[i+1], W.matrix[i+1]);
-         if (l == 0) {
-            T.matrix[i+1][i] = 0; // = delta_{j+1}
-            T.matrix[i][i+1] = 0; // = beta_{j+1}
-            W.matrix[i+1][i+1] = 1;
-            V.matrix[i+1][i+1] = 1;            
-         } else {
-            //System.out.println("### i=" + i + ", l=" + l);
-            T.matrix[i+1][i] = Math.sqrt(Math.abs(l));  // = delta_{j+1}
-            T.matrix[i][i+1] = l / T.matrix[i+1][i];    // = beta_{j+1}
-            W.matrix[i+1] = multiply(1 / T.matrix[i][i+1], W.matrix[i+1]);
-            V.matrix[i+1] = multiply(1 / T.matrix[i+1][i], V.matrix[i+1]);
-         }
-      }
-      
-      
-      Matrix[] QR = T.decomposeQR();
-      
-      //System.out.println(V); System.out.println(W);
-      //System.out.println(T);
-      //System.out.println(this);
-      //System.out.println(QR[0]);
-      //System.out.println(QR[1]);
-      //System.out.println(QR[1].det() - T.det());
-      //return QR[0].transpose().times(this);
-      //return QR[0].times(QR[0].transpose());
-      //return QR[0].times(QR[1]);
-      return QR[1];
-      //return V.transpose().times(T).times(W);
-      //return W.times(this).times(V.transpose());
-   }
-   // */
    
    /** Returns the QR decomposition of this matrix as a pair of matrices.
     *  Here <i>A = QR</i> where <i>A</i> is this matrix, <i>Q</i> is an
@@ -1198,6 +1235,16 @@ public class Matrix {
    }
    
    /**
+    * Returns the zero (m &times; n) matrix.
+    * @param m the numbers of rows
+    * @param n the number of columns
+    * @return the zero (<i>m</i> &times; <i>n</i>) matrix
+    */
+   public static Matrix createZero(int m, int n) {
+      return new Matrix(new double[m][n]);
+   }
+   
+   /**
     *  This method creates an (<i>n</i> x <i>n</i>) unity matrix.
     *  I.e., a square matrix whose diagonal entries are 1's, and all other
     *  entries are 0.
@@ -1216,15 +1263,37 @@ public class Matrix {
    /*
    public static void main(String[] args) {
       Matrix A = new Matrix(new double[][] {
-         { 0, 1, 0, 1},
-         { 0, 0, 1, 1},
-         { 1, 0, 0, 0},
-         { 0, 0, 1, 0},
+         //1  2  3  4  5  6  7  8  9 10 11 12  13 14 15 16 17 18 19
+         { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+         { 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+         { 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+         { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+         { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
+         { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+         { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
+         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0},
+         { 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+         { 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+         { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0},
+         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0}
+         //{ 1, 1},
+         //{ 0, 1},
       });
-      //Matrix T = A.lanczosNonSymmetric();
       Matrix T = A.getEigenvectors();
-      Matrix eigen = new Matrix(new double[][] {A.getRealEigenvalues(), A.getImagEigenvalues()});
-      System.out.println(eigen);
+      //Matrix T = new Matrix(A.getDominantEigenvector());
+      //Matrix T = A.times(A.inverse());
+      Matrix eigenvalues = new Matrix(new double[][] {A.getRealEigenvalues(), A.getImagEigenvalues()});
+      System.out.println(eigenvalues);
+      System.out.println("Dominant eigenvalue: " + A.getDominantEigenvalue());
+      javax.swing.JOptionPane.showMessageDialog(null, "<html>" + T.toHTML("right"));
+      T = new Matrix(A.getDominantEigenvector()).transpose();
       javax.swing.JOptionPane.showMessageDialog(null, "<html>" + T.toHTML("right"));
    }
    // */

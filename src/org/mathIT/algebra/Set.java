@@ -20,9 +20,11 @@ import java.util.Arrays;
  * Thus, it is very important not to set the initial capacity too high 
  * (or the load factor too low) if iteration performance is important.
  * For further technical details see {@link java.util.HashSet}.
+ * @author Andreas de Vries
+ * @version 1.1
  * @see OrderedSet
  * @see java.util.HashSet
- * @version 1.1
+ * @param <E> the type of the elements of this set
  */
 public class Set<E> extends java.util.HashSet<E> {
    private static final long serialVersionUID = 1120767115L; // hash code of "org.mathIT.algebra.Set"

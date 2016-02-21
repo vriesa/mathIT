@@ -46,7 +46,7 @@ import org.mathIT.numbers.Numbers;
  * 
  * This class is a slight modification of the Java class by the JAMA Java Matrix Package
  * by NIST, 
- * see <a href="http://math.nist.gov/javanumerics/jama/">http://math.nist.gov/javanumerics/jama/</a>
+ * see <a href="http://math.nist.gov/javanumerics/jama/" target="_new">http://math.nist.gov/javanumerics/jama/</a>
  *
  * @author JAMA, Andreas de Vries
  *
@@ -142,7 +142,7 @@ public class EigenvalueDecomposition { // implements java.io.Serializable {
     Public Methods
     * ------------------------ */
    /**
-    * Return the eigenvector matrix
+    * Return a matrix with the real parts of the eigenvectors as columns
     * @return the eigenvector matrix
     */
    public Matrix getV() {
@@ -151,7 +151,7 @@ public class EigenvalueDecomposition { // implements java.io.Serializable {
 
    /**
     * Return the real parts of the eigenvalues
-    * @return Re(diag(D))
+    * @return the real parts of the eigenvalues
     */
    public double[] getRealEigenvalues() {
       return d;
@@ -159,7 +159,7 @@ public class EigenvalueDecomposition { // implements java.io.Serializable {
 
    /**
     * Return the imaginary parts of the eigenvalues
-    * @return Im(diag(D))
+    * @return the imaginary parts of the eigenvalues
     */
    public double[] getImagEigenvalues() {
       return e;

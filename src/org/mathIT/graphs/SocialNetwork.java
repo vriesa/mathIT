@@ -1,7 +1,7 @@
 /*
  * SocialNetwork.java - Class representing a social network
  *
- * Copyright (C) 2013 Andreas de Vries
+ * Copyright (C) 2013-2016 Andreas de Vries
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,15 +84,22 @@ import java.util.HashSet;
  * independant cascade model, the influence maximization problem is NP-hard.
  * </p>
  * <p style="text-align:justify;">
- * For details and further references, see
- * <a href="http://www.cs.cornell.edu/home/kleinber/kdd03-inf.pdf">
+ * For more details and further references, see
+ * <a href="http://www.cs.cornell.edu/home/kleinber/kdd03-inf.pdf" target="_new">
  * D. Kempe, J. Kleinberg &amp; E. Tardos:
  * ’Maximizing the Spread of Influence through a Social Network‘,
  * <i>Proc. 9th ACM SIGKDD Intl. Conf. on Knowledge Discovery and Data Mining.</i>
- * 2003.
+ * 2003,
  * </a>
+ * as well as
+ * F. Morone, H.A. Makse (2015): 
+ * ‘Influence maximization in complex networks through optimal percolation’,
+ * <i>Nature</i> <b>524</b> (7563), pp. 65–68,
+ * <a href="http://dx.doi.org/10.1038/nature14604" target="_new">doi 10.1038/nature14604</a>
+ * (or preprint 
+ * <a href="http://arxiv.org/abs/1506.08326" target="_new">arxiv 1506.08326</a>).
  * </p>
- * @version 1.0
+ * @version 1.1
  * @author Andreas de Vries
  */
 public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActivatables<Actor> {
@@ -131,7 +138,7 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
     *  Also the weight matrix is derived from the adjacency matrix, where each
     *  relation (edge) between two actors has the uniform weight 1.
     *  @param actors an array of the actors forming this social network
-    *  @param adjacenvy the adjacency matrix determining the relations between the actors
+    *  @param adjacency the adjacency matrix determining the relations between the actors
     */
    public SocialNetwork(Actor[] actors, int[][] adjacency) {
       this(false, actors, adjacency);
@@ -428,244 +435,5 @@ public class SocialNetwork extends WeightedGraph<Actor> implements NetworkOfActi
          pos = text.indexOf("\n", pre);
       }      
       return new SocialNetwork(undirected,vertices,weight, active);
-   }
-   
-   public static void main(String[] args) {
-      //double inf = WeightedGraph.INFINITY;
-      boolean binary = false;  // whether vertex number should be shown in binary format
-      boolean undirected = true;
-      //int s;
-      
-      // /* Haus-vom-Nikolaus example: ---
-      undirected = false;
-      double[][] w = {
-         //1  2  3  4  5
-         { 0, 1, 1, 0, 0}, //  1
-         { 0, 0, 1, 1, 0}, //  2
-         { 0, 0, 0, 1, 0}, //  3
-         { 1, 0, 0, 0, 1}, //  4
-         { 0, 1, 0, 0, 0}, //  5
-      };
-      // */
-
-      /* Easley-Kleinberg example: ---
-      undirected = true;
-      double[][] w = {
-         //0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16
-         { 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //  0
-         { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //  1
-         { 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //  2
-         { 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0}, //  3
-         { 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0}, //  4
-         { 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0}, //  5
-         { 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0}, //  6
-         { 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0}, //  7
-         { 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0}, //  8
-         { 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0}, //  9
-         { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0}, // 10
-         { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0}, // 11
-         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1}, // 12
-         { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1}, // 13
-         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0}, // 14
-         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1}, // 15
-         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0}, // 16
-      };
-      // */
-
-      /* Permutation matrix: ---
-      undirected = false;
-      double[][] w = {
-         //0  1  2  3  4 
-         { 0, 0, 1, 0, 0}, //  0
-         { 0, 1, 0, 0, 0}, //  1
-         { 0, 0, 0, 0, 1}, //  2
-         { 1, 0, 0, 0, 0}, //  3
-         { 0, 0, 0, 1, 0}, //  4
-      };
-      // */
-      
-      /* Permutation matrix 2: ---
-      undirected = false;
-      double[][] w = {
-         //0  1  2  3  4 
-         { 0, 1, 0, 0, 0}, //  0
-         { 0, 0, 1, 0, 0}, //  1
-         { 0, 0, 0, 1, 0}, //  2
-         { 0, 0, 0, 0, 1}, //  3
-         { 1, 0, 0, 0, 0}, //  4
-      };
-      // */
-      
-      /* Permutation matrix 2: ---
-      undirected = false;
-      double[][] w = {
-         //0  1  2  3  4  5
-         { 0, 1, 1, 1, 1, 1}, //  0
-         { 0, 0, 1, 1, 1, 1}, //  1
-         { 0, 0, 0, 1, 1, 1}, //  2
-         { 0, 0, 0, 0, 1, 1}, //  3
-         { 0, 0, 0, 0, 0, 1}, //  4
-         { 0, 0, 0, 0, 0, 0}, //  5
-      };
-      // */
-      
-      /* 3 cycles: ---
-      undirected = false;
-      double[][] w = {
-         //1  2  3  4  5  6  7  8  9 10 11 12
-         { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //  1
-         { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //  2
-         { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0}, //  3
-         { 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0}, //  4
-         { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //  5
-         { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}, //  6
-         { 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0}, //  7
-         { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0}, //  8
-         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0}, //  9
-         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0}, // 10
-         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, // 11
-         { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}, // 12
-      };
-      // */
-      
-      /* shear mapping: ---
-      undirected = false;
-      double[][] w = {
-         //1  2
-         { 1, 1}, //  1
-         { 0, 1}, //  2
-      };
-      // */
-      
-      /* Adder gate: ---
-      undirected = false;
-      double[][] w = {
-         //1  2  3  4  5  6  7  8
-         { 1, 0, 0, 0, 0, 0, 0, 0}, //  1
-         { 0, 1, 0, 0, 0, 0, 0, 0}, //  2
-         { 0, 0, 1, 0, 0, 0, 0, 0}, //  3
-         { 0, 0, 0, 1, 0, 0, 0, 0}, //  4
-         { 0, 0, 0, 0, 0, 0, 1, 0}, //  5
-         { 0, 0, 0, 0, 0, 0, 0, 1}, //  6
-         { 0, 0, 0, 0, 0, 1, 0, 0}, //  7
-         { 0, 0, 0, 0, 1, 0, 0, 0}, //  8
-      };
-      binary = true;
-      // */
-      
-      /* 2-bit adder gate: ---
-      undirected = false;
-      double[][] w = {
-         //1  2  3  4
-         { 1, 0, 0, 0}, //  1
-         { 0, 1, 0, 0}, //  2
-         { 0, 1, 0, 0}, //  3
-         { 0, 0, 1, 0}, //  4
-      };
-      binary = true;
-      // */
-      
-      /* Easley-Kleinberg toy web: ---
-      undirected = false;
-      double[][] w = {
-         //1  2  3  4
-         { 0, 1, 0, 1}, //  1
-         { 0, 0, 1, 1}, //  2
-         { 1, 0, 0, 0}, //  3
-         { 0, 0, 1, 0}, //  4
-      };
-      // */
-      
-      /* Easley-Kleinberg toy web variation: ---
-      undirected = false;
-      double[][] w = {
-         //1  2  3  4
-         { 0, 1, 0, 1}, //  1
-         { 0, 0, 1, 1}, //  2
-         { 1, 0, 0, 0}, //  3
-         { 0, 0, 0, 0}, //  4
-      };
-      // */
-      
-      /* Krumke-Noltemeier 3.4: ---
-      undirected = false;
-      double[][] w = {
-         //1  2  3  4  5  6  7
-         { 0, 1, 0, 0, 0, 0, 0}, //  1
-         { 0, 0, 1, 1, 0, 0, 0}, //  2
-         { 0, 0, 0, 0, 0, 0, 0}, //  3
-         { 0, 0, 0, 0, 1, 0, 0}, //  4
-         { 0, 1, 0, 1, 0, 0, 0}, //  5
-         { 0, 0, 0, 0, 0, 0, 0}, //  6
-         { 0, 0, 0, 0, 0, 1, 0}, //  7
-      };
-      // */
-      
-      /* OR gate: ---
-      double[][] w = {
-         //1  2  3  4  5  6  7  8
-         { 0, 1, 0, 0, 0, 0, 0, 0}, //  1
-         { 1, 0, 0, 0, 0, 0, 0, 0}, //  2
-         { 0, 0, 1, 0, 0, 0, 0, 0}, //  3
-         { 0, 0, 0, 1, 0, 0, 0, 0}, //  4
-         { 0, 0, 0, 0, 1, 0, 0, 0}, //  5
-         { 0, 0, 0, 0, 0, 1, 0, 0}, //  6
-         { 0, 0, 0, 0, 0, 0, 1, 0}, //  7
-         { 0, 0, 0, 0, 0, 0, 0, 1}, //  8
-      };
-      binary = true;
-      // */
-      
-      /* cOR gate: ---
-      undirected = false;
-      double[][] w = {
-         //1  2  3  4  5  6  7  8
-         { 0, 1, 0, 0, 0, 0, 0, 0}, //  1
-         { 0, 0, 0, 0, 0, 0, 1, 0}, //  2
-         { 0, 0, 0, 0, 1, 0, 0, 0}, //  3
-         { 0, 0, 0, 1, 0, 0, 0, 0}, //  4
-         { 0, 0, 1, 0, 0, 0, 0, 0}, //  5
-         { 0, 0, 0, 0, 0, 1, 0, 0}, //  6
-         { 1, 0, 0, 0, 0, 0, 0, 0}, //  7
-         { 0, 0, 0, 0, 0, 0, 0, 1}, //  8
-      };
-      binary = true;
-      // */
-      
-      /* Brandes et al 2008, Fig. 1a: ---
-      double[][] w = {
-         //1  2  3  4  5  6
-         { 0, 1, 1, 0, 0, 0}, //  1
-         { 1, 0, 1, 0, 1, 0}, //  2
-         { 1, 1, 0, 1, 0, 0}, //  3
-         { 0, 0, 1, 0, 0, 0}, //  4
-         { 0, 1, 0, 0, 0, 1}, //  5
-         { 0, 0, 0, 0, 1, 0}, //  6
-      };
-      // maximum modularity: C_0=[{0, 1, 2}, {3}, {4}, {5}], Q=0.013888888888888895
-      // */
-      Actor[] x = new Actor[w.length];
-      for (int i = 0; i < x.length; i++) {
-         String name = "";
-         if (binary) {
-            int jMax = Integer.numberOfLeadingZeros(i) - Integer.numberOfLeadingZeros(x.length) - 1;
-            //System.out.println("i=" + i + ", jMax=" + jMax);
-            for (int j = 0; j < jMax; j++) {
-               name += "0";
-            }
-            if (i != 0) name += Integer.toBinaryString(i);
-         } else {
-            //name += i;
-            name += (i+1);
-         }
-         //if (!binary && i < 10) name = " " + name;
-         x[i] = new Actor(i, name, .5);
-      }
-      
-      SocialNetwork graph = new SocialNetwork(undirected,x,w);
-      
-      //graph.activate(x[6], x[9]);
-      
-      graph.visualize();      
    }
 }
