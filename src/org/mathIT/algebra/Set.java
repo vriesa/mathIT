@@ -264,7 +264,7 @@ public class Set<E> extends java.util.HashSet<E> {
       }
 
       Set<E> tmpS;
-      ArrayList<E> s = new ArrayList<>(set);
+      ArrayList<E> s = new ArrayList<>(set); // represent set as an array list (indexing each element!)
       if (k == 1) {
          for (E i : s) {
             tmpS = new Set<>();
@@ -272,22 +272,19 @@ public class Set<E> extends java.util.HashSet<E> {
             subsets.add(tmpS);
          }
       } else if ( k > 1 && k <= s.size() ) {
-         ArrayList<Set<E>> tmp;
-         for (int i = 0; i < s.size(); i++) {
-            tmpS = new Set<>(); // size: Größe: n über k
-            for (int j = i+1; j < s.size(); j++) {
+         ArrayList<Set<E>> list;
+         for (int i = 1; i < s.size(); i++) {
+            tmpS = new Set<>();
+            for (int j = 0; j < i; j++) {
                tmpS.add(s.get(j));
             }
-            tmp = subsets(tmpS, k-1);
-            for (int j = 0; j < tmp.size(); j++) {
-               tmpS = tmp.get(j);
-               //if (!tmpS.equals(emptySet(new Set<E>())))
-               {
-                  tmpS.add(s.get(i));
-                  subsets.add(tmpS);
-               }
+            list = subsets(tmpS, k-1); // recursion step
+            for (int j = 0; j < list.size(); j++) {
+               tmpS = list.get(j); // get subset j
+               tmpS.add(s.get(i)); // add element i
+               subsets.add(tmpS);
             }  // for j
-         } // for x
+         } // for i
       }
       return subsets;
    }
@@ -318,7 +315,8 @@ public class Set<E> extends java.util.HashSet<E> {
       // // ... oder von Characters:
       Set<Character> s = new Set<Character>(
          //new Character[] {'A', 'n', 'd', 'r', 'e', 'a', 's', 'x', 'y'}
-         new Character[] {'l', 'i', 'e', 'b'}
+            //new Character[] {'l', 'i', 'e', 'b'}
+            new Character[] {'a', 'b'}
       );
       Set<Character> s1 = new Set<Character>(java.util.Arrays.asList(
          new Character[] {'u', 'g', 'a', 'b'}
@@ -446,5 +444,5 @@ public class Set<E> extends java.util.HashSet<E> {
       }
       System.out.println(ausgabe);
    }
-   */
+   // */
 }
