@@ -16,7 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
+ * 
+ * As a special exception, the copyright holders of this program give you permission 
+ * to link this program with independent modules to produce an executable, 
+ * regardless of the license terms of these independent modules, and to copy and 
+ * distribute the resulting executable under terms of your choice, provided that 
+ * you also meet, for each linked independent module, the terms and conditions of 
+ * the license of that module. An independent module is a module which is not derived 
+ * from or based on this program. If you modify this program, you may extend 
+ * this exception to your version of the program, but you are not obligated to do so. 
+ * If you do not wish to do so, delete this exception statement from your version.
  */
 package org.mathIT.approximation;
 /**
