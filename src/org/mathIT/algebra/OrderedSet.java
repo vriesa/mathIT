@@ -62,6 +62,8 @@ import java.util.SortedSet;
  * For further technical details see {@link java.util.TreeSet TreeSet}.
  * @param <E> the type of the elements of the set
  * @see MathSet
+ * @see EnumSet
+ * @see Set
  * @see java.util.TreeSet
  * @author Andreas de Vries
  * @version 1.1

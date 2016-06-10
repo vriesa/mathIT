@@ -50,7 +50,9 @@ import java.util.Arrays;
  * Thus, it is very important not to set the initial capacity too high 
  * (or the load factor too low) if iteration performance is important.
  * For further technical details see {@link java.util.HashSet}.
+ * @see EnumSet
  * @see OrderedSet
+ * @see Set
  * @see java.util.HashSet
  * @author Andreas de Vries
  * @version 1.2

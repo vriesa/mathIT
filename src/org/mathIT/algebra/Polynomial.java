@@ -82,8 +82,6 @@ import java.util.TreeMap;
  *  and the length of the array is &gt;= the degree of the polynomial.
  *  If the degree of the involved polynomials is not too large, these
  *  method are fast.
- *  <br>
- *  This class requires JDK 5 or higher.
  *  @see PolynomialZ
  *  @author Andreas de Vries
  *  @version 1.1

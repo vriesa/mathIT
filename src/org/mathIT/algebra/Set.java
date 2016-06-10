@@ -52,6 +52,8 @@ import java.util.Arrays;
  * For further technical details see {@link java.util.HashSet}.
  * @author Andreas de Vries
  * @version 1.1
+ * @see EnumSet
+ * @see MathSet
  * @see OrderedSet
  * @see java.util.HashSet
  * @param <E> the type of the elements of this set

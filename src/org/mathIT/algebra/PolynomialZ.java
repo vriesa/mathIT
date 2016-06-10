@@ -79,7 +79,6 @@ import java.util.TreeSet;
  *    <i>x</i><sup>1023</sup> - 3<i>x</i><sup>2</sup> 
  *    + 5<i>x</i> - 1
  *  </p>
- *  This class requires JDK 5 or higher.
  *  @see Polynomial
  *  @author Andreas de Vries
  *  @version 1.1
