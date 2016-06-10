@@ -271,10 +271,16 @@ public class Plot3DPane extends JPanel implements Printable {
       }
    }
 
+   /** Decides whether a coordinate grid is plotted.
+    * @param drawGrid flag deciding whether to plot a coordinate grid
+    */
    public void setDrawGrid( boolean drawGrid ) {
       this.drawGrid = drawGrid;
    }
    
+   /** Decides whether coordinate ticks are plotted.
+    * @param drawTicks flag deciding whether to plot coordinate ticks
+    */
    public void setDrawTicks( boolean drawTicks ) {
       this.drawTicks = drawTicks;
    }
@@ -477,6 +483,14 @@ public class Plot3DPane extends JPanel implements Printable {
       }
    }
 
+   /** Sets ticks for this plot.
+    * @param xTicks array of ticks of the x values
+    * @param xTicksPixel array of ticks of the x pixel values
+    * @param yTicks array of ticks of the y values
+    * @param yTicksPixel array of ticks of the y pixel values
+    * @param zTicks array of ticks of the z values
+    * @param zTicksPixel array of ticks of the z pixel values
+    */
    public void setTicks(
      double[] xTicks, int[] xTicksPixel, 
      double[] yTicks, int[] yTicksPixel,
@@ -541,6 +555,9 @@ public class Plot3DPane extends JPanel implements Printable {
       return Printable.PAGE_EXISTS;
    }
    
+   /**
+    *  Prints this plot.
+    */
    public void startPrinterJob() {
       int origWidth = width, origHeight = height;
       int origVxmin = vxmin, origVxmax = vxmax, origVymin = vymin, origVymax = vymax; 
@@ -601,6 +618,9 @@ System.out.println("Printing curve ("
    }
    
    // plot methods: -------------------------------
+   /** Plots the axes of this graph.
+    * @param g the graphics object of this plot
+    */
    public void axes(Graphics g) {
       int px, py;
 
@@ -744,22 +764,42 @@ System.out.println("Printing curve ("
       } // for-i
    }
     
+   /** Returns the projected value on the x axis given by the current rotation angles.
+    * @param x the x value
+    * @param y the y value
+    * @param z the z value
+    * @return the projected value on the x axis given by the current rotation angles
+    */
    public double vx(double x, double y, double z) {
       double b = angleY * RADIANS;
       return x * Math.cos(b) - y * Math.sin(b);
    }
 
+   /** Returns the projected value on the y axis given by the current rotation angles.
+    * @param x the x value
+    * @param y the y value
+    * @param z the z value
+    * @return the projected value on the y axis given by the current rotation angles
+    */
    public double vy(double x, double y, double z) {
       double a = angleX * RADIANS;
       double b = angleY * RADIANS;
       return z * Math.cos(a) + Math.sin(a) * ( x*Math.sin(b) + y*Math.cos(b) );
    }
 
+   /** Returns the projected value of the specified x value mapped onto this plot.
+    * @param x the x value
+    * @return the projected value of x
+    */
    public int mapX(double x) {
       int px = vxmin + (int)((x - xmin) / (xmax - xmin) * (vxmax - vxmin));
       return px;
    }
 
+   /** Returns the projected value of the specified x value mapped onto this plot.
+    * @param y the y value
+    * @return the projected value of y
+    */
    public int mapY(double y) {
       int py = vymin + (int)((ymax - y) / (ymax - ymin) * (vymax - vymin));
       return py;
@@ -808,6 +848,11 @@ System.out.println("Printing curve ("
       return y;
    }
 
+   /** Returns the projected coordinate values from the pixel values.
+    * @param px the pixel value of x
+    * @param py the pixel value of y
+    * @return an array where the first entry is the projected x coordinate and the second entry the projected y coordinate
+    */
    public double[] pixelToV(int px, int py) {
       double[] v = new double[2];
       // v_x:
@@ -817,10 +862,20 @@ System.out.println("Printing curve ("
       return v;
    }
 
+   /** Draws the line through the specified start and end coordinates projected onto the plot plane. 
+    * @param g the graphics object of this plot
+    * @param x1 the x coordinate of the starting point
+    * @param y1 the y coordinate of the starting point
+    * @param x2 the x coordinate of the end point
+    * @param y2 the y coordinate of the end point
+    */
    public void line(Graphics g, double x1, double y1, double x2, double y2) {
       g.drawLine(mapX(x1), mapY(y1), mapX(x2), mapY(y2));
    }
       
+   /** Draws ticks on the axes of this plot.
+    * @param g the graphics object of this plot
+    */
    public void drawTicks(Graphics2D g) {
       int x, y;
       String tick;

@@ -319,7 +319,7 @@ public class Combinatorics {
     *  @param set a set containing elements of a specified type &lt;T&gt;
     *  @return a table where each row is a permutation of the elements of <i>set</i>
     */
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    public static <T> T[][] permutations(Set<T> set) {
       Class clazz = findTypeOfElements(set, null);
       //System.out.println("### Determined class " + clazz); 
@@ -337,7 +337,7 @@ public class Combinatorics {
     *  @param clazz the currently found least superclass so far; should be null at start
     *  @return the least superclass of all elements of set.
     */
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    private static <T> Class findTypeOfElements(Set<T> set, Class clazz) {
       for (T x : set) {
          if (clazz == null) {

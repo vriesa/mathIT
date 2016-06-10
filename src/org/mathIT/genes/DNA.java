@@ -328,6 +328,7 @@ public class DNA implements java.io.Serializable {
       return out;
    }
   
+   /*
    public String getFrequencyAsHTMLGraph2() {
       // ... vertikale Säulen mit gedrehter Beschriftung ... noch nicht fertig!
       java.text.DecimalFormat threeDigits = new java.text.DecimalFormat("0.000");
@@ -353,7 +354,8 @@ public class DNA implements java.io.Serializable {
       out += "</table>";
       return out;
    }
-  
+   // */
+   
    /** Returns the probability to obtain the specified nucleobase of this genome sequence.
     *  @param b the specified nucleobase
     *  @return the probability of the nucleobase of this genome
@@ -613,6 +615,7 @@ public class DNA implements java.io.Serializable {
       return genome;
    }
    
+   /*
    public static void main(String... args) {
       String out = "<html>";
       //String sequence = "GTATGGTCGGCCTGAGTTAA";
@@ -631,7 +634,6 @@ public class DNA implements java.io.Serializable {
       //System.out.println(out);
       //javax.swing.JOptionPane.showMessageDialog(null, out);
       
-      // /*
       genome = loadFASTA();
       if (genome != null) {
         out += "<br>" + genome.getName() + ":<br>" + genome.getFrequencyAsHTMLGraph() + 
@@ -640,9 +642,7 @@ public class DNA implements java.io.Serializable {
         javax.swing.JOptionPane.showMessageDialog(null, out);
         genome.save();
       }
-      // */
-      
-      // /*
+
       out = "<html>";
       genome = loadDNA();
       if (genome != null) {
@@ -659,7 +659,7 @@ public class DNA implements java.io.Serializable {
          out += "\n" + genome;
          javax.swing.JOptionPane.showMessageDialog(null, out);
       }
-      // */
    }
+   // */
 }
 

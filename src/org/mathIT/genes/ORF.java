@@ -558,9 +558,10 @@ public class ORF implements java.io.Serializable {
       return orfs;
    }
    
+   /*
    public static void main(String... args) {
-      /* Frequency [in %] of codons in the gene of Escherichia Coli K-12. 
-       * Data according to Merkl, Waack: Bioinformatik Interaktiv. Wiley, Weinheim 2009, S.8.*/
+      // Frequency [in %] of codons in the gene of Escherichia Coli K-12. 
+      // Data according to Merkl, Waack: Bioinformatik Interaktiv. Wiley, Weinheim 2009, S.8.
       java.util.TreeMap<Codon, Double> p = new java.util.TreeMap<>();
       p.put(TTT,2.08);p.put(TCT,0.89);p.put(TAT,1.53);p.put(TGT,0.49);
       p.put(TTC,1.78);p.put(TCC,0.90);p.put(TAC,1.30);p.put(TGC,0.65);
@@ -586,7 +587,6 @@ public class ORF implements java.io.Serializable {
       
       ArrayList<ORF> genes = new ArrayList<>();
       
-      // /*
       genes = loadFASTA(true);
       if (genes.size() > 0) {
          out = "<html>";
@@ -610,22 +610,21 @@ public class ORF implements java.io.Serializable {
          }
          //ORF.save(genes);
       }
-      // */
       
       /*
-      genes = loadORFs();
-      if (genes != null && genes.size() > 0) {
-         out = "<html>";
-         out += getFrequencyAsHTMLTable(genes);
-         out += "<br>Entropy:" + entropy(genes);
-         out += " (" + genes.size() + " genes)";         
-         javax.swing.JOptionPane.showMessageDialog(null, out, "Codon Frequencies", -1);
-         
-         out = "<html>";
-         out += getFrequencyAsHTMLGraph(genes);
-         javax.swing.JOptionPane.showMessageDialog(null, out, "Codon Frequencies", -1);
-      }
-      // */
+//      genes = loadORFs();
+//      if (genes != null && genes.size() > 0) {
+//         out = "<html>";
+//         out += getFrequencyAsHTMLTable(genes);
+//         out += "<br>Entropy:" + entropy(genes);
+//         out += " (" + genes.size() + " genes)";         
+//         javax.swing.JOptionPane.showMessageDialog(null, out, "Codon Frequencies", -1);
+//         
+//         out = "<html>";
+//         out += getFrequencyAsHTMLGraph(genes);
+//         javax.swing.JOptionPane.showMessageDialog(null, out, "Codon Frequencies", -1);
+//      }
    }
+   // */
 }
 

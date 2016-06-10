@@ -664,6 +664,7 @@ public class Utils {
       }
    }
    
+   /*
    public static void main(String... args) {
       int f = 0; // frequency
       //int n_min = 2, n_max = 3, step = 1; // limits of tuple sizes, step width
@@ -791,4 +792,5 @@ public class Utils {
          }
       }      
    }
+   // */
 }

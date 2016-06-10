@@ -569,7 +569,7 @@ public class Circuit extends ArrayList<QuantumGate> implements java.io.Serializa
    }
    
    /** Executes the specified quantum gate.
-    *  @return gate the quantum gate to execute
+    *  @param gate the quantum gate to execute
     *  @throws IllegalArgumentException if the quantum gate is unknown
     */
    private void perform(QuantumGate gate) {

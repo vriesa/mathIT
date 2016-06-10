@@ -116,7 +116,8 @@ public final class Tuple<T> implements Collection<T>, Serializable {
       return elements.get(1);
    }
 
-   @Override
+   @SuppressWarnings("rawtypes")
+	@Override
    public boolean equals(Object o) {
       if (o == this) {
          return true;

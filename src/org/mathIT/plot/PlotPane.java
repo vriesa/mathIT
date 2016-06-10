@@ -336,18 +336,30 @@ public class PlotPane extends JPanel implements Printable {
       }
    }
 
+   /** Decides whether a coordinate grid is plotted.
+    * @param drawGrid flag deciding whether to plot a coordinate grid
+    */
    public void setDrawGrid( boolean drawGrid ) {
       this.drawGrid = drawGrid;
    }
    
+   /** Decides whether coordinate ticks are plotted.
+    * @param drawTicks flag deciding whether to plot coordinate ticks
+    */
    public void setDrawTicks( boolean drawTicks ) {
       this.drawTicks = drawTicks;
    }
    
+   /** Sets the function pixel values of this plot.
+    * @param fPixels function pixel values
+    */
    public void setFPixels( int[][] fPixels ) {
       this.fPixels = fPixels;
    }
    
+   /**
+    * Computes all pixel values of the current function values.
+    */
    public void computePixels() {
       //double x;
       double y;
@@ -482,11 +494,21 @@ public class PlotPane extends JPanel implements Printable {
       }
    }
   
+   /** Sets the origin of this plot pane.
+    * @param ox the x value of the origin
+    * @param oy the y value of the origin
+    */
    public void setOrigin( int ox, int oy ) {
       this.ox = ox;
       this.oy = oy;
    }
 
+   /** Sets ticks for this plot.
+    * @param xTicks array of ticks of the x values
+    * @param xTicksPixel array of ticks of the x pixel values
+    * @param yTicks array of ticks of the y values
+    * @param yTicksPixel array of ticks of the y pixel values
+    */
    public void setTicks(
      double[] xTicks, int[] xTicksPixel, 
      double[] yTicks, int[] yTicksPixel
@@ -638,6 +660,9 @@ public class PlotPane extends JPanel implements Printable {
       return Printable.PAGE_EXISTS;
    }
    
+   /**
+    *  Prints this plot.
+    */
    public void startPrinterJob() {
       int origWidth = width, origHeight = height;
       

@@ -106,7 +106,7 @@ public class EnumSet<E extends Enum<E>> {
     *  @param enumName the fully qualified name of the enum
     *  @throws ClassNotFoundException if the enum cannot be located
     */
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    public EnumSet(String enumName) throws ClassNotFoundException {
       EnumSet tmp = new EnumSet(Class.forName(enumName));
       enumSet = tmp.enumSet;

@@ -40,7 +40,8 @@ import static org.mathIT.util.Formats.*;
  *  @version 1.0
  */
 public class MatrixAlgebra extends javax.swing.JFrame {
-   /** First matrix to be operated upon.*/
+	private static final long serialVersionUID = 8598673622635355958L;
+	/** First matrix to be operated upon.*/
    private Matrix A;
    /** Second matrix to be operated upon. It is ignored in case of unary operators.*/
    private Matrix B;
@@ -58,7 +59,7 @@ public class MatrixAlgebra extends javax.swing.JFrame {
    }
    
    /** Creates a new form MatrixAlgebra for unary operations on the matrix A.
-    * @param A.matrix to be operated upon
+    * @param A matrix to be operated upon
     */
    public MatrixAlgebra(Matrix A) {
       this("Matrix Algebra", A);
@@ -66,7 +67,7 @@ public class MatrixAlgebra extends javax.swing.JFrame {
    
    /** Creates a new form MatrixAlgebra for unary operations on the matrix A.
     *  @param title the title of this frame
-    *  @param A.matrix to be operated upon
+    *  @param A matrix to be operated upon
     */
    public MatrixAlgebra(String title, Matrix A) {
       this.A = A;
@@ -216,8 +217,8 @@ public class MatrixAlgebra extends javax.swing.JFrame {
    }
 
    /** Creates a new form MatrixAlgebra for binary operations on the matrices A and B.
-    * @param A.first operand
-    * @param B.second operand
+    * @param A first operand
+    * @param B second operand
     */
    public MatrixAlgebra(Matrix A, Matrix B) {
       this.A = A;
@@ -371,11 +372,17 @@ public class MatrixAlgebra extends javax.swing.JFrame {
             "1", "2", "3"
          }
       ) {
-         Class[] types = new Class [] {
+         /**
+			 * 
+			 */
+			private static final long serialVersionUID = 4879457937330699855L;
+			@SuppressWarnings("rawtypes")
+			Class[] types = new Class [] {
             java.lang.String.class, java.lang.String.class, java.lang.String.class
          };
 
-         public Class getColumnClass(int columnIndex) {
+         @SuppressWarnings("rawtypes")
+			public Class getColumnClass(int columnIndex) {
             return types [columnIndex];
          }
       });
@@ -469,11 +476,14 @@ public class MatrixAlgebra extends javax.swing.JFrame {
             "1", "2", "3"
          }
       ) {
-         Class[] types = new Class [] {
+ 			private static final long serialVersionUID = -4944851734739683090L;
+			@SuppressWarnings("rawtypes")
+			Class[] types = new Class [] {
             java.lang.String.class, java.lang.String.class, java.lang.String.class
          };
 
-         public Class getColumnClass(int columnIndex) {
+         @SuppressWarnings("rawtypes")
+			public Class getColumnClass(int columnIndex) {
             return types [columnIndex];
          }
       });

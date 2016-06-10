@@ -100,7 +100,8 @@ public class Files {
     *  with the specified path as default, optionally showing a file chooser dialog.
     *  @return null if the file name is null or empty, or if the file chooser dialog is canceled
     */
-   private static File getFileToLoad(String fileName, String currentDirectory, boolean showDialog) {
+   /*
+	private static File getFileToLoad(String fileName, String currentDirectory, boolean showDialog) {
       if (fileName == null || fileName == "") return null;
       File file = null;
       
@@ -122,6 +123,7 @@ public class Files {
       }
       return file;
    }   
+   // */
    
    /** Saves the specified text to a file. Here the text is a general
     * {@link java.lang.CharSequence character sequence}.

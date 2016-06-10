@@ -108,7 +108,8 @@ public class Probability {
     * @param p the probability of the quantile
     * @return the quantile of p
     */
-   public static double standardNormalQuantile(double p) {
+   @SuppressWarnings("rawtypes")
+	public static double standardNormalQuantile(double p) {
       int c__0 = 0;
       double epsilon = 1e-8; //double c_d1em8 = 1e-8;
 
@@ -215,7 +216,8 @@ public class Probability {
          x[1] = p;
          xzero = 0;
          // These are the argument types of the function sztud:
-         Class[] argTypes = { Double.TYPE, Double.TYPE, Integer.TYPE };
+         @SuppressWarnings("rawtypes")
+			Class[] argTypes = { Double.TYPE, Double.TYPE, Integer.TYPE };
          try {
             /* auxzbr determines two x-values enclosing a zero:*/
             x = auxzbr(x[0], x[1], "szstud", argTypes, p, n, c__0);
@@ -270,7 +272,8 @@ public class Probability {
     *  @throws IllegalAccessException if the arguments are not correct
     *  @throws InvocationTargetException if the arguments are not correct
     */
-   public static double[] auxzbr(double x0, double x1,
+   @SuppressWarnings("rawtypes")
+	public static double[] auxzbr(double x0, double x1,
              String function, Class[] argTypes,
              double par, int npar1, int npar2
    ) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -334,7 +337,8 @@ public class Probability {
     *  @throws IllegalAccessException if the arguments are not correct
     *  @throws InvocationTargetException if the arguments are not correct
     */
-   public static double auxzfn(double x0, double x1,
+   @SuppressWarnings("rawtypes")
+	public static double auxzfn(double x0, double x1,
              String function, Class[] argTypes,
              double par, int npar1, int npar2, double epsiln)
    throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {

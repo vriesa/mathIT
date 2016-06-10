@@ -1015,6 +1015,7 @@ public class Protein implements java.io.Serializable {
       return protein;
    }
    
+   /*
    public static void main(String... args) {
       String out = "<html>";
       //String sequence = "GTATGGTCGGCCTGAGTTAA";
@@ -1023,7 +1024,6 @@ public class Protein implements java.io.Serializable {
       
       Protein protein;
       
-      // /*
       char[] sequence = {'A', 'A', 'G', 'T', 'T', 'C', 'G', 'A', 'A', 'G'};
       protein = new Protein("Test", sequence);
       
@@ -1051,12 +1051,10 @@ public class Protein implements java.io.Serializable {
       }
       
       javax.swing.JOptionPane.showMessageDialog(null, out, "Protein", -1);
-      // */
       
       out = "<html>"; // + protein.getName() + ":<br>" + protein.getFrequenciesAsHTMLGraph();
       //javax.swing.JOptionPane.showMessageDialog(null, out);
       
-      // /*
       protein = loadFASTA();
       if (protein != null) {
         out += "<br>" + protein.getName();
@@ -1076,7 +1074,7 @@ public class Protein implements java.io.Serializable {
         out += "<br>f(AGG)=" + protein.getTripletFrequencies().get("AGG");
         out += "<br>f(AGA)=" + protein.getTripletFrequencies().get("AGA");
         out += "<br>f(GGG)=" + protein.getTripletFrequencies().get("GGG");
-        */
+
         out += "<br>" + getFrequenciesAsHTMLGraph(protein.getExtremalTripletFrequencies(0,1));
         
         StringBuilder out2 = new StringBuilder("Vanishing amino acid frequencies " + fileName + ":\n");
@@ -1119,26 +1117,25 @@ public class Protein implements java.io.Serializable {
         //protein.saveAsCSV();
         //protein.save();
       }
-      // */
       
       /*
-      out = "<html>";
-      protein = loadProtein();
-      if (protein != null) {
-         //--- Determine runtime of decoding: (30 mio letters => 1 sec)
-         //long time = System.currentTimeMillis();
-         //int laenge = protein.decodeSequence().size();
-         //time = System.currentTimeMillis() - time;
-         //System.out.println("### Sequence length: " + laenge);
-         //System.out.println("### Sequence decoding needed " + time/1000. + " sec");
-         
-         out += "<br>" + protein.getName() + ":<br>" + protein.getFrequenciesAsHTMLGraph() + 
-          protein.getFrequenciesAsHTMLTable();
-         out += "<br><br>Entropy:" + protein.entropy() + " (" + protein.getSequence().length() + " amino acids)";
-         out += "<br><br>" + protein.asHTMLString();
-         javax.swing.JOptionPane.showMessageDialog(null, out, "Protein", -1);
-      }
-      // */
+//      out = "<html>";
+//      protein = loadProtein();
+//      if (protein != null) {
+//         //--- Determine runtime of decoding: (30 mio letters => 1 sec)
+//         //long time = System.currentTimeMillis();
+//         //int laenge = protein.decodeSequence().size();
+//         //time = System.currentTimeMillis() - time;
+//         //System.out.println("### Sequence length: " + laenge);
+//         //System.out.println("### Sequence decoding needed " + time/1000. + " sec");
+//         
+//         out += "<br>" + protein.getName() + ":<br>" + protein.getFrequenciesAsHTMLGraph() + 
+//          protein.getFrequenciesAsHTMLTable();
+//         out += "<br><br>Entropy:" + protein.entropy() + " (" + protein.getSequence().length() + " amino acids)";
+//         out += "<br><br>" + protein.asHTMLString();
+//         javax.swing.JOptionPane.showMessageDialog(null, out, "Protein", -1);
+//      }
    }
+   // */
 }
 

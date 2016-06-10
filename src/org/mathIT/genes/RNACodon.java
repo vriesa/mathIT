@@ -138,10 +138,12 @@ public enum RNACodon {
       throw new IllegalArgumentException(triplet + " is not a codon triplet");
    }
    
+   /*
    public static void main(String... args) {      
       String string = "UGA";
       System.out.println(string + " = " + RNACodon.fromString(string));
       AminoAcid acid = Trp;
       System.out.println(acid + " = " + RNACodon.decode(acid));
    }
+   // */
 }

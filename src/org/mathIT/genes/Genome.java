@@ -979,6 +979,7 @@ public class Genome implements java.io.Serializable {
       return genome;
    }
    
+   /*
    public static void main(String... args) {
       String out;
       //out = "<html>";
@@ -988,25 +989,22 @@ public class Genome implements java.io.Serializable {
       
       Genome genome;
       
-      /*
-      char[] sequence = {'A', 'A', 'G', 'T', 'T', 'C', 'G', 'A', 'A', 'G'};
-      genome = new Genome("Test", sequence);
-      
-      out += "<br>" + genome.asHTMLString();
-      out += "<br>" + genome.getFrequenciesAsHTMLTable() 
-      + "<br>" + genome.getFrequenciesAsHTMLGraph2()
-      ;
-      out += "<br><br>Entropy:" + genome.entropy();
-      //out += "<br>" + genome.getPairFrequenciesAsHTMLGraph();
-      //out += "<br>" + genome.getTripletFrequenciesAsHTMLGraph();
-      
-      javax.swing.JOptionPane.showMessageDialog(null, out, "Genome", -1);
-      // */
+//      char[] sequence = {'A', 'A', 'G', 'T', 'T', 'C', 'G', 'A', 'A', 'G'};
+//      genome = new Genome("Test", sequence);
+//      
+//      out += "<br>" + genome.asHTMLString();
+//      out += "<br>" + genome.getFrequenciesAsHTMLTable() 
+//      + "<br>" + genome.getFrequenciesAsHTMLGraph2()
+//      ;
+//      out += "<br><br>Entropy:" + genome.entropy();
+//      //out += "<br>" + genome.getPairFrequenciesAsHTMLGraph();
+//      //out += "<br>" + genome.getTripletFrequenciesAsHTMLGraph();
+//      
+//      javax.swing.JOptionPane.showMessageDialog(null, out, "Genome", -1);
       
       out = "<html>"; // + genome.getName() + ":<br>" + genome.getFrequenciesAsHTMLGraph();
       //javax.swing.JOptionPane.showMessageDialog(null, out);
       
-      // /*
       genome = loadFASTA();
       if (genome != null) {
         out += "<br>" + genome.getName();
@@ -1060,26 +1058,24 @@ public class Genome implements java.io.Serializable {
         //protein.saveAsCSV();
         //protein.save();
       }
-      // */
-            
-      /*
-      out = "<html>";
-      genome = loadGenome();
-      if (genome != null) {
-         //--- Determine runtime of decoding: (30 mio letters => 1 sec)
-         //long time = System.currentTimeMillis();
-         //int laenge = genome.decodeSequence().size();
-         //time = System.currentTimeMillis() - time;
-         //System.out.println("### Sequence length: " + laenge);
-         //System.out.println("### Sequence decoding needed " + time/1000. + " sec");
-         
-         out += "<br>" + genome.getName() + ":<br>" + genome.getFrequenciesAsHTMLGraph() + 
-          genome.getFrequenciesAsHTMLTable();
-         out += "<br><br>Entropy:" + genome.entropy() + " (" + genome.getSequence().length() + " nucleobases)";
-         out += "<br><br>" + genome.asHTMLString();
-         javax.swing.JOptionPane.showMessageDialog(null, out);
-      }
-      // */
+
+//      out = "<html>";
+//      genome = loadGenome();
+//      if (genome != null) {
+//         //--- Determine runtime of decoding: (30 mio letters => 1 sec)
+//         //long time = System.currentTimeMillis();
+//         //int laenge = genome.decodeSequence().size();
+//         //time = System.currentTimeMillis() - time;
+//         //System.out.println("### Sequence length: " + laenge);
+//         //System.out.println("### Sequence decoding needed " + time/1000. + " sec");
+//         
+//         out += "<br>" + genome.getName() + ":<br>" + genome.getFrequenciesAsHTMLGraph() + 
+//          genome.getFrequenciesAsHTMLTable();
+//         out += "<br><br>Entropy:" + genome.entropy() + " (" + genome.getSequence().length() + " nucleobases)";
+//         out += "<br><br>" + genome.asHTMLString();
+//         javax.swing.JOptionPane.showMessageDialog(null, out);
+//      }
    }
+   // */
 }
 

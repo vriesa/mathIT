@@ -446,7 +446,8 @@ public class WeightedGraph<V extends Vertible<V>> extends Graph<V> {
     * Returns a representation of this graph as a text in CSV format.
     * @return a StringBuilder representation of this graph in CSV fomat
     */
-   @Override
+   @SuppressWarnings("rawtypes")
+	@Override
    public StringBuilder toCSV() {
       //final char separator = Graph.separator;
       int i, j;

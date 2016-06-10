@@ -257,7 +257,8 @@ public class Clustering {
     * @param vertices an array of the vertices of this clustering
     * @return a string representing this clustering of vertices
     */
-   public String toString(Vertible[] vertices) {
+   @SuppressWarnings("rawtypes")
+	public String toString(Vertible[] vertices) {
       if (this.vertexDistribution == null || this.vertexDistribution.length == 0) return "[]";
       StringBuilder out = new StringBuilder("{");
       OrderedSet<Integer> cluster;

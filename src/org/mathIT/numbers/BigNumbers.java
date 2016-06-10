@@ -769,7 +769,7 @@ public class BigNumbers {
 //System.out.println("\nfuer while-loop: " + (System.currentTimeMillis() - start) + " ms");
 
       // r is always prime, i.e., phi(r) = r-1:
-      int end = (int) (Math.sqrt((r-1)/12.0) * lgn) + 8;
+      // int end = (int) (Math.sqrt((r-1)/12.0) * lgn) + 8;
       // //int end = (int) (Math.sqrt(r-1) * lgn);
 
 //System.out.print("after loop: ");

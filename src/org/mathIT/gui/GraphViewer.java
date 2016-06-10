@@ -181,7 +181,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
    /**
     * This method is called from within the constructor to initialize the frame.
     */
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    private void initComponents() {
       layout = new KKLayout<>(this.graph);
       //layout = new FRLayout<>(this.graph);
@@ -734,7 +734,7 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
     * {@link edu.uci.ics.jung.algorithms.layout.Layout}.
     * @return an array of graph layouts
     */
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    protected Class<? extends Layout<?,?>>[] getCombos() {
       List<Class<? extends Layout>> layouts = new ArrayList<>();
       layouts.add(KKLayout.class);

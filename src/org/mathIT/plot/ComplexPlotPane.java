@@ -230,10 +230,19 @@ public class ComplexPlotPane extends JPanel implements Printable {
       }
    }
 
+   /** Decides whether to draw the coordinate axes of this plot.
+    * @param drawAxes flag indicating whether to draw the coordinate axes
+    */
    public void setDrawAxes( boolean drawAxes ) {
       this.drawAxes = drawAxes;
    }
    
+   /** Sets the limit projected values.
+    * @param vxmin minimum projected x-value
+    * @param vxmax maximum projected x-value
+    * @param vymin minimum projected y-value
+    * @param vymax maximum projected y-value
+    */
    public void setVLimits(int vxmin, int vxmax, int vymin, int vymax){
       this.vxmin = vxmin;
       this.vxmax = vxmax;
@@ -241,11 +250,23 @@ public class ComplexPlotPane extends JPanel implements Printable {
       this.vymax = vymax;
    }
    
+   /** Sets the rotation angles of this plot. 
+    * @param angleX the rotation angle of the x axis
+    * @param angleY the rotation angle of the y axis
+    */
    public void setAngles(double angleX, double angleY){
       this.angleX = angleX;
       this.angleY = angleY;
    }
    
+   /** Sets the limits for the values.
+    * @param xmin minimum x value
+    * @param xmax maximum x value
+    * @param ymin minimum y value
+    * @param ymax maximum y value
+    * @param zmin minimum z value
+    * @param zmax maximum z value
+    */
    public void setLimits(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax){
       this.xmin = xmin;
       this.xmax = xmax;
@@ -255,6 +276,9 @@ public class ComplexPlotPane extends JPanel implements Printable {
       this.zmax = zmax;
    }
    
+   /**
+    * Computes all line values regarding the current parameter values.
+    */
    public void computeValues() {
       surface = computeSurface();
       xLine = computeXLine();
@@ -266,15 +290,25 @@ public class ComplexPlotPane extends JPanel implements Printable {
       computeZTicks();
    }
    
+   /** Rotates the coordinate axes.
+    * @param xAngle angle to rotate the x axis
+    * @param yAngle angle to rotate the y axis
+    */
    public void rotate( double xAngle, double yAngle ){
       angleX += xAngle;
       angleY += yAngle;
    }
    
+   /** Decides whether the real part of the function is plotted.
+    * @param realPart flag indicating whether the real part of the function is plotted
+    */
    public void setRealPart(boolean realPart){
       this.realPart = realPart;
    }
 
+   /** Decides whether the imaginary part of the function is plotted.
+    * @param imaginaryPart flag indicating whether the imaginary part of the function is plotted
+    */
    public void setImaginaryPart(boolean imaginaryPart){
       this.imaginaryPart = imaginaryPart;
    }
@@ -693,6 +727,9 @@ System.out.println("*** angleX="+angleX+", angleY="+angleY+
       return Printable.PAGE_EXISTS;
    }
    
+   /**
+    *  Prints this plot.
+    */
    public void startPrinterJob() {
       int origWidth = width, origHeight = height;
       int origVxmin = vxmin, origVxmax = vxmax, origVymin = vymin, origVymax = vymax; 
@@ -753,6 +790,10 @@ System.out.println("Printing curve ("
    }
    
    // plot methods: -------------------------------
+   
+   /** Plots the axes of this graph.
+    * @param g the graphics object of this plot
+    */
    public void axes(Graphics g) {
       int px, py;
 
@@ -979,22 +1020,44 @@ System.out.println("Printing curve ("
       } // for-i
    }
     
+   /** Returns the projected value on the x axis given by the current rotation angles.
+    * @param x the x value
+    * @param y the y value
+    * @param z the z value
+    * @return the projected value on the x axis given by the current rotation angles
+    * @see #setAngles(double, double)
+    */
    public double vx(double x, double y, double z) {
       double b = angleY * RADIANS;
       return x * Math.cos(b) - y * Math.sin(b);
    }
 
+   /** Returns the projected value on the y axis given by the current rotation angles.
+    * @param x the x value
+    * @param y the y value
+    * @param z the z value
+    * @return the projected value on the y axis given by the current rotation angles
+    * @see #setAngles(double, double)
+    */
    public double vy(double x, double y, double z) {
       double a = angleX * RADIANS;
       double b = angleY * RADIANS;
       return z * Math.cos(a) + Math.sin(a) * ( x*Math.sin(b) + y*Math.cos(b) );
    }
 
+   /** Returns the projected value of the specified x value mapped onto this plot.
+    * @param x the x value
+    * @return the projected value of x
+    */
    public int mapX(double x) {
       int px = vxmin + (int)((x - xmin) / (xmax - xmin) * (vxmax - vxmin));
       return px;
    }
 
+   /** Returns the projected value of the specified y value mapped onto this plot.
+    * @param y the y value
+    * @return the projected value of y
+    */
    public int mapY(double y) {
       int py = vymin + (int)((ymax - y) / (ymax - ymin) * (vymax - vymin));
       return py;
@@ -1043,6 +1106,11 @@ System.out.println("Printing curve ("
       return y;
    }
 
+   /** Returns the projected coordinate values from the pixel values.
+    * @param px the pixel value of x
+    * @param py the pixel value of y
+    * @return an array where the first entry is the projected x coordinate and the second entry the projected y coordinate
+    */
    public double[] pixelToV(int px, int py) {
       double[] v = new double[2];
       // v_x:
@@ -1052,10 +1120,20 @@ System.out.println("Printing curve ("
       return v;
    }
 
+   /** Draws the line through the specified start and end coordinates projected onto the plot plane. 
+    * @param g the graphics object of this plot
+    * @param x1 the x coordinate of the starting point
+    * @param y1 the y coordinate of the starting point
+    * @param x2 the x coordinate of the end point
+    * @param y2 the y coordinate of the end point
+    */
    public void line(Graphics g, double x1, double y1, double x2, double y2) {
       g.drawLine(mapX(x1), mapY(y1), mapX(x2), mapY(y2));
    }
       
+   /** Draws the axes of this plot.
+    * @param g the graphics object of this plot
+    */
    public void drawAxes(Graphics2D g) {
       int x, y;
       String tick;

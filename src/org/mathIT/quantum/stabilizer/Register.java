@@ -220,7 +220,7 @@ public class Register {
    
    /** Returns the graph register state representing this quantum register as long as
     *  it is a stabilizer state according to the Gottesman-Knill theorem.
-    *  If {@link #isStabilizerState} is <code>false</code>, the graph register state
+    *  If this register is not a stabilizer state, the graph register state
     *  is <code>null</code>.
     *  @return the graph register state representing this quantum register
     */
