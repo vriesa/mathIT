@@ -864,7 +864,7 @@ public class BigNumbers {
             // i++; x = (m*x) mod n; y = (m*y)^2 mod n:
             i = i.add(ONE);
             x = m.multiply(x).mod(n);
-            y = m.multiply(y).mod(n); y = y.multiply(y).mod(n); //?? y = m.multiply(y).mod(n);
+            y = m.multiply(m).multiply(y).mod(n);
          }
       }
       return i;

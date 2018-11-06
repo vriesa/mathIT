@@ -1097,7 +1097,7 @@ public class Numbers {
             // i++; x = (m*x) mod n; y = (m*y)^2 mod n:
             i++;
             x = (m*x) % n;
-            y = (m*y) % n; y = (y*y) % n; 
+            y = (m*m*y) % n; 
          }
       }
       return i;
