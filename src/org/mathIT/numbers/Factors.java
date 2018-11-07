@@ -29,7 +29,7 @@
  */
 package org.mathIT.numbers;
 import java.math.BigInteger;
-import static java.math.BigInteger.*;
+import static java.math.BigInteger.ONE;
 import java.util.Set;
 import java.util.TreeMap;
 import static org.mathIT.numbers.BigNumbers.*;
@@ -84,7 +84,7 @@ public class Factors extends TreeMap<BigInteger,Integer>{
       BigInteger prime;
       int exponent;
       BigInteger d = TWO;
-      BigInteger sqrtN = BigNumbers.sqrt(n).toBigInteger();
+      BigInteger sqrtN = BigNumbers.sqrt(n).toBigInteger().add(ONE);
       final BigInteger THREE = BigInteger.valueOf(3);
       final BigInteger FOUR = BigInteger.valueOf(4);
       boolean plus2Step = true; // flag to control the wheel
