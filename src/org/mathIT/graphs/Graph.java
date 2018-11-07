@@ -1932,7 +1932,7 @@ public class Graph<V extends Vertible<V>> {
       //Entfernungsmatrix
       //int inf = 0;
       int[][] y;
-      // /*
+      /*
       y = new int[][] {
           {0,1,0},
           {1,0,1},
@@ -1940,7 +1940,7 @@ public class Graph<V extends Vertible<V>> {
       };
       network = new Graph<>(false, y, new SimpleVertex[]{new SimpleVertex(0)});
       network.computeHashimoto();
-      System.exit(0);;
+      //System.exit(0);;
       // */
       
       // /*
@@ -2022,7 +2022,7 @@ public class Graph<V extends Vertible<V>> {
       });
       System.out.println("Eigenvalues of L:\n "+eigen);
       //javax.swing.JOptionPane.showMessageDialog(null, "<html>" + L.toHTML("right", false));
-      javax.swing.JOptionPane.showMessageDialog(null, "<html>" + eigenvectors.toHTML("right", false));
+      //javax.swing.JOptionPane.showMessageDialog(null, "<html>" + eigenvectors.toHTML("right", false));
    }
    // */
 }
