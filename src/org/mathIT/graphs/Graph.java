@@ -1,7 +1,7 @@
 /*
  * Graph.java - Class representing a graph
  *
- * Copyright (C) 2009-2016 Andreas de Vries
+ * Copyright (C) 2009-2019 Andreas de Vries
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,12 +119,7 @@ public class Graph<V extends Vertible<V>> {
    protected int[][] adjacency;
    /** Number of edges.*/
    protected int numberOfEdges;
-   /** The Hashimoto matrix, also called non-backtracking matrix or edge adjacency matrix.
-    *  It encodes those pairs of adjacent edges for which the start vertex is 
-    *  different from the end vertex (i.e., backtracks are excluded).
-    */
-   //protected int[][] hashimoto;
-   /** The modiable Hashimoto matrix <i>M</i>(<i>i</i>)
+   /** The modifiable Hashimoto matrix <i>M</i>(<i>i</i>)
     *  consisting of function entries <i>n</i>(<i>i</i>).
     *  The Hashimoto matrix, also called non-backtracking matrix or edge adjacency matrix,
     *  encodes those pairs of adjacent edges for which the start vertex is 
@@ -166,8 +161,6 @@ public class Graph<V extends Vertible<V>> {
       this.undirected = false;
       this.weighted = false;
       this.vertices = vertices.toArray(arrayTemplate);
-      //this.numberOfEdges = computeNumberOfEdges(adjacency);
-      //this.hashimoto = computeHashimoto();
    }
 
    /** Creates a directed graph with the specified vertices. The adjacency matrix is created as the
@@ -188,8 +181,6 @@ public class Graph<V extends Vertible<V>> {
       this.weighted = false;
       this.vertices = vertices;
       this.adjacency = new int[vertices.length][vertices.length];
-      //this.numberOfEdges = computeNumberOfEdges(undirected, adjacency);
-      //this.hashimoto = computeHashimoto();
    }
 
    /** Creates a directed graph from the specified adjacency matrix.
@@ -256,7 +247,6 @@ public class Graph<V extends Vertible<V>> {
       }
       this.adjacency = adjacency;
       this.numberOfEdges = computeNumberOfEdges();
-      //this.hashimoto = computeHashimoto();
    }
 
    /** Creates a directed graph from the specified array of vertices and the adjacency matrix.
@@ -323,7 +313,6 @@ public class Graph<V extends Vertible<V>> {
       this.vertices  = vertices;
       this.adjacency = adjacency;
       this.numberOfEdges = computeNumberOfEdges();
-     //this.hashimoto = computeHashimoto();
    }
    
    /** Creates a directed graph from the specified array list of vertices and the adjacency matrix.
@@ -363,7 +352,6 @@ public class Graph<V extends Vertible<V>> {
       }
       this.adjacency = adjacency;
       this.numberOfEdges = computeNumberOfEdges();
-      //this.hashimoto = computeHashimoto();
    }
 
    /** Returns the number of edges of this graph.
@@ -883,6 +871,12 @@ public class Graph<V extends Vertible<V>> {
     * remaining network. Network relevance is an important notion to study
     * system relevance, network stability, or network reliability.
     * <p>
+    * After the calculation of the network relevances, the values are offered 
+    * to be stored in a CSV file. In its first row there are stored the maximum 
+    * and the minimum relevance value of all nodes, each following row consisting
+    * of node's label and its relevance value.
+    * </p>
+    * <p>
     * Cf.
     * A. Terras: <i>Zeta Functions of Graphs.</i> Cambridge University Press, 
     * Cambridge New York 2011,
@@ -1380,7 +1374,7 @@ public class Graph<V extends Vertible<V>> {
       
       // start with singletons:
       OrderedSet<Integer> set; // cluster candidate
-      java.util.ArrayList<OrderedSet<Integer>> c = new java.util.ArrayList<>();      
+      ArrayList<OrderedSet<Integer>> c = new ArrayList<>();      
       for (i = 0; i < vertices.length; i++) {
          set = new OrderedSet<>(i);
          c.add(set);
@@ -1538,10 +1532,13 @@ public class Graph<V extends Vertible<V>> {
       computeRelevances();
       
       // Divide interval [min,max] into N categories:
-      double max = Arrays.stream(relevance).max().getAsDouble();
-      double min = Arrays.stream(relevance).min().getAsDouble();
+      double min, max = max(relevance);
+      double step = max/N;
+      /* --- relevance minimum is zero by construction ...
+      min = Arrays.stream(relevance).parallel().min().getAsDouble();
       double step = (max - min)/N;
-      
+      // ... . */
+
       for (int i = 0; i < relevance.length; i++) {
          min = max;
          for(int n = N-1; n > 0; n--) {
@@ -1582,23 +1579,47 @@ public class Graph<V extends Vertible<V>> {
    private void computeRelevances() {
       relevance = new double[vertices.length];
 
-      // min and max absolute value of dominant eigenvalues:
-      double min=Double.MAX_VALUE, max=-Double.MAX_VALUE;
+      // max absolute value of dominant eigenvalues:
+      double max = -Double.MAX_VALUE;
 
       for (int i = 0; i < relevance.length; i++) {
          relevance[i] = (new Matrix(getModifiedHashimoto(i))).getDominantEigenvalue();
-         if (min > relevance[i]) min = relevance[i];
          if (max < relevance[i]) max = relevance[i];
       }
       
       for (int i=0; i<relevance.length; i++) {
          relevance[i] = max - relevance[i];
       }
+
+      // Save the relevance of the vertices to a CSV file:
+      StringBuilder csv = new StringBuilder();
+      
+      csv.append("maximum:")
+         .append(SEPARATOR)
+         .append(max(relevance))
+         .append(SEPARATOR)
+         .append("minimum:")
+         .append(SEPARATOR)
+         .append(0.0)
+         .append('\n');
+      
+      for (int i = 0; i < vertices.length; i++) {
+         csv.append(vertices[i].getName())
+            .append(SEPARATOR)
+            .append(relevance[i])
+            .append('\n');  // new line
+      }
+      org.mathIT.util.Files.save("relevances.csv", csv);
    }
    
    /** Returns the maximum entry of the specified array. */
    private static int max(int[] x) {
-      return Arrays.stream(x).max().getAsInt();
+      return Arrays.stream(x).parallel().max().getAsInt();
+   }
+   
+   /** Returns the maximum entry of the specified array. */
+   private static double max(double[] x) {
+      return Arrays.stream(x).max().getAsDouble();
    }
    
    /** Computes the next vertex distribution representing a cluster partition, 

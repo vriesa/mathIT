@@ -2,7 +2,7 @@
  * Copyright (c) 2003, the JUNG Project and the Regents of the University of
  * California All rights reserved.
  *
- * Modified and adapted to the math IT framework by Andreas de Vries (2013)
+ * Modified and adapted to the math IT framework by Andreas de Vries (2013-2019)
  *
  * This software is open-source under the BSD license; see either "license.txt"
  * or http://jung.sourceforge.net/license.txt for a description.
@@ -183,11 +183,14 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
     */
    @SuppressWarnings({ "unchecked", "rawtypes" })
    private void initComponents() {
-      layout = new KKLayout<>(this.graph);
+      if (this.graph.getVertices().size() <= 100) {
+         layout = new KKLayout<>(this.graph);
+      } else {
+         layout = new ISOMLayout<>(this.graph);
+      }
       //layout = new FRLayout<>(this.graph);
       //layout = new CircleLayout<>(this.graph);
       
-      // Dimension preferredSize = new Dimension(840, 585); // old!
       Dimension preferredSize = new Dimension(900, 585);
       final VisualizationModel<V,E> visualizationModel =
               new DefaultVisualizationModel<>(layout, preferredSize);
@@ -709,15 +712,8 @@ public class GraphViewer<V extends Vertible<V>,E> extends JFrame {
             canvas.getRenderContext().getMultiLayerTransformer().setToIdentity();
             canvas.repaint();
          } catch (Exception e) {
-            //e.printStackTrace();
-            /*
-            JOptionPane.showMessageDialog(
-               canvas, 
-               "Sorry, this layout is not possible, since the graph contains cycles!"
-            );
-            */
             new org.mathIT.gui.MessageFrame(
-               "Sorry, this layout is not possible, since the graph contains cycles!", 
+               "Sorry, this layout is not possible since the graph contains cycles!", 
                "Error Message", 
                600, 10
             );

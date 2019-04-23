@@ -1,7 +1,7 @@
 /*
  * BigNumbers.java
  *
- * Copyright (C) 2007-2012 Andreas de Vries
+ * Copyright (C) 2007-2019 Andreas de Vries
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,14 +29,17 @@
  * If you do not wish to do so, delete this exception statement from your version.
  */
 package org.mathIT.numbers;
-import java.math.*;
+import java.math.BigInteger;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import static java.math.BigInteger.*;
 import org.mathIT.algebra.PolynomialZ;
 import static org.mathIT.numbers.Numbers.factorial;
 /**
  * This class provides basic analytical and number theoretic functions for big numbers.
  * @author  Andreas de Vries
- * @version 1.1
+ * @version 1.2
  */
 public class BigNumbers {
    // Suppresses default constructor, ensuring non-instantiability.
@@ -732,8 +735,9 @@ public class BigNumbers {
    public static boolean primalityTestAKS(BigInteger n) {
       if (n.mod(TWO).equals(ZERO)) return false;
 
-//long start;
-      if (isPower(n)) return false; // step 1
+      // Step 1:
+      if (isPower(n)) return false;
+      
       boolean rDivides = true; // flag needed to find r
       int lgn = n.bitLength();
       int minOrder = (30 + lgn)*(30 + lgn)/12; // <- Ralf Meyer
@@ -749,11 +753,7 @@ public class BigNumbers {
          r_ = BigInteger.valueOf(r);
          // return if gcd(n,r) > 1:
          if (n.gcd(r_).compareTo(ONE) > 0) {
-            if (n.equals(r_)) {
-               return true;
-            } else {
-               return false;
-            }
+            return n.equals(r_);
          }
 
          k = 0;
@@ -765,17 +765,6 @@ public class BigNumbers {
          }
       }
 
-      //if (n.compareTo(BigInteger.valueOf(32399)) < 0) return true; // für Meyersche Werte getestet
-//System.out.println("\nfuer while-loop: " + (System.currentTimeMillis() - start) + " ms");
-
-      // r is always prime, i.e., phi(r) = r-1:
-      // int end = (int) (Math.sqrt((r-1)/12.0) * lgn) + 8;
-      // //int end = (int) (Math.sqrt(r-1) * lgn);
-
-//System.out.print("after loop: ");
-//System.out.println("r="+r+", n="+n+", minOrder="+minOrder+", end="+end);
-
-//start = System.currentTimeMillis();
       /*
       for (a = 1; a <= end; a++) {
          // poly1 = (x + a)^n  mod  (x^r - 1, n)
@@ -789,13 +778,11 @@ public class BigNumbers {
          poly2.put(ZERO, (BigInteger.valueOf(a)).mod(n));
          if (!poly1.equals(poly2)) return false;
       }
-//System.out.println("fuer poly-loop: " + (System.currentTimeMillis() - start) + " ms");
       return true;
       // */
       // /*
       // geht auch??
       a = 1;
-      // poly1 = (x - a)^n mod (x^r - 1, n)
       poly1 = new PolynomialZ();
       poly1.put(ONE, ONE);
       poly1.put(ZERO, BigInteger.valueOf(a));
@@ -803,8 +790,6 @@ public class BigNumbers {
       poly2 = new PolynomialZ();
       poly2.put(n.mod(BigInteger.valueOf(r)), ONE);
       poly2.put(ZERO, (BigInteger.valueOf(a)).mod(n));
-//System.out.println("poly1="+poly1+", poly2="+poly2);
-//System.out.println("fuer Polynomdivision: " + (System.currentTimeMillis() - start) + " ms");
       return poly1.equals(poly2);
       // */
    }
@@ -883,8 +868,8 @@ public class BigNumbers {
       int k = 2;
 
       while (k <= greatexp) {
-         temp = pow(root(k, n).setScale(0,BigDecimal.ROUND_HALF_UP), k);
-         if (nBD.compareTo(temp.setScale(0, BigDecimal.ROUND_HALF_UP)) == 0) {
+         temp = pow(root(k, n).setScale(0, RoundingMode.HALF_UP), k);
+         if (nBD.compareTo(temp.setScale(0, RoundingMode.HALF_UP)) == 0) {
             return true;
          }
          k++;
