@@ -871,8 +871,9 @@ public class Graph<V extends Vertible<V>> {
     * remaining network. Network relevance is an important notion to study
     * system relevance, network stability, or network reliability.
     * <p>
-    * After the calculation of the network relevances, the values are offered 
-    * to be stored in a CSV file. In its first row there are stored the maximum 
+    * After the calculation of the network relevances, the relevance values 
+    * of all nodes are offered to be stored in a CSV file. 
+    * In its first row there are stored the maximum 
     * and the minimum relevance value of all nodes, each following row consisting
     * of node's label and its relevance value.
     * </p>
@@ -892,6 +893,9 @@ public class Graph<V extends Vertible<V>> {
     * @return network relevance of vertex i
     */
    public double getRelevance(int i) {
+      if (relevance == null || relevance.length == 0) {
+         computeRelevances();
+      }
       return relevance[i];
    }
 
@@ -1515,7 +1519,7 @@ public class Graph<V extends Vertible<V>> {
       return clustering.get(0);
    }   
 
-   /** Finds a clustering according to the relevance of each nde of this graph.
+   /** Finds a clustering according to the relevance of each node of this graph.
     *  Here the network relevance, or influence, of a node is defined by 
     *  the impact of its removal 
     *  to the {@link #computeHashimoto() Hashimoto matrix}
@@ -1523,13 +1527,34 @@ public class Graph<V extends Vertible<V>> {
     *  Network relevance is an important notion to study system relevance,
     *  network stability, or network reliability.
     *  The nodes are clustered into categories of network relevance.
+    *  <p>
+    *  After the calculation of the network relevances, the relevance values 
+    *  of all nodes are offered to be stored in a CSV file. 
+    *  In its first row there are stored the maximum 
+    *  and the minimum relevance value of all nodes, each following row consisting
+    *  of node's label and its relevance value.
+    *  </p>
+    *  <p>
+    *  Cf.
+    *  A. Terras: <i>Zeta Functions of Graphs.</i> Cambridge University Press, 
+    *  Cambridge New York 2011,
+    *  or
+    *  F. Morone, H.A. Makse (2015): 
+    *  ‘Influence maximization in complex networks through optimal percolation’,
+    *  <i>Nature</i> <b>524</b> (7563), pp. 65–68,
+    *  <a href="http://dx.doi.org/10.1038/nature14604" target="_new">doi 10.1038/nature14604</a>
+    *  (or preprint 
+    *  <a href="http://arxiv.org/abs/1506.08326" target="_new">arxiv 1506.08326</a>).
+    *  </p>
     *  @return a clustering of nodes with respect to network relevance
     */
    public Clustering getRelevanceClusters() {
       final int N = 5; // number of categories: 0 - least relevant, ..., N - most relevant
       int[] vertexDistribution = new int[vertices.length];
       
-      computeRelevances();
+      if (relevance == null || relevance.length == 0) {
+         computeRelevances();
+      }
       
       // Divide interval [min,max] into N categories:
       double min, max = max(relevance);
