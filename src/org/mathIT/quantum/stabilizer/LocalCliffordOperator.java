@@ -475,7 +475,7 @@ public class LocalCliffordOperator {
     */
    @Override
    public int hashCode() {
-      return (new Integer(code)).hashCode();
+      return (Integer.valueOf(code)).hashCode();
    }
    
    static String showHTML(double[][][] matrix) {

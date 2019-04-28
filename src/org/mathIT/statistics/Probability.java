@@ -284,8 +284,8 @@ public class Probability {
          x1 = x0 + 1.;
       }
       
-      //Object[] args = { new Double(x0), new Double(par), new Integer(npar1), new Integer(npar2) };
-      Object[] argsMax = { new Double(x0), new Double(par), new Integer(npar1), new Integer(npar2) };
+      //Object[] args = { Double.valueOf(x0), Double.valueOf(par), Integer.valueOf(npar1), Integer.valueOf(npar2) };
+      Object[] argsMax = { Double.valueOf(x0), Double.valueOf(par), Integer.valueOf(npar1), Integer.valueOf(npar2) };
       Object[] args = new Object[ argTypes.length ];
       for (int j = 0; j < args.length; j++) {
          args[j] = argsMax[j];
@@ -293,7 +293,7 @@ public class Probability {
       Method func = Class.forName("org.mathIT.statistics.Probability").getMethod( function, argTypes );
       f0 = ( (Double) func.invoke( null, args ) ).doubleValue();
       //f0=(*funct)(x0, par, npar1, npar2);
-      args[0] = new Double(x1); 
+      args[0] = Double.valueOf(x1); 
       f1 = ( (Double) func.invoke( null, args ) ).doubleValue();
       //f1=(*funct)(x1, par, npar1, npar2);
       //while( (f0 * f1 > 0.) && i < iMax ) {
@@ -303,7 +303,7 @@ public class Probability {
             x0 += (x0 - x1) * 2.;
             x1 = xs;
             f1 = f0;
-            args[0] = new Double(x0);
+            args[0] = Double.valueOf(x0);
             f0 = ( (Double) func.invoke( null, args ) ).doubleValue();
             //f0 = (*funct)(x0, par, npar1, npar2);
          } else {
@@ -311,7 +311,7 @@ public class Probability {
             x1 += (x1 - x0) * 2.;
             x0 = xs;
             f0 = f1;
-            args[0] = new Double(x1); 
+            args[0] = Double.valueOf(x1); 
             f1 = ( (Double) func.invoke( null, args ) ).doubleValue();
             //f1 = (*funct)(x1, par, npar1, npar2);
          }
@@ -346,8 +346,8 @@ public class Probability {
 
       int i, iMax = 2000;
       double f0, f1, fm, xm;
-      //Object[] args = { new Double(x0), new Double(par), new Integer(npar1), new Integer(npar2) };
-      Object[] argsMax = { new Double(x0), new Double(par), new Integer(npar1), new Integer(npar2) };
+      //Object[] args = { Double.valueOf(x0), Double.valueOf(par), Integer.valueOf(npar1), Integer.valueOf(npar2) };
+      Object[] argsMax = { Double.valueOf(x0), Double.valueOf(par), Integer.valueOf(npar1), Integer.valueOf(npar2) };
       Object[] args = new Object[ argTypes.length ];
       for ( int j = 0; j < args.length; j++ ) {
          args[j] = argsMax[j];
@@ -357,7 +357,7 @@ public class Probability {
       for (i = 1; i <= iMax; ++i) {
          f0 = ( (Double) func.invoke( null, args ) ).doubleValue();
          //f0 = (*funct)(x0, par, npar1, npar2);
-         args[0] = new Double(x1); 
+         args[0] = Double.valueOf(x1); 
          f1 = ( (Double) func.invoke( null, args ) ).doubleValue();
          //f1 = (*funct)(x1, par, npar1, npar2);
          if (f0 == 0.) {
@@ -367,7 +367,7 @@ public class Probability {
          }
          xm = (x0 + x1) * .5;
          if ((d__1 = x0 - x1) > epsiln && Math.abs(d__1) >= epsiln) {
-            args[0] = new Double(xm); 
+            args[0] = Double.valueOf(xm); 
             fm = ( (Double) func.invoke( null, args ) ).doubleValue();
             //fm = (*funct)(&xm, par, npar1, npar2);
             if (f0 * fm < 0.) {

@@ -1225,7 +1225,7 @@ public class Register {
       
       for (int i = 0; i < size; i++) {
          idx = (1 << i) - 1;
-         hash = 31*hash + (new Float(real[idx]*real[idx] + imaginary[idx]*imaginary[idx])).hashCode();
+         hash = 31*hash + (Double.valueOf(real[idx]*real[idx] + imaginary[idx]*imaginary[idx])).hashCode();
       }
       return hash;
    }

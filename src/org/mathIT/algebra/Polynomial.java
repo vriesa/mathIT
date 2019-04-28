@@ -90,7 +90,7 @@ public class Polynomial extends TreeMap<Integer,Double> {
    private static final long serialVersionUID = 913625844L;
    private static final double ACCURACY = 1e-10;
    private static java.text.DecimalFormat outputFormat = new java.text.DecimalFormat( "#,##0.##########" );
-   private static final Integer ZERO = new Integer(0);
+   private static final Integer ZERO = Integer.valueOf(0);
    private ExponentComparator ec;
    
    /** Creates an empty polynomial with a new {@link ExponentComparator}.
@@ -295,7 +295,7 @@ public class Polynomial extends TreeMap<Integer,Double> {
             // r_{i+j} += p_i q_j:
 //System.out.println("### 1.1 (i,j)=("+i+","+j+ "), r="+r +", p="+p + ", q="+q);
             if ( p.get(i) != null && q.get(j) != null ) {
-               k = new Integer(i+j);
+               k = Integer.valueOf(i+j);
                if ( r.get(k) != null ) {
                   tmp = r.get(k);
                } else {
@@ -355,24 +355,24 @@ public class Polynomial extends TreeMap<Integer,Double> {
       for ( k = n - nv; k >= 0; k-- ) {
          // q_k = r_{nv+k} / v_{nv}:
 //System.out.println("### 1.1 k=" + k + ", nv=" + nv + ", r="+r +", q="+q + ", u="+u +", v="+v);
-         nvk = new Integer(nv+k);
+         nvk = Integer.valueOf(nv+k);
          if ( r.get( nvk ) != null ) {
-            //tmp = ((Double) r.get( nvk ) ).doubleValue() / ((Double)v.get(new Integer(nv))).doubleValue();
+            //tmp = ((Double) r.get( nvk ) ).doubleValue() / ((Double)v.get(Integer.valueOf(nv))).doubleValue();
             q.put(k, r.get( nvk ) / (v.get(nv)) );
          //} else {
          //   tmp = 0;
          }
-         //if ( Math.abs(tmp) > ACCURACY ) q.put( new Integer(k), new Double(tmp) );
+         //if ( Math.abs(tmp) > ACCURACY ) q.put( Integer.valueOf(k), new Double(tmp) );
 //System.out.println("### 1.2 k=" + k + ", nv=" + nv + ", r="+r +", q="+q + ", u="+u +", v="+v);
          //q.put( k, ( new BigDecimal((BigInteger)r.get( nv.add(k)))).divide( new BigDecimal((BigInteger)v.get(nv)), scale, BigDecimal.ROUND_HALF_UP ) );
          for ( j = nv+k-1; j >= k; j-- ) {
             // r_j -= q_k * v_{j-k}:
 //System.out.println("### 1.2.1 k=" + k + ", j="+j +", nv=" + nv + ", r="+r +", q="+q );
-            //kk = new Integer(k);
+            //kk = Integer.valueOf(k);
             if ( q.get(k) != null && v.get(j-k) != null ) {
                tmp = q.get(k) * v.get(j-k);
                //if ( Math.abs(tmp) > ACCURACY ) {  // tmp != 0
-                  //jj = new Integer(j);
+                  //jj = Integer.valueOf(j);
                   //if ( r.get(jj) == null ) {
                   //   r.put(jj, new Double(-tmp) );
                   //} else {
@@ -457,12 +457,12 @@ public class Polynomial extends TreeMap<Integer,Double> {
       Polynomial p = new Polynomial();
       System.out.println( "leer: P(x) = " + p );
       //--- P(x) = 5x^3 + 2x + 7: -------------------------
-      //p.put( new Integer("0"), new Double("7") );
-      //p.put( new Integer("1"), new Double("2") );
-      //p.put( new Integer("3"), new Double("24") );
+      //p.put( Integer.valueOf("0"), new Double("7") );
+      //p.put( Integer.valueOf("1"), new Double("2") );
+      //p.put( Integer.valueOf("3"), new Double("24") );
       //--- P(x) = x^2 - 1: -------------------------------
-      //p.put( new Integer("0"), new Double("-1") );
-      //p.put( new Integer("2"), new Double("1") );
+      //p.put( Integer.valueOf("0"), new Double("-1") );
+      //p.put( Integer.valueOf("2"), new Double("1") );
       //--- P(x) = x^1023 - 3.5 x^2 + 3x - 1: ------------------
       p.put( 2, 3.5 );
       p.put( 1, 3. );
@@ -474,14 +474,14 @@ public class Polynomial extends TreeMap<Integer,Double> {
       //Polynomial q = new Polynomial();
       Polynomial q = new Polynomial(new ExponentComparator());
       //--- Q(x) = 8x^2 + 3x: -----------------------------
-      //q.put( new Integer("1"), new Double("3") );
-      //q.put( new Integer("2"), new Double("8") );
+      //q.put( Integer.valueOf("1"), new Double("3") );
+      //q.put( Integer.valueOf("2"), new Double("8") );
       //--- Q(x) = x + 1: ---------------------------------
-      //q.put( new Integer("0"), new Double("1") );
-      //q.put( new Integer("1"), new Double("1") );
+      //q.put( Integer.valueOf("0"), new Double("1") );
+      //q.put( Integer.valueOf("1"), new Double("1") );
       //--- Q(x) = - x^523 + x: ---------------------------------
-      q.put( new Integer("523"), new Double("-1") );
-      q.put( new Integer("1"), new Double("1") );
+      q.put( Integer.valueOf("523"), new Double("-1") );
+      q.put( Integer.valueOf("1"), new Double("1") );
       //---------------------------------------------------
       System.out.println( "Q(x) = " + q + ", deg Q=" + q.deg() );
       
@@ -500,12 +500,12 @@ public class Polynomial extends TreeMap<Integer,Double> {
       double[] p1 = new double[0];
       System.out.println( "leer: P(x) = " + toString(p1) );
       //--- P(x) = 5x^3 + 2x + 7: -------------------------
-      //p.put( new Integer("0"), new Double("7") );
-      //p.put( new Integer("1"), new Double("2") );
-      //p.put( new Integer("3"), new Double("24") );
+      //p.put( Integer.valueOf("0"), new Double("7") );
+      //p.put( Integer.valueOf("1"), new Double("2") );
+      //p.put( Integer.valueOf("3"), new Double("24") );
       //--- P(x) = x^2 - 1: -------------------------------
-      //p.put( new Integer("0"), new Double("-1") );
-      //p.put( new Integer("2"), new Double("1") );
+      //p.put( Integer.valueOf("0"), new Double("-1") );
+      //p.put( Integer.valueOf("2"), new Double("1") );
       //--- P(x) = x^1023 - 3.5 x^2 + 3x - 1: ------------------
       int size = 10024;
       p1 = new double[size];
@@ -518,11 +518,11 @@ public class Polynomial extends TreeMap<Integer,Double> {
       
       double[] q1;
       //--- Q(x) = 8x^2 + 3x: -----------------------------
-      //q.put( new Integer("1"), new Double("3") );
-      //q.put( new Integer("2"), new Double("8") );
+      //q.put( Integer.valueOf("1"), new Double("3") );
+      //q.put( Integer.valueOf("2"), new Double("8") );
       //--- Q(x) = x + 1: ---------------------------------
-      //q.put( new Integer("0"), new Double("1") );
-      //q.put( new Integer("1"), new Double("1") );
+      //q.put( Integer.valueOf("0"), new Double("1") );
+      //q.put( Integer.valueOf("1"), new Double("1") );
       //--- Q(x) = - 523 x + x: ---------------------------------
       q1 = new double[524];
       q1[523] = -1;

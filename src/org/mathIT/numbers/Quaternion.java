@@ -524,10 +524,10 @@ public class Quaternion extends Number {
       if (obj instanceof Quaternion) { 
          Quaternion tmp = (Quaternion) obj;
          return (
-               (new Double(z[0])).equals(tmp.z[0]) 
-            && (new Double(z[1])).equals(tmp.z[1])
-            && (new Double(z[2])).equals(tmp.z[2])
-            && (new Double(z[3])).equals(tmp.z[3])
+               (Double.valueOf(z[0])).equals(tmp.z[0]) 
+            && (Double.valueOf(z[1])).equals(tmp.z[1])
+            && (Double.valueOf(z[2])).equals(tmp.z[2])
+            && (Double.valueOf(z[3])).equals(tmp.z[3])
          );
       }
       return false;        

@@ -926,8 +926,8 @@ public class GraphRegister {
          for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {
                // Several operators represent the same physical register state, e.g., H=ZC
-               hash = 31*hash + (new Float(matrix[i][j][0])).hashCode();
-               hash = 31*hash + (new Float(matrix[i][j][1])).hashCode();
+               hash = 31*hash + (Double.valueOf(matrix[i][j][0])).hashCode();
+               hash = 31*hash + (Double.valueOf(matrix[i][j][1])).hashCode();
             }
          }
       }

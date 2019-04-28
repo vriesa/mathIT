@@ -1451,7 +1451,7 @@ public class Register {
             Register tmpReg = graphState.getRegister();
             double[] tmpReal = tmpReg.real;
             double[] tmpImag = tmpReg.imaginary;
-            hash = 31*hash + (new Float(tmpReal[i]*tmpReal[i] + tmpImag[i]*tmpImag[i])).hashCode();
+            hash = 31*hash + (Double.valueOf(tmpReal[i]*tmpReal[i] + tmpImag[i]*tmpImag[i])).hashCode();
             /*
             for (int j = 0; j < c[0].length; j++) {
                rows = c.length;
@@ -1484,7 +1484,7 @@ public class Register {
 //System.out.println();
          } else {
             //i = (1 << b) - 1;
-            hash = 31*hash + (new Float(real[i]*real[i] + imaginary[i]*imaginary[i])).hashCode();
+            hash = 31*hash + (Double.valueOf(real[i]*real[i] + imaginary[i]*imaginary[i])).hashCode();
          }
       }
       return hash;
